@@ -75,11 +75,11 @@ button.pill{color:var(--txt)} button.pill:active{background:rgba(255,255,255,.2)
 .bb.sel{border-color:var(--brass);background:rgba(224,170,72,.2)}
 .bb.poor .ct{color:var(--bad)}
 .bb.lock{opacity:.45}.bb.lock .ct{color:var(--brass)}
-#armyMenu{position:fixed;left:calc(10px + var(--sl));bottom:calc(76px + var(--sb));display:none;flex-direction:column;gap:6px;padding:6px;z-index:5}
-#armyMenu .bb,#armyMenu .bb2{flex-direction:row;gap:8px;min-width:150px;padding:6px 10px;text-align:left}
+#armyMenu{position:fixed;left:calc(10px + var(--sl));bottom:calc(76px + var(--sb));display:none;grid-template-columns:repeat(3,auto);gap:5px;padding:6px;z-index:5}
+#armyMenu .bb,#armyMenu .bb2{flex-direction:row;gap:6px;min-width:118px;padding:5px 8px;text-align:left;align-items:center}
 #armyMenu .bb .nm,#armyMenu .bb2 .nm{display:block}
 #armyMenu .ct{display:block}
-#menu{position:fixed;right:calc(8px + var(--sr));top:calc(40px + var(--st));display:none;flex-direction:column;gap:4px;padding:6px;z-index:6}
+#menu{position:fixed;right:calc(8px + var(--sr));top:calc(40px + var(--st));display:none;grid-template-columns:1fr 1fr;gap:4px;padding:6px;z-index:6}
 #menu .btn{text-align:left;padding:8px 12px}
 
 /* --- mod çubuğu: inşa/yol/yık sırasında alt ortada --- */
@@ -87,6 +87,9 @@ button.pill{color:var(--txt)} button.pill:active{background:rgba(255,255,255,.2)
 #modebar #mbText{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #modebar .btn{padding:8px 14px;font-size:14px}
 
+#armyPanel{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(10px + var(--sb));display:none;flex-wrap:wrap;gap:5px;padding:7px 9px;z-index:4;width:min(470px,calc(100vw - 190px - var(--sl) - var(--sr)));font-size:12.5px;align-items:center}
+#armyPanel .hd{width:100%;color:var(--mut)} #armyPanel .hd b{color:var(--txt)}
+#armyPanel .btn{padding:6px 9px;font-size:12px}
 /* --- seçili bina kartı --- */
 #info{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(10px + var(--sb));width:min(440px,calc(100vw - 190px - var(--sl) - var(--sr)));max-height:62vh;overflow:auto;padding:10px 12px;font-size:13px;display:none;z-index:4}
 #info .x{position:absolute;right:6px;top:3px;background:none;border:0;font-size:16px;color:var(--mut);padding:4px 6px}
@@ -119,6 +122,8 @@ button.pill{color:var(--txt)} button.pill:active{background:rgba(255,255,255,.2)
 .trow .tx small{color:var(--mut);font-size:12.5px;line-height:1.3;display:block}
 .trow .btn{white-space:nowrap}
 .note{color:var(--mut);font-size:13px;margin:0 0 8px;line-height:1.4}
+.relbar{height:6px;background:rgba(255,255,255,.12);border-radius:3px;overflow:hidden;margin:6px 0}.relbar i{display:block;height:100%}
+.btn.on[disabled]{opacity:1}
 
 /* --- ekranlar --- */
 .screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:10;
@@ -191,7 +196,11 @@ button.pill{color:var(--txt)} button.pill:active{background:rgba(255,255,255,.2)
   <div class="pill" id="quest"></div>
 </div>
 <div class="panel" id="menu">
-  <button class="btn" id="saveBtn">💾 Kaydet</button>
+  <button class="btn" id="saveBtn">💾 Kaydet / Yükle</button>
+  <button class="btn" id="achBtn">🏆 Başarımlar</button>
+  <button class="btn" id="sfxBtn">🔊 Ses: Açık</button>
+  <button class="btn" id="musBtn">🎵 Müzik: Açık</button>
+  <button class="btn" id="gfxBtn">🖼️ Grafik: Yüksek</button>
   <button class="btn" id="fsBtn">⛶ Tam ekran</button>
   <button class="btn" id="helpBtn2">❔ Nasıl oynanır</button>
 </div>
@@ -203,6 +212,7 @@ button.pill{color:var(--txt)} button.pill:active{background:rgba(255,255,255,.2)
 <div class="panel" id="armyMenu"></div>
 <div class="panel" id="drawer"><div id="cats"></div><div id="bar"></div></div>
 <div class="panel" id="modebar"><span id="mbText"></span><button class="btn brass" id="cfOk">✔ Yerleştir</button><button class="btn no" id="cfNo">✖ İptal</button></div>
+<div class="panel" id="armyPanel"></div>
 <div id="rot">↻ Daha rahat oynamak için telefonu yatay çevir</div>
 
 <div class="screen" id="techScreen" style="display:none">
@@ -211,6 +221,8 @@ button.pill{color:var(--txt)} button.pill:active{background:rgba(255,255,255,.2)
       <button class="btn on" data-tab="tech">🔬 Araştırma</button>
       <button class="btn" data-tab="trade">⚖️ Pazar takası</button>
       <button class="btn" data-tab="happy">👑 Refah</button>
+      <button class="btn" data-tab="dip">🤝 Diplomasi</button>
+      <button class="btn" data-tab="laws">📜 Yasalar</button>
       <span class="grow"></span>
       <button class="btn" id="techClose">✕</button>
     </div>
@@ -226,7 +238,7 @@ button.pill{color:var(--txt)} button.pill:active{background:rgba(255,255,255,.2)
     <div class="btns">
       <span id="diffRow" style="display:flex;gap:6px;align-items:center;width:100%;margin-bottom:4px"><span style="color:var(--mut);font-size:13px">Zorluk:</span><button class="btn" data-d="0">Kolay</button><button class="btn on" data-d="1">Normal</button><button class="btn" data-d="2">Zor</button></span>
       <button class="btn brass" id="newBtn">Yeni oyun</button>
-      <button class="btn" id="contBtn" style="display:none">Kayıttan devam et</button>
+      <button class="btn" id="contBtn" style="display:none">Kayıtlı oyunlar</button>
       <button class="btn" id="helpBtn">❔ Nasıl oynanır</button>
     </div>
   </div>
@@ -240,6 +252,18 @@ button.pill{color:var(--txt)} button.pill:active{background:rgba(255,255,255,.2)
   </div>
 </div>
 
+<div class="screen" id="slotScreen" style="display:none">
+  <div class="panel box wide">
+    <div class="tabs"><b id="slotTitle" style="font-size:18px;flex:1">💾 Kaydet</b><button class="btn" id="slotClose">✕</button></div>
+    <div id="slotList"></div>
+  </div>
+</div>
+<div class="screen" id="achScreen" style="display:none">
+  <div class="panel box wide">
+    <div class="tabs"><b id="achTitle" style="font-size:18px;flex:1">🏆 Başarımlar</b><button class="btn" id="achClose">✕</button></div>
+    <div id="achList"></div>
+  </div>
+</div>
 <div class="screen" id="helpScreen" style="display:none">
   <div class="panel box">
     <h2>Nasıl oynanır?</h2>
@@ -279,6 +303,7 @@ button.pill{color:var(--txt)} button.pill:active{background:rgba(255,255,255,.2)
    ========================================================= */
 const N = 36, T = 2, HALF = N * T / 2;           // 36x36 ızgara, karo = 2 birim
 const SAVE_KEY = 'krallik3d_save_v1';
+const SLOT_KEYS = [SAVE_KEY,'krallik3d_slot1','krallik3d_slot2','krallik3d_slot3'];
 const RI = {wood:'🪵', stone:'🪨', food:'🌾', gold:'🪙'};
 
 const ERAS = [
@@ -296,15 +321,19 @@ const B = {
   market:  {n:'Pazar',       ic:'🏪', cost:{wood:60, stone:20},           era:1, s:1, hp:100, bt:5,  d:'Altın üretir; nüfus arttıkça kazancı artar.'},
   tower:   {n:'Gözcü Kulesi',ic:'🗼', cost:{wood:30, stone:60},           era:1, s:1, hp:170, bt:6,  d:'Menzildeki düşmana ok atar.', range:17, dmg:13, cd:1.1, ah:3.4},
   barracks:{n:'Kışla',       ic:'⚔️', cost:{wood:80, stone:50},           era:1, s:1, hp:180, bt:7,  d:'Mızraklı, okçu ve şövalye eğitir. Ordu sınırını +4 artırır.'},
-  wall:    {n:'Sur',         ic:'🧱', cost:{stone:8},                     era:1, s:1, hp:260, bt:2,  d:'Düşmanı oyalar, hasarı emer.'},
+  wall:    {n:'Sur',         ic:'🧱', cost:{stone:8},                     era:1, s:1, hp:260, bt:2,  d:'Birbirine bağlanır, düşmanı durdurur. Sürükleyerek uzun sur çekebilirsin.'},
   castle:  {n:'Kale',        ic:'🏰', cost:{wood:150, stone:300, gold:100}, era:2, s:2, hp:600, bt:14, d:'Güçlü ok yağmuru. 2×2.', range:23, dmg:30, cd:1.3, ah:3.6},
   wonder:  {n:'Harika',      ic:'🏛️', cost:{wood:500, stone:600, gold:500, food:200}, era:3, s:3, hp:700, bt:60, d:'Tamamlanırsa oyunu kazanırsın. 3×3.'},
   well:    {n:'Çeşme',       ic:'⛲', cost:{wood:30, stone:15},           era:0, s:1, hp:80,  bt:3,  d:'Halkın refahını artırır.'},
   tavern:  {n:'Han',         ic:'🍺', cost:{wood:70, stone:20},           era:1, s:1, hp:110, bt:5,  d:'Refahı artırır ve biraz altın kazandırır.'},
   chapel:  {n:'Şapel',       ic:'⛪', cost:{wood:40, stone:80},           era:1, s:1, hp:140, bt:7,  d:'Refahı güçlü biçimde artırır.'},
+  gate:    {n:'Kapı',        ic:'🚪', cost:{wood:40, stone:30},           era:1, s:1, hp:230, bt:4,  d:'Surlara bağlanır ve ok atar. Düşman kapıyı yıkmadan geçemez.', range:12, dmg:9, cd:1.3, ah:2.4},
+  clinic:  {n:'Şifahane',    ic:'🏥', cost:{wood:60, stone:40},           era:1, s:1, hp:120, bt:6,  d:'Salgına karşı korur, refahı artırır, yakındaki askerleri iyileştirir.'},
+  firehouse:{n:'İtfaiye',    ic:'🚒', cost:{wood:70, stone:30},           era:1, s:1, hp:130, bt:6,  d:'Yakındaki yangınları 3,5 kat hızlı söndürür (menzil 16).'},
+  armycamp:{n:'Ordu Kampı',  ic:'⛺', cost:{wood:80, stone:30},           era:0, s:2, hp:220, bt:8,  d:'Askerler yakında beklerken canları yavaşça yenilenir. Ordu sınırını +2 artırır.'},
   hall:    {n:'Şehir Merkezi', ic:'🏯', cost:{}, era:0, s:2, hp:900, bt:0, d:'Mızraklı eğitir ve ok atar. Yıkılırsa oyun biter.', range:15, dmg:12, cd:1.4, ah:4.3}
 };
-const ORDER = ['house','farm','lumber','quarry','well','market','tavern','chapel','tower','barracks','wall','castle','wonder'];
+const ORDER = ['house','farm','lumber','quarry','well','market','tavern','chapel','tower','barracks','armycamp','wall','gate','clinic','firehouse','castle','wonder'];
 const TECHS = [
   {id:'agri',  n:'Sabancılık',      ic:'🌾', era:0, cost:{wood:80,food:40},               d:'Çiftlikler %30 daha fazla yiyecek üretir.'},
   {id:'axe',   n:'Çelik Balta',     ic:'🪓', era:0, cost:{wood:60,stone:30},              d:'Oduncular %30 daha fazla odun keser.'},
@@ -329,7 +358,8 @@ const CAMP_POS = [{x:-84,z:-76},{x:88,z:-62},{x:16,z:100},{x:-98,z:56}];
 const UNITS = {
   spear: {n:'Mızraklı', ic:'🔱', cost:{food:25,wood:15}, era:0, time:6,  hp:80,  dmg:9,  spd:4.2, range:0, at:['hall','barracks']},
   archer:{n:'Okçu',     ic:'🏹', cost:{wood:35,gold:20}, era:1, time:7,  hp:50,  dmg:8,  spd:4.0, range:9, at:['barracks']},
-  knight:{n:'Şövalye',  ic:'🐎', cost:{food:50,gold:45}, era:2, time:10, hp:170, dmg:20, spd:6.5, range:0, at:['barracks']}
+  knight:{n:'Şövalye',  ic:'🐎', cost:{food:50,gold:45}, era:2, time:10, hp:170, dmg:20, spd:6.5, range:0, at:['barracks']},
+  hero:  {n:'Komutan',  ic:'👑', cost:{gold:150,food:80}, era:1, time:15, hp:300, dmg:24, spd:5.0, range:0, at:['barracks'], limit:1}
 };
 
 /* ---------- yardımcılar ---------- */
@@ -341,16 +371,80 @@ const costStr = c => Object.keys(c).map(k => RI[k]+c[k]).join(' ');
 const tileToWorld = (i,j) => new THREE.Vector3((i-N/2+.5)*T,0,(j-N/2+.5)*T);
 
 /* ---------- ses ---------- */
-let actx=null;
-function beep(f=440,d=.12,type='sine',v=.05,f2){
+let actx=null, masterG=null, musicG=null, ambG=null, noiseBuf=null, rainG=null, windG=null, lastHitT=0, musicTimer=null, musicIdx=0;
+const PREFS=(function(){ try{ return Object.assign({sfx:true,music:true,gfx:'high'},JSON.parse(localStorage.getItem('krallik3d_prefs')||'{}')); }catch(e){ return {sfx:true,music:true,gfx:'high'}; } })();
+function savePrefs(){ try{ localStorage.setItem('krallik3d_prefs',JSON.stringify(PREFS)); }catch(e){} }
+function ensureAudio(){
+  if(actx){ if(actx.state==='suspended') actx.resume(); return actx; }
   try{
-    actx = actx || new (window.AudioContext||window.webkitAudioContext)();
+    actx=new (window.AudioContext||window.webkitAudioContext)();
+    masterG=actx.createGain(); masterG.gain.value=1; masterG.connect(actx.destination);
+    musicG=actx.createGain(); musicG.gain.value=PREFS.music?1:0; musicG.connect(masterG);
+    ambG=actx.createGain(); ambG.gain.value=1; ambG.connect(masterG);
+    const len=actx.sampleRate*2, buf=actx.createBuffer(1,len,actx.sampleRate), dd=buf.getChannelData(0);
+    for(let i=0;i<len;i++) dd[i]=Math.random()*2-1;
+    noiseBuf=buf;
+    const mkNoise=(type,freq,q)=>{ const src=actx.createBufferSource(); src.buffer=buf; src.loop=true; const f=actx.createBiquadFilter(); f.type=type; f.frequency.value=freq; f.Q.value=q; const g=actx.createGain(); g.gain.value=0; src.connect(f); f.connect(g); g.connect(ambG); src.start(); return g; };
+    rainG=mkNoise('bandpass',3200,.6); windG=mkNoise('lowpass',420,.7);
+  }catch(e){ actx=null; }
+  return actx;
+}
+function beep(f=440,d=.12,type='sine',v=.05,f2){
+  if(!PREFS.sfx) return;
+  try{
+    if(!ensureAudio()) return;
     const o=actx.createOscillator(), g=actx.createGain(), t=actx.currentTime;
     o.type=type; o.frequency.setValueAtTime(f,t); if(f2) o.frequency.exponentialRampToValueAtTime(f2,t+d);
     g.gain.setValueAtTime(v,t); g.gain.exponentialRampToValueAtTime(.0001,t+d);
-    o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t+d);
+    o.connect(g); g.connect(masterG); o.start(t); o.stop(t+d);
   }catch(e){}
 }
+function sfxHit(){
+  if(!PREFS.sfx||!actx||!noiseBuf) return;
+  try{
+    const t=actx.currentTime, src=actx.createBufferSource(); src.buffer=noiseBuf;
+    const f=actx.createBiquadFilter(); f.type='highpass'; f.frequency.value=900; const g=actx.createGain();
+    g.gain.setValueAtTime(.05,t); g.gain.exponentialRampToValueAtTime(.001,t+.09);
+    src.connect(f); f.connect(g); g.connect(masterG); src.start(t,Math.random(),.1);
+  }catch(e){}
+}
+const noteF=semi=>261.63*Math.pow(2,semi/12);
+function playNote(freq,dur,vol,type,delay){
+  if(!actx||!PREFS.music) return;
+  try{
+    const t0=actx.currentTime+(delay||0), o=actx.createOscillator(), g=actx.createGain();
+    o.type=type; o.frequency.value=freq; g.gain.setValueAtTime(.0001,t0);
+    g.gain.linearRampToValueAtTime(vol,t0+Math.min(1.2,dur*.3)); g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+    o.connect(g); g.connect(musicG); o.start(t0); o.stop(t0+dur+.05);
+  }catch(e){}
+}
+function drum(){
+  if(!actx||!PREFS.music) return;
+  try{ const t=actx.currentTime, o=actx.createOscillator(), g=actx.createGain(); o.frequency.setValueAtTime(95,t); o.frequency.exponentialRampToValueAtTime(42,t+.25); g.gain.setValueAtTime(.07,t); g.gain.exponentialRampToValueAtTime(.001,t+.3); o.connect(g); g.connect(musicG); o.start(t); o.stop(t+.32); }catch(e){}
+}
+function chirp(){
+  if(!actx||!PREFS.sfx) return;
+  try{ for(let k=0;k<2;k++){ const t=actx.currentTime+k*.14, o=actx.createOscillator(), g=actx.createGain(); o.frequency.setValueAtTime(2200,t); o.frequency.exponentialRampToValueAtTime(3300,t+.1); g.gain.setValueAtTime(.012,t); g.gain.exponentialRampToValueAtTime(.0001,t+.12); o.connect(g); g.connect(masterG); o.start(t); o.stop(t+.13); } }catch(e){}
+}
+function updateAmbience(){
+  if(!actx||!rainG) return; const t=actx.currentTime, w=(S&&S.weather)||'clear', on=PREFS.sfx&&started;
+  rainG.gain.setTargetAtTime(on&&w==='rain'?.06:0,t,1.2);
+  windG.gain.setTargetAtTime(on?(w==='snow'?.05:w==='fog'?.02:.012):0,t,1.5);
+}
+const CHORDS_CALM=[[0,4,7],[-3,0,4],[-7,-3,0],[-5,-1,2]], CHORDS_TENSE=[[-15,-12,-8],[-8,-5,-1],[-10,-7,-3],[-15,-12,-8]];
+const SCALE_CALM=[0,2,4,7,9], SCALE_TENSE=[-3,0,2,4,7];
+function musicTick(){
+  if(!actx||!started||!S||S.paused||S.over) return;
+  updateAmbience();
+  if(!PREFS.music) return;
+  const tense=enemies.length>0, ch=(tense?CHORDS_TENSE:CHORDS_CALM)[musicIdx%4]; musicIdx++;
+  ch.forEach((n,i)=>playNote(noteF(n-12),4.8,.014,'sine',i*.07));
+  if(Math.random()<(tense?.5:.7)){ const sc=tense?SCALE_TENSE:SCALE_CALM, n=sc[Math.floor(Math.random()*sc.length)]+(Math.random()<.5?12:0); playNote(noteF(n),1.7,.016,'triangle',Math.random()*1.2); }
+  if(tense){ drum(); setTimeout(drum,650); }
+  if(dayF>.6&&S.weather==='clear'&&Math.random()<.45) chirp();
+}
+function startMusic(){ ensureAudio(); if(musicTimer) return; musicTimer=setInterval(musicTick,2600); musicTick(); }
+document.addEventListener('visibilitychange',()=>{ if(actx){ if(document.hidden) actx.suspend(); else actx.resume(); } });
 
 /* ---------- sahne ---------- */
 const canvas = $('c');
@@ -506,12 +600,47 @@ function bChapel(t){const g=new THREE.Group();
   g.add(box(0xffd54a,.06,.5,.06,0,3.1,-.55)); g.add(box(0xffd54a,.3,.06,.06,0,3.3,-.55));
   g.add(box(0x4a3320,.35,.6,.05,0,0,.96)); g.add(box(0x9fd4ee,.05,.35,.2,-.56,.5,.1)); g.add(box(0x9fd4ee,.05,.35,.2,.56,.5,.1));
   return g;}
-const MODELS = {well:bWell,tavern:bTavern,chapel:bChapel,house:bHouse,farm:bFarm,lumber:bLumber,quarry:bQuarry,market:bMarket,tower:bTower,barracks:bBarracks,wall:bWall,castle:bCastle,wonder:bWonder,hall:bHall};
-const HEIGHTS = {well:2.0,tavern:2.4,chapel:3.9,house:2.2,farm:1.4,lumber:1.5,quarry:1.8,market:1.5,tower:4.2,barracks:2.2,wall:1.6,castle:4.8,wonder:5.2,hall:5.0};
+function bArmyCamp(t){const g=new THREE.Group();
+  g.add(box(0x7a6a48,3.7,.1,3.7));
+  g.add(roof4(0xdfd6c0,1.7,1.5,.1,-.95,-.85)); g.add(roof4(0xc9b88a,1.5,1.3,.1,.95,-.95)); g.add(roof4(0xf2f2f2,1.2,1.0,.1,-.3,.95));
+  g.add(box(0xc0392b,.35,.08,.04,-.3,.62,1.62)); g.add(box(0xc0392b,.08,.35,.04,-.3,.48,1.62));
+  g.add(cyl(0x444444,.05,2.7,1.45,.1,.9)); g.add(box(0x2a5db0,.7,.45,.03,1.8,2.2,.9));
+  g.add(cyl(0x6b4423,.05,1.0,1.1,.1,1.5)); g.add(cyl(0x6b4423,.05,1.0,1.3,.1,1.5)); g.add(box(0x6b4423,.9,.06,.06,1.2,.7,1.5));
+  for(let k=0;k<6;k++){ const a=k/6*6.283, st=new THREE.Mesh(GI,mat(0x7d7d78)); st.scale.set(.12,.09,.12); st.position.set(.2+Math.cos(a)*.3,.15,.2+Math.sin(a)*.3); g.add(st); }
+  const f=new THREE.Mesh(GK,new THREE.MeshBasicMaterial({color:0xff8a30})); f.scale.set(.2,.5,.2); f.position.set(.2,.4,.2); g.add(f);
+  return g;}
+function bWallArms(t,mask){const g=new THREE.Group(), c=STONE[t];
+  g.add(box(c,1.0,1.5,1.0));
+  [[-.34,-.34],[.34,-.34],[-.34,.34],[.34,.34]].forEach(a=>g.add(box(c,.26,.26,.26,a[0],1.5,a[1])));
+  if(mask&1){ g.add(box(c,.7,1.15,.55,0,0,-.78)); g.add(box(c,.24,.24,.24,0,1.15,-.78)); }
+  if(mask&2){ g.add(box(c,.55,1.15,.7,.78,0,0));  g.add(box(c,.24,.24,.24,.78,1.15,0)); }
+  if(mask&4){ g.add(box(c,.7,1.15,.55,0,0,.78));  g.add(box(c,.24,.24,.24,0,1.15,.78)); }
+  if(mask&8){ g.add(box(c,.55,1.15,.7,-.78,0,0)); g.add(box(c,.24,.24,.24,-.78,1.15,0)); }
+  return g;}
+function bGateArms(t,mask){const g=new THREE.Group(), c=STONE[t];
+  g.add(box(c,.5,1.9,.9,-.7,0,0)); g.add(box(c,.5,1.9,.9,.7,0,0)); g.add(box(c,1.9,.5,.9,0,1.4,0));
+  g.add(box(0x5b3a1e,.9,1.2,.12,0,0,0)); g.add(box(0x222222,.12,.3,.05,0,1.55,.46));
+  g.add(cone(ROOF[t],.38,.5,-.7,1.9,0)); g.add(cone(ROOF[t],.38,.5,.7,1.9,0));
+  if((mask&5)&&!(mask&10)) g.rotation.y=Math.PI/2;
+  return g;}
+function bClinic(t){const g=new THREE.Group();
+  g.add(box(0xf0ece2,1.5,1.1,1.3)); g.add(roof4(0x8e3b2e,1.5,.8,1.1));
+  g.add(box(0xc0392b,.5,.14,.04,0,.75,.66)); g.add(box(0xc0392b,.14,.5,.04,0,.57,.66));
+  g.add(box(0x4a3320,.35,.6,.05,0,0,.66)); g.add(box(0x9fd4ee,.22,.22,.05,-.5,.45,.66)); g.add(box(0x9fd4ee,.22,.22,.05,.5,.45,.66));
+  g.add(box(0x4a7c59,.4,.3,.4,.6,0,.7));
+  return g;}
+function bFirehouse(t){const g=new THREE.Group();
+  g.add(box(0xb03a2e,1.7,1.2,1.3)); g.add(roof4(0x3a3a3a,1.7,.7,1.2));
+  g.add(box(0xe8e8e8,.9,.95,.05,-.2,0,.66)); g.add(box(0x444444,.9,.06,.05,-.2,.5,.69));
+  g.add(box(STONE[t],.45,2.2,.45,.6,0,-.4)); g.add(cone(0x3a3a3a,.38,.5,.6,2.2,-.4)); g.add(box(0xffd54a,.18,.18,.18,.6,1.7,-.1));
+  return g;}
+const MODELS = {gate:function(t){return bGateArms(t,0);},clinic:bClinic,firehouse:bFirehouse,armycamp:bArmyCamp,well:bWell,tavern:bTavern,chapel:bChapel,house:bHouse,farm:bFarm,lumber:bLumber,quarry:bQuarry,market:bMarket,tower:bTower,barracks:bBarracks,wall:bWall,castle:bCastle,wonder:bWonder,hall:bHall};
+const HEIGHTS = {gate:2.3,clinic:2.4,firehouse:2.8,armycamp:3.0,well:2.0,tavern:2.4,chapel:3.9,house:2.2,farm:1.4,lumber:1.5,quarry:1.8,market:1.5,tower:4.2,barracks:2.2,wall:1.6,castle:4.8,wonder:5.2,hall:5.0};
 
 /* ---------- dünya: zemin, su, tepeler, bulutlar ---------- */
 var water, waterBase; var clouds=[];
 var campLight=null, flames=[], birds=[], puffs=[], dayF=1;
+var groundGeo=null, forestCones=[], forestVals=[], stars=null, precip=null, pPos=null, pMat=null;
 function hgt(x,z){
   const d=Math.max(Math.abs(x),Math.abs(z)), e=Math.max(0,d-(HALF+9));
   if(e<=0) return 0;
@@ -542,6 +671,7 @@ function buildForest(rnd){
     col.setHSL(.29+v*.06,.45,.18+v*.1);
     layers.forEach((L,k)=>{ dm.position.set(x,y+(L[2]+L[1]/2)*s,z); dm.scale.set(L[0]*s,L[1]*s,L[0]*s); dm.updateMatrix(); cones[k].setMatrixAt(i,dm.matrix); cones[k].setColorAt(i,col); });
   });
+  forestCones=cones; forestVals=pts.map(p=>p[4]);
   [trunk].concat(cones).forEach(m=>{ m.frustumCulled=false; m.castShadow=false; m.receiveShadow=false; m.instanceMatrix.needsUpdate=true; if(m.instanceColor) m.instanceColor.needsUpdate=true; scene.add(m); });
 }
 (function buildWorld(){
@@ -556,7 +686,7 @@ function buildForest(rnd){
     c.setHSL(.27+n*.02, .42-.05*f, (.34+n*.05)*(1-f)+(.2+n*.03)*f);
     col[i*3]=c.r; col[i*3+1]=c.g; col[i*3+2]=c.b;
   }
-  gg.setAttribute('color', new THREE.BufferAttribute(col,3)); gg.computeVertexNormals();
+  gg.setAttribute('color', new THREE.BufferAttribute(col,3)); gg.computeVertexNormals(); groundGeo=gg;
   const ground=new THREE.Mesh(gg,new THREE.MeshStandardMaterial({vertexColors:true,roughness:1}));
   ground.receiveShadow=true; scene.add(ground);
 
@@ -638,22 +768,23 @@ function nodesAround(b,kind,R){
 /* ---------- oyun durumu ---------- */
 let S, blds=[], enemies=[], soldiers=[], arrows=[], rates={wood:0,stone:0,food:0,gold:0}, popCap=6;
 let villagers=[], sheep=[], caravans=[], bid=0, rallyFlag=null;
+let groups=[[],[],[]], selV=null;
 let mode={k:'select',type:null}, selected=null, started=false;
 const mouse={x:innerWidth/2,y:innerHeight/2,over:true};
 
 function freshState(){
-  return {res:{wood:170,stone:60,food:120,gold:60}, era:0, pop:6, time:0, wave:0, nextWave:200, over:false, won:false, speed:1, paused:false, kills:0, seed:Math.floor(Math.random()*1e9)+1, tech:{}, rally:{x:0,z:6}, nextEvent:150, coldUntil:0, quests:{}, happy:60, tax:1, fearUntil:0, diff:1};
+  return {res:{wood:170,stone:60,food:120,gold:60}, era:0, pop:6, time:0, wave:0, nextWave:200, over:false, won:false, speed:1, paused:false, kills:0, seed:Math.floor(Math.random()*1e9)+1, tech:{}, rally:{x:0,z:6}, nextEvent:150, coldUntil:0, quests:{}, happy:60, tax:1, fearUntil:0, diff:1, weather:'clear', weatherT:60, lastSeason:-1, rallyCustom:false, cryUntil:0, cryReady:0, form:'s', kd:freshKingdoms(), laws:{work:0,ration:0,draft:0,tariff:0,martial:0}, lawCd:0, plagueUntil:0};
 }
 
 function clearWorld(){
   blds.forEach(b=>{scene.remove(b.mesh); if(b.bar) scene.remove(b.bar);});
-  enemies.forEach(e=>{scene.remove(e.mesh);scene.remove(e.bar);}); soldiers.forEach(s=>{scene.remove(s.mesh);scene.remove(s.bar);}); arrows.forEach(a=>scene.remove(a.m));
+  enemies.forEach(e=>{scene.remove(e.mesh);scene.remove(e.bar);}); soldiers.forEach(s=>{scene.remove(s.mesh);scene.remove(s.bar);if(s.ring)scene.remove(s.ring);}); arrows.forEach(a=>scene.remove(a.m));
   nodeMeshes.forEach(m=>scene.remove(m));
   villagers.forEach(v=>scene.remove(v.mesh)); sheep.forEach(v=>scene.remove(v.mesh)); puffs.forEach(p=>{p.on=false;p.m.visible=false;});
   caravans.forEach(c=>scene.remove(c.mesh)); caravans=[];
   camps.forEach(c=>scene.remove(c.mesh)); campGuards.forEach(g=>{scene.remove(g.mesh);scene.remove(g.bar);}); camps=[]; campGuards=[];
   villagers=[];sheep=[];
-  blds=[];enemies=[];soldiers=[];arrows=[];nodeMeshes=[];cut=[];selected=null;
+  blds=[];enemies=[];soldiers=[];arrows=[];nodeMeshes=[];cut=[];selected=null;groups=[[],[],[]];selV=null;
   for(let i=0;i<occ.length;i++) for(let j=0;j<occ[i].length;j++){ const o=occ[i][j]; if(o&&o.kind==='road') scene.remove(o.mesh); }
   clearOcc();
 }
@@ -691,20 +822,51 @@ function placeBuilding(type,i,j,tier,instant){
   const b={type,i,j,s:d.s,tier,hp:mhp,maxhp:mhp,prog:instant?1:0,bt:d.bt,mesh,cx:p.x,cz:p.z,cd:0,harv:0,nodes:0,spawnT:6,bar:null,id:++bid,q:[],workers:0,smokeT:Math.random()*2,lvl:1,road:false,badge:null};
   if(!instant){ mesh.scale.y=.12; }
   for(let a=i;a<i+d.s;a++) for(let c=j;c<j+d.s;c++) occ[a][c]={kind:'bld',b};
-  blds.push(b); return b;
+  blds.push(b);
+  if(type==='wall'||type==='gate'){ wallRefresh(b); wallRefreshAround(i,j); }
+  return b;
 }
 function destroyBuilding(b){
   scene.remove(b.mesh); if(b.bar) scene.remove(b.bar);
   for(let a=b.i;a<b.i+b.s;a++) for(let c=b.j;c<b.j+b.s;c++) occ[a][c]=null;
   blds.splice(blds.indexOf(b),1);
+  if(b.type==='wall'||b.type==='gate') wallRefreshAround(b.i,b.j);
   if(selected===b){selected=null;} 
 }
 function upgradeModels(){
   blds.forEach(b=>{
     if(b.prog<1||b.tier===S.era) return;
-    const m=MODELS[b.type](S.era); m.position.copy(b.mesh.position); m.rotation.copy(b.mesh.rotation);
+    const m=(b.type==='wall')?bWallArms(S.era,wallMask(b)):(b.type==='gate')?bGateArms(S.era,wallMask(b)):MODELS[b.type](S.era); m.position.copy(b.mesh.position); if(b.type!=='gate') m.rotation.copy(b.mesh.rotation);
     scene.remove(b.mesh); scene.add(m); b.mesh=m; b.tier=S.era; b.badge=null; applyLevelVisual(b);
   });
+}
+
+/* ---------- sur & kapı bağlantıları ---------- */
+function wallMask(b){
+  const nb=(i,j)=>{ const o=occ[i]&&occ[i][j]; return !!(o&&o.kind==='bld'&&(o.b.type==='wall'||o.b.type==='gate'||o.b.type==='castle'||o.b.type==='tower')); };
+  let m=0; if(nb(b.i,b.j-1)) m|=1; if(nb(b.i+1,b.j)) m|=2; if(nb(b.i,b.j+1)) m|=4; if(nb(b.i-1,b.j)) m|=8; return m;
+}
+function wallRefresh(b){
+  const m=(b.type==='wall'?bWallArms:bGateArms)(b.tier,wallMask(b));
+  m.position.copy(b.mesh.position); m.scale.copy(b.mesh.scale);
+  scene.remove(b.mesh); scene.add(m); b.mesh=m; b.badge=null; applyLevelVisual(b);
+}
+function wallRefreshAround(i,j){
+  [[0,-1],[1,0],[0,1],[-1,0]].forEach(d=>{ const o=occ[i+d[0]]&&occ[i+d[0]][j+d[1]]; if(o&&o.kind==='bld'&&(o.b.type==='wall'||o.b.type==='gate')) wallRefresh(o.b); });
+}
+function wallAhead(x,z,dx,dz){
+  const l=Math.hypot(dx,dz)||1; dx/=l; dz/=l;
+  for(const k of [1.2,2.4,3.6]){
+    const i=Math.floor((x+dx*k)/T+N/2), j=Math.floor((z+dz*k)/T+N/2); if(i<0||j<0||i>=N||j>=N) continue;
+    const o=occ[i][j]; if(o&&o.kind==='bld'&&(o.b.type==='wall'||o.b.type==='gate')&&o.b.prog>=1) return o.b;
+  }
+  return null;
+}
+function paintWall(){
+  const t=hoverTile(); if(!t||!started||S.over) return;
+  const a=anchorFor('wall',t.i,t.j); if(!canPlace('wall',a.i,a.j)) return;
+  const d=B.wall; if(S.era<d.era||!canAfford(d.cost)) return;
+  pay(d.cost); placeBuilding('wall',a.i,a.j,S.era,false); beep(260,.04,'square',.02);
 }
 
 /* ---------- araçlar & hayalet ---------- */
@@ -755,7 +917,7 @@ canvas.addEventListener('pointerdown',e=>{
   if(e.pointerType==='mouse'){
     touchMode=false;
     if(e.button===2||e.button===1){ drag={x:e.clientX,y:e.clientY}; canvas.setPointerCapture(e.pointerId); return; }
-    if(e.button===0 && started && !S.over){ onLeftClick(hoverTile()); painting=(mode.k==='road'); }
+    if(e.button===0 && started && !S.over){ onLeftClick(hoverTile()); painting=(mode.k==='road'||(mode.k==='build'&&mode.type==='wall')); }
     return;
   }
   touchMode=true;
@@ -767,7 +929,7 @@ canvas.addEventListener('pointerdown',e=>{
 canvas.addEventListener('pointermove',e=>{
   if(e.pointerType==='mouse'){
     touchMode=false; mouse.x=e.clientX; mouse.y=e.clientY;
-    if(painting&&mode.k==='road') paintRoad();
+    if(painting){ if(mode.k==='road') paintRoad(); else if(mode.k==='build'&&mode.type==='wall') paintWall(); }
     if(drag){ cam.yaw-=(e.clientX-drag.x)*.005; cam.pitch=clamp(cam.pitch+(e.clientY-drag.y)*.004,.35,1.4); drag.x=e.clientX; drag.y=e.clientY; }
     return;
   }
@@ -777,7 +939,7 @@ canvas.addEventListener('pointermove',e=>{
     const v=[...ptrs.values()], a=v[0], b=v[1], d=Math.hypot(a.x-b.x,a.y-b.y), ang=Math.atan2(b.y-a.y,b.x-a.x);
     cam.dist=clamp(pinch.dist*pinch.d/Math.max(20,d),14,120); cam.yaw=pinch.yaw-(ang-pinch.ang); return;
   }
-  if(mode.k==='road'&&ptrs.size===1){ mouse.x=e.clientX; mouse.y=e.clientY; p.x=e.clientX; p.y=e.clientY; paintRoad(); return; }
+  if((mode.k==='road'||(mode.k==='build'&&mode.type==='wall'))&&ptrs.size===1){ mouse.x=e.clientX; mouse.y=e.clientY; p.x=e.clientX; p.y=e.clientY; if(mode.k==='road') paintRoad(); else paintWall(); return; }
   const dx=e.clientX-p.x, dy=e.clientY-p.y; p.x=e.clientX; p.y=e.clientY;
   if(tapInfo&&!tapInfo.moved&&Math.hypot(e.clientX-tapInfo.x,e.clientY-tapInfo.y)>9) tapInfo.moved=true;
   if(!tapInfo||tapInfo.moved){
@@ -797,7 +959,7 @@ canvas.addEventListener('wheel',e=>{ e.preventDefault(); cam.dist=clamp(cam.dist
 addEventListener('keydown',e=>{
   keys[e.code]=true;
   if(!started||(S&&S.over)) return;
-  if(e.code==='Escape'){ closeMenus(); if($('techScreen').style.display==='flex') toggleTech(false); else { selected=null; setMode('select'); } }
+  if(e.code==='Escape'){ closeMenus(); if($('techScreen').style.display==='flex') toggleTech(false); else { selected=null; selV=null; clearSel(); setMode('select'); } }
   else if(e.code==='KeyT') toggleTech();
   else if(e.code==='KeyB') setMode(mode.k==='rally'?'select':'rally');
   else if(e.code==='KeyR') setMode(mode.k==='road'?'select':'road');
@@ -814,13 +976,22 @@ function onLeftClick(t){
   if(mode.k==='attack'){
     const p=pickGround(); let best=null,bd=16;
     if(p) for(const c of camps){ if(c.cleared) continue; const d=Math.hypot(c.x-p.x,c.z-p.z); if(d<bd){bd=d;best=c;} }
-    if(best){ soldiers.forEach(so=>so.order=best); toast(`⚔️ ${soldiers.length} asker sefere çıktı! Geri çağırmak için 🚩 bayrağı kullan.`,'good'); beep(300,.2,'sawtooth',.05,500); setMode('select'); }
+    if(best){ const grp=selUnits(), list=grp.length?grp:soldiers; list.forEach(so=>{so.order=best;so.hold=null;}); toast(`⚔️ ${list.length} birlik sefere çıktı! Geri çağırmak için 🚩 bayrağı kullan.`,'good'); beep(300,.2,'sawtooth',.05,500); setMode('select'); }
     else toast('Haritada bir düşman kampına (ormandaki çadırlar) dokun.','bad');
     return;
   }
+  if(mode.k==='move'){
+    const p=pickGround(), sel=selUnits();
+    if(p&&sel.length){
+      let camp=null,bd=16; for(const c of camps){ if(c.cleared) continue; const d=Math.hypot(c.x-p.x,c.z-p.z); if(d<bd){bd=d;camp=c;} }
+      if(camp){ sel.forEach(u=>{u.order=camp;u.hold=null;}); toast('⚔️ Seçili birlikler kampa saldırıyor.','good'); }
+      else { const hp={x:clamp(p.x,-HALF-60,HALF+60),z:clamp(p.z,-HALF-60,HALF+60)}; sel.forEach(u=>{u.hold=hp;u.order=null; if(u.stance==='r') u.stance='d';}); layoutUnits(sel); toast('📍 Birlikler hedef noktaya ilerliyor.'); beep(330,.08,'triangle',.04); }
+    }
+    setMode('select'); renderArmyPanel(); return;
+  }
   if(!t) return;
   if(mode.k==='road'){ paintRoad(); return; }
-  if(mode.k==='rally'){ const p=pickGround(); if(p){ S.rally={x:clamp(p.x,-HALF+2,HALF-2),z:clamp(p.z,-HALF+2,HALF-2)}; updateRallyFlag(); soldiers.forEach(so=>so.order=null); toast('🚩 Toplanma noktası belirlendi, ordu geri çağrıldı.','good'); beep(380,.1,'triangle',.05,520); } setMode('select'); return; }
+  if(mode.k==='rally'){ const p=pickGround(); if(p){ S.rally={x:clamp(p.x,-HALF+2,HALF-2),z:clamp(p.z,-HALF+2,HALF-2)}; S.rallyCustom=true; updateRallyFlag(); soldiers.forEach(so=>{so.order=null;so.hold=null;if(so.stance==='r')so.stance='d';}); toast('🚩 Toplanma noktası belirlendi, ordu geri çağrıldı.','good'); beep(380,.1,'triangle',.05,520); } setMode('select'); return; }
   if(mode.k==='build'){ doPlace(anchorFor(mode.type,t.i,t.j)); return; }
   if(mode.k==='demolish'){
     const o=occ[t.i][t.j]; if(!o||o.kind==='prop') return;
@@ -830,7 +1001,12 @@ function onLeftClick(t){
     if(o.b.type==='hall') return toast('Şehir merkezi yıkılamaz.','bad');
     refund(o.b); destroyBuilding(o.b); beep(140,.2,'sawtooth',.05,60); return;
   }
-  const o=occ[t.i][t.j]; selected = (o&&o.kind==='bld')?o.b:null; renderInfo();
+  const gp=pickGround(), u=gp?pickUnit(gp.x,gp.z):null;
+  if(u){
+    if(u.ox!==undefined){ toggleSel(u); selected=null; selV=null; } else { clearSel(); selV=u; selected=null; }
+    renderInfo(); renderArmyPanel(); return;
+  }
+  const o=occ[t.i][t.j]; clearSel(); selV=null; selected=(o&&o.kind==='bld')?o.b:null; renderInfo(); renderArmyPanel();
 }
 function doPlace(a){
   const d=B[mode.type];
@@ -840,7 +1016,7 @@ function doPlace(a){
   pay(d.cost); placeBuilding(mode.type,a.i,a.j,S.era,false); beep(300,.1,'triangle',.06,500); refreshBar(); return true;
 }
 function onTap(x,y){
-  mouse.x=x; mouse.y=y; const t=hoverTile(); if(!t&&mode.k!=='attack') return;
+  mouse.x=x; mouse.y=y; const t=hoverTile(); if(!t&&mode.k!=='attack'&&mode.k!=='move') return;
   if(mode.k==='build'){
     const a=anchorFor(mode.type,t.i,t.j);
     if(pending&&pending.i===a.i&&pending.j===a.j){ doPlace(a); pending=null; } else pending=a;
@@ -857,6 +1033,7 @@ function updateConfirm(){
   else if(mode.k==='demolish') txt='🔨 Yık / kes — dokun';
   else if(mode.k==='rally') txt='🚩 Bayrak yerini seç';
   else if(mode.k==='attack') txt='🗡️ Bir düşman kampına dokun';
+  else if(mode.k==='move') txt='📍 Hedef noktaya dokun (kampa dokunursan saldırır)';
   $('mbText').textContent=txt;
   $('cfOk').style.display=(touchMode&&mode.k==='build'&&pending)?'':'none';
   mb.style.display='flex';
@@ -878,8 +1055,8 @@ function makeUnit(body,helm,big){
   const w=box(0x9a9a9a,.07,.75,.07,.38,.4,0); w.rotation.z=-.5; g.add(w);
   g.scale.setScalar(big?1.45:1); return g;
 }
-function makeArcher(){
-  const g=makeUnit(0x2f6b2f,0x1f3a1f,false);
+function makeArcher(col){
+  const g=makeUnit(col||0x2f6b2f,0x1f3a1f,false);
   const bow=box(0x6b4423,.05,.8,.05,-.38,.35,.1); bow.rotation.x=.2; g.add(bow); return g;
 }
 function makeSiege(){
@@ -892,12 +1069,12 @@ function makeSiege(){
   g.add(box(0x555555,.4,.3,.4,0,1.55,.45));
   return g;
 }
-function addEnemy(kind,x,z){
-  const w=S.wave; let mesh,bh=1.9,bw=1,hp,dmg,spd,range=0,siege=false,big=false,rew=3;
-  if(kind==='brute'){ mesh=makeUnit(0x4a1010,0x2a2a2a,true); bh=2.6; bw=1.3; hp=(24+w*7)*3; dmg=(4+w*.6)*1.7; spd=2.3+w*.04; big=true; rew=15; }
-  else if(kind==='archer'){ mesh=makeArcher(); hp=18+w*5; dmg=3.5+w*.5; spd=2.3; range=9; rew=5; }
+function addEnemy(kind,x,z,col,wv){
+  const w=wv||S.wave; let mesh,bh=1.9,bw=1,hp,dmg,spd,range=0,siege=false,big=false,rew=3;
+  if(kind==='brute'){ mesh=makeUnit(col||0x4a1010,0x2a2a2a,true); bh=2.6; bw=1.3; hp=(24+w*7)*3; dmg=(4+w*.6)*1.7; spd=2.3+w*.04; big=true; rew=15; }
+  else if(kind==='archer'){ mesh=makeArcher(col); hp=18+w*5; dmg=3.5+w*.5; spd=2.3; range=9; rew=5; }
   else if(kind==='siege'){ mesh=makeSiege(); bh=2.5; bw=1.5; hp=80+w*9; dmg=15+w; spd=1.4; range=13; siege=true; rew=20; }
-  else { mesh=makeUnit(0x9b1c1c,0x2a2a2a,false); hp=24+w*7; dmg=4+w*.6; spd=2.5+w*.04; }
+  else { mesh=makeUnit(col||0x9b1c1c,0x2a2a2a,false); hp=24+w*7; dmg=4+w*.6; spd=2.5+w*.04; }
   mesh.position.set(x,hgt(x,z),z); scene.add(mesh);
   const bar=makeBar(bw); scene.add(bar);
   enemies.push({mesh,bar,hp,maxhp:hp,dmg,spd,big,range,siege,bh,rew,ph:Math.random()*6,kind});
@@ -912,11 +1089,12 @@ function spawnWave(){
   list.forEach(kind=>{ const a=Math.random()*6.28, r=2+Math.random()*5; addEnemy(kind,camp.x+Math.cos(a)*r,camp.z+Math.sin(a)*r); });
   let extra=''; if(na) extra+=` 🏹${na}`; if(ns) extra+=` 🪨${ns} mancınık`; if(nb) extra+=` 👹${nb}`;
   toast(`⚠️ BASKIN! Dalga ${w} — ${dir} ormanından ${list.length} düşman geliyor!${extra}`,'raid'); beep(110,.7,'sawtooth',.09,70);
+  allyHelp();
 }
-function makeSoldierMesh(kind){
+function makeSoldierMesh(kind,col){
   let g;
   if(kind==='archer'){
-    g=makeUnit(0x2e7d6b,0x2e5a3a,false);
+    g=makeUnit(col||0x2e7d6b,0x2e5a3a,false);
     const bow=box(0x6b4423,.05,.85,.05,-.38,.3,.12); bow.rotation.x=.15; g.add(bow); g.add(box(0x5b3a1e,.12,.4,.1,.1,.5,-.3));
   } else if(kind==='knight'){
     g=new THREE.Group();
@@ -924,29 +1102,57 @@ function makeSoldierMesh(kind){
     [[-.2,-.45],[.2,-.45],[-.2,.45],[.2,.45]].forEach(([x,z])=>g.add(box(0x5a3418,.12,.42,.12,x,0,z)));
     const r=makeUnit(0xaab4c4,0x8f8f9a,false); r.position.y=.85; r.add(box(0xc0392b,.08,.3,.3,0,1.2,-.05)); r.add(box(0x2a5db0,.3,.45,.06,-.35,.35,.1)); g.add(r);
     g.scale.setScalar(1.15);
+  } else if(kind==='hero'){
+    g=new THREE.Group();
+    g.add(box(0x7a4a2a,.6,.6,1.3,0,.4,0)); g.add(box(0x7a4a2a,.32,.6,.32,0,.75,.7)); g.add(box(0x5a3418,.24,.28,.44,0,1.0,.92)); g.add(box(0xc0392b,.9,.5,.04,0,.55,0));
+    [[-.22,-.5],[.22,-.5],[-.22,.5],[.22,.5]].forEach(([x,z])=>g.add(box(0x5a3418,.13,.45,.13,x,0,z)));
+    const r=makeUnit(0xffd54a,0xffd54a,false); r.position.y=.9; r.add(box(0xc0392b,.1,.35,.35,0,1.2,-.05)); r.add(cyl(0x444444,.04,1.8,.45,0,-.2)); r.add(box(0xe0aa48,.6,.4,.03,.78,1.5,-.2)); g.add(r);
+    g.scale.setScalar(1.3);
   } else {
-    g=makeUnit(0x2a5db0,0x8f8f9a,false);
+    g=makeUnit(col||0x2a5db0,0x8f8f9a,false);
     g.add(box(0x6b4423,.05,1.7,.05,-.35,0,.1)); g.add(cone(0xb0b0b0,.08,.25,-.35,1.7,.1)); g.add(box(0x6b4423,.34,.4,.06,.2,.35,.28));
   }
   return g;
 }
-function spawnSoldier(kind,b){
-  const U=UNITS[kind], mesh=makeSoldierMesh(kind);
+const HERO_NAMES=['Aslan Bey','Kara Kemal','Demir Hatun','Bozkurt Alp','Gökhan Reis','Şahin Paşa','Tuğrul Bey','Selçuk Han'];
+function spawnSoldier(kind,b,opt){
+  opt=opt||{};
+  const U=UNITS[kind], mesh=makeSoldierMesh(kind,opt.col);
   mesh.position.set(b.cx+(Math.random()-.5)*1.5,0,b.cz+b.s*T*.5+.6); scene.add(mesh);
-  const bar=makeBar(kind==='knight'?1.1:.8); scene.add(bar);
+  const big=(kind==='knight'||kind==='hero');
+  const bar=makeBar(big?1.1:.8); scene.add(bar);
   const am=has('armor')?1.5:1, em=1+.1*S.era, a=Math.random()*6.28, r=1+Math.random()*3.2;
-  soldiers.push({mesh,bar,kind,hp:U.hp*am,maxhp:U.hp*am,dmg:U.dmg*am*em,spd:U.spd,range:U.range,cd:0,ph:Math.random()*6,ox:Math.cos(a)*r,oz:Math.sin(a)*r,bh:kind==='knight'?2.7:1.9});
+  const u={mesh,bar,kind,hp:U.hp*am,maxhp:U.hp*am,dmg:U.dmg*am*em,spd:U.spd,range:U.range,cd:0,ph:Math.random()*6,ox:Math.cos(a)*r,oz:Math.sin(a)*r,bh:big?2.8:1.9,stance:'a',sel:false,hold:null};
+  if(kind==='hero'){ u.name=opt.name||HERO_NAMES[Math.floor(Math.random()*HERO_NAMES.length)]; u.lvl=opt.lvl||1; u.xp=opt.xp||0; for(let k=1;k<u.lvl;k++){ u.maxhp*=1.18; u.dmg*=1.15; } u.hp=u.maxhp; }
+  if(opt.ally){ u.ally=true; u.ttl=opt.ttl||80; }
+  soldiers.push(u); return u;
+}
+function armyN(){ let n=0; for(const so of soldiers) if(!so.ally) n++; return n; }
+function queuedKind(k){ let n=0; for(const b of blds) for(const q of b.q) if(q.kind===k) n++; return n; }
+function unitCost(k){ const c=UNITS[k].cost; if(S.laws&&S.laws.draft){ const o={}; for(const x in c) o[x]=Math.ceil(c[x]*.7); return o; } return c; }
+function retreatPoint(){ const c=blds.find(b=>b.type==='armycamp'&&b.prog>=1)||blds.find(b=>b.type==='hall'); return c?{x:c.cx,z:c.cz+c.s*T*.5+1.5}:{x:S.rally.x,z:S.rally.z}; }
+function heroXP(x,z,amt){
+  const h=soldiers.find(u=>u.kind==='hero'&&u.hp>0); if(!h||Math.hypot(h.mesh.position.x-x,h.mesh.position.z-z)>16) return;
+  h.xp+=amt; const th=[25,70,140,240];
+  if(h.lvl<5&&h.xp>=th[h.lvl-1]){ h.lvl++; h.maxhp*=1.18; h.dmg*=1.15; h.hp=h.maxhp; toast(`👑 ${h.name} seviye ${h.lvl} oldu!`,'good'); beep(600,.4,'triangle',.07,1000); }
+}
+function heroCry(){
+  const h=soldiers.find(u=>u.kind==='hero'&&u.hp>0);
+  if(!h) return toast('Komutanın yok. Kışlada eğitebilirsin.','bad');
+  if(S.time<S.cryReady) return toast('Savaş çığlığı '+Math.ceil(S.cryReady-S.time)+' sn sonra hazır.','bad');
+  S.cryUntil=S.time+10; S.cryReady=S.time+45; toast(`📢 ${h.name}: "İleri!" Yakındaki birlikler 10 sn %50 daha güçlü!`,'good'); beep(150,.5,'sawtooth',.08,90);
 }
 function startingArmy(){ const h=blds.find(b=>b.type==='hall'); if(h) for(let k=0;k<3;k++) spawnSoldier('spear',h); }
-function armyCap(){ let c=6; for(const b of blds){ if(b.prog<1) continue; if(b.type==='barracks') c+=4+2*((b.lvl||1)-1); if(b.type==='castle') c+=8; } return c; }
+function armyCap(){ let c=6+(S.laws&&S.laws.draft?6:0); for(const b of blds){ if(b.prog<1) continue; if(b.type==='armycamp') c+=2; if(b.type==='barracks') c+=4+2*((b.lvl||1)-1); if(b.type==='castle') c+=8; } return c; }
 function queuedCount(){ let n=0; for(const b of blds) n+=b.q.length; return n; }
 function queueUnit(b,kind){
   const U=UNITS[kind]; if(!U||b.prog<1) return;
   if(S.era<U.era) return toast(U.n+' için '+ERAS[U.era].n+' gerekir.','bad');
   if(b.q.length>=5) return toast('Eğitim sırası dolu.','bad');
-  if(soldiers.length+queuedCount()>=armyCap()) return toast('Ordu sınırı dolu! Kışla veya kale yap.','bad');
-  if(!canAfford(U.cost)) return toast('Yetersiz kaynak: '+costStr(U.cost),'bad');
-  pay(U.cost); b.q.push({kind,t:U.time}); beep(420,.08,'triangle',.05); renderInfo(b);
+  if(U.limit&&(soldiers.filter(x=>x.kind===kind&&!x.ally).length+queuedKind(kind)>=U.limit)) return toast('Zaten bir '+U.n+' var.','bad');
+  if(armyN()+queuedCount()>=armyCap()) return toast('Ordu sınırı dolu! Kışla, kamp veya kale yap.','bad');
+  const uc=unitCost(kind); if(!canAfford(uc)) return toast('Yetersiz kaynak: '+costStr(uc),'bad');
+  pay(uc); b.q.push({kind,t:U.time}); beep(420,.08,'triangle',.05); renderInfo(b);
 }
 function updateRallyFlag(){
   if(!rallyFlag){ rallyFlag=new THREE.Group(); rallyFlag.add(cyl(0x444444,.05,1.8)); rallyFlag.add(box(0x2a5db0,.7,.4,.03,.35,1.35,0)); scene.add(rallyFlag); }
@@ -980,6 +1186,7 @@ function updateUnits(dt){
     } else {
       let tb=null,bb=1e9;
       for(const b of blds){const d=Math.hypot(b.cx-ex,b.cz-ez)-b.s*T*.5; if(d<bb){bb=d;tb=b;}}
+      if(tb){ const wb=wallAhead(ex,ez,tb.cx-ex,tb.cz-ez); if(wb&&wb!==tb) tb=wb; }
       if(tb){
         const reach=tb.s*T*.5+.9+rg, d=Math.hypot(tb.cx-ex,tb.cz-ez);
         if(d>reach) stepToward(e,tb.cx,tb.cz,e.spd,dt); else { tb.hp-=e.dmg*dt; e.mesh.rotation.y=Math.atan2(tb.cx-ex,tb.cz-ez); e.mesh.position.y=0; }
@@ -987,23 +1194,36 @@ function updateUnits(dt){
     }
   }
   const gpool=campGuards.length?enemies.concat(campGuards):enemies;
+  const hero=soldiers.find(h=>h.kind==='hero'&&h.hp>0);
+  let fought=false;
   for(const s of soldiers){
-    let te=null,bd=30; const sx=s.mesh.position.x, sz=s.mesh.position.z;
-    for(const e of (s.order?gpool:enemies)){const d=Math.hypot(e.mesh.position.x-sx,e.mesh.position.z-sz); if(d<bd){bd=d;te=e;}}
-    s.cd=Math.max(0,s.cd-dt);
+    const sx=s.mesh.position.x, sz=s.mesh.position.z;
+    if(s.ally){ s.ttl-=dt; if(s.ttl<=0) s.hp=0; }
+    s.aura=!!(hero&&s!==hero&&Math.hypot(hero.mesh.position.x-sx,hero.mesh.position.z-sz)<10);
+    const stance=s.stance||'a', hx=s.hold?s.hold.x:S.rally.x, hz=s.hold?s.hold.z:S.rally.z;
+    let te=null, bd=stance==='d'?12:30;
+    if(stance!=='r') for(const e of (s.order?gpool:enemies)){ const d=Math.hypot(e.mesh.position.x-sx,e.mesh.position.z-sz); if(d<bd&&(stance!=='d'||Math.hypot(e.mesh.position.x-hx,e.mesh.position.z-hz)<20)){bd=d;te=e;} }
+    s.cd=Math.max(0,s.cd-dt); s.fighting=!!te; s.idle=!te&&!s.order;
+    const cry=(S.time<S.cryUntil)&&(s.aura||s===hero);
+    const dm=s.dmg*(s.aura?1.25:1)*(cry?1.5:1);
     if(te){
       const reach=s.range?s.range-.5:1.5;
       if(bd>reach) stepToward(s,te.mesh.position.x,te.mesh.position.z,s.spd,dt);
       else{
         s.mesh.rotation.y=Math.atan2(te.mesh.position.x-sx,te.mesh.position.z-sz); s.mesh.position.y=0;
-        if(s.range){ if(s.cd<=0){ fireArrowAt(sx,1.1,sz,te,s.dmg*1.5); s.cd=1.1; } }
-        else te.hp-=s.dmg*dt;
+        if(s.range){ if(s.cd<=0){ fireArrowAt(sx,1.1,sz,te,dm*1.5); s.cd=1.1; } }
+        else { te.hp-=dm*dt; fought=true; }
       }
-    } else if(s.order){ const oc=s.order; if(oc.cleared) s.order=null; else stepToward(s,oc.x+s.ox,oc.z+s.oz,s.spd,dt); } else {
-      const rx=S.rally.x+s.ox, rz=S.rally.z+s.oz, d=Math.hypot(rx-sx,rz-sz);
+    } else if(stance==='r'){
+      const rp=retreatPoint(), tx=rp.x+s.ox*.3, tz=rp.z+s.oz*.3;
+      if(Math.hypot(tx-sx,tz-sz)>1) stepToward(s,tx,tz,s.spd*1.1,dt); else { s.mesh.position.y=0; if(s.hp>=s.maxhp*.85) s.stance='d'; }
+    } else if(s.order){ const oc=s.order; if(oc.cleared) s.order=null; else stepToward(s,oc.x+s.ox,oc.z+s.oz,s.spd,dt); }
+    else {
+      const rx=hx+s.ox, rz=hz+s.oz, d=Math.hypot(rx-sx,rz-sz);
       if(d>.8) stepToward(s,rx,rz,s.spd*.8,dt); else s.mesh.position.y=0;
     }
   }
+  if(fought&&performance.now()-lastHitT>240){ lastHitT=performance.now(); sfxHit(); }
   /* kuleler & kale */
   for(const b of blds){
     const d=B[b.type]; if(!d.range||b.prog<1) continue;
@@ -1021,8 +1241,8 @@ function updateUnits(dt){
     tmpV.normalize(); a.m.position.addScaledVector(tmpV,step); a.m.quaternion.setFromUnitVectors(UP,tmpV);
   }
   /* ölenler */
-  for(let k=enemies.length-1;k>=0;k--){ const e=enemies[k]; if(e.hp<=0){ scene.remove(e.mesh); scene.remove(e.bar); enemies.splice(k,1); S.res.gold+=e.rew; S.kills++; beep(200,.08,'square',.03,100);} }
-  for(let k=soldiers.length-1;k>=0;k--){ const s=soldiers[k]; if(s.hp<=0){ scene.remove(s.mesh); scene.remove(s.bar); soldiers.splice(k,1);} }
+  for(let k=enemies.length-1;k>=0;k--){ const e=enemies[k]; if(e.hp<=0){ scene.remove(e.mesh); scene.remove(e.bar); enemies.splice(k,1); S.res.gold+=e.rew; S.kills++; heroXP(e.mesh.position.x,e.mesh.position.z,e.rew); beep(200,.08,'square',.03,100);} }
+  for(let k=armyN()-1;k>=0;k--){ const s=soldiers[k]; if(s.hp<=0){ scene.remove(s.mesh); scene.remove(s.bar); if(s.ring) scene.remove(s.ring); if(s.kind==='hero') toast('💀 '+s.name+' savaşta düştü!','bad'); soldiers.splice(k,1);} }
   for(let k=blds.length-1;k>=0;k--){
     const b=blds[k];
     if(b.hp<=0){
@@ -1058,6 +1278,7 @@ function buildLife(){
     g.traverse(o=>{o.castShadow=false;}); scene.add(g);
     birds.push({g,wl,wr,cx:f?-25:20,cz:f?15:-20,r:14+f*10+k*1.5,h:20+k*1.2+f*4,w:.12+f*.04,a0:k*.5+f*2});
   }
+  buildSky();
 }
 function lifeFrame(t){
   flames.forEach((f,i)=>{ const b=f.userData.b, k=1+.28*Math.sin(t*12+i*2)+.14*Math.sin(t*23+i);
@@ -1084,11 +1305,14 @@ function makeVillager(){
   const log=mkCarry(box(0x6b4423,.55,.14,.14,0,0,0),.85), stone=mkCarry(box(0x8b8b8b,.26,.2,.26,0,0,0),.95), wheat=mkCarry(box(0xe3c35a,.3,.2,.3,0,0,0),.95);
   g.scale.setScalar(.9); g.userData.tl={hand,axe,pick,hoe,log,stone,wheat}; return g;
 }
+const V_NAMES=['Ahmet','Mehmet','Ayşe','Fatma','Hasan','Hüseyin','Zeynep','Emine','Ali','Mustafa','Elif','Hatice','Yusuf','İbrahim','Meryem','Osman','Kemal','Selim','Leyla','Murat','Cemal','Derya','Nuri','Rıza','Tuncay','Gül','Bekir','Sevim','Orhan','Hülya','Kerem','Dilek','Yıldız','Barış','Aslı','Cengiz','Nazlı','Rüzgar','Esra','Tarık'];
+const V_JOB={lumber:'Oduncu',quarry:'Madenci',farm:'Çiftçi',market:'Tüccar'};
+const V_LVL=['Çırak','Kalfa','Usta','Üstat'];
 function spawnVillager(){
   const homes=blds.filter(b=>b.type==='house'&&b.prog>=1), src=homes.length?homes[Math.floor(Math.random()*homes.length)]:blds.find(b=>b.type==='hall');
   if(!src) return;
   const mesh=makeVillager(); mesh.position.set(src.cx+(Math.random()-.5)*.6, 0, src.cz+src.s*T*.5+.4); scene.add(mesh);
-  const v={mesh,tl:mesh.userData.tl,ph:Math.random()*6,spd:2.3+Math.random()*.5,base:0,job:null,state:'idle',t:Math.random()*2,tx:0,tz:0,carry:false,hidden:false,shelter:null};
+  const v={mesh,tl:mesh.userData.tl,ph:Math.random()*6,spd:2.3+Math.random()*.5,base:0,name:V_NAMES[Math.floor(Math.random()*V_NAMES.length)],skill:0,lvl:1,job:null,state:'idle',t:Math.random()*2,tx:0,tz:0,carry:false,hidden:false,shelter:null};
   if(isNight()||enemies.length){ v.hidden=true; mesh.visible=false; }
   villagers.push(v);
 }
@@ -1114,8 +1338,9 @@ function assignWorkers(){
   const free=[];
   for(const v of villagers){ if(v.job&&jobs.includes(v.job)&&v.job.workers<VSLOTS[v.job.type]) v.job.workers++; else { v.job=null; free.push(v); } }
   for(const v of free){ const j=jobs.find(b=>b.workers<VSLOTS[b.type]); if(!j) break; v.job=j; j.workers++; }
+  blds.forEach(b=>{ b.wp=0; }); villagers.forEach(v=>{ if(v.job) v.job.wp+=1+.2*(v.lvl-1); });
 }
-function staff(b){ const sl=VSLOTS[b.type]; return sl?(.3+.7*Math.min(1,(b.workers||0)/sl))*(1+.25*((b.lvl||1)-1))*(b.road?1.1:1):1; }
+function staff(b){ const sl=VSLOTS[b.type]; return sl?(.3+.7*Math.min(1.4,(b.wp!==undefined?b.wp:(b.workers||0))/sl))*(1+.25*((b.lvl||1)-1))*(b.road?1.1:1):1; }
 function pickShelter(v){
   let best=null,bd=1e9; const x=v.mesh.position.x,z=v.mesh.position.z;
   for(const b of blds){ if((b.type!=='house'&&b.type!=='hall')||b.prog<1) continue; const d=Math.hypot(b.cx-x,b.cz-z); if(d<bd){bd=d;best=b;} }
@@ -1154,7 +1379,7 @@ function updateVillagers(dt){
         v.t-=dt; m.position.y=0; const sw=Math.sin(tm*9+v.ph);
         if(j.type==='lumber'||j.type==='quarry') tl.hand.rotation.z=-.4+sw*.9;
         else if(j.type==='farm') m.rotation.x=.45+sw*.15;
-        if(v.t<=0){ v.carry=(j.type!=='market'); v.state='back'; v.tx=j.cx; v.tz=j.cz+j.s*T*.5+.4; m.rotation.x=0; tl.hand.rotation.z=0; }
+        if(v.t<=0){ v.skill++; v.lvl=Math.min(4,1+Math.floor(v.skill/6)); v.carry=(j.type!=='market'); v.state='back'; v.tx=j.cx; v.tz=j.cz+j.s*T*.5+.4; m.rotation.x=0; tl.hand.rotation.z=0; }
       }
       else if(v.state==='back'){ if(stepToward(v,v.tx,v.tz,v.spd,dt)<.5){ v.carry=false; const sp=workSpot(v); v.tx=sp.x; v.tz=sp.z; v.state='go'; } }
     } else {
@@ -1230,32 +1455,32 @@ function updateCaravans(dt){
 }
 function updateEvents(dt){
   updateCaravans(dt);
-  if(!enemies.length) for(const b of blds) if(b.prog>=1&&b.hp<b.maxhp) b.hp=Math.min(b.maxhp,b.hp+dt*.6);
+  if(!enemies.length) for(const b of blds) if(b.prog>=1&&!b.fire&&b.hp<b.maxhp) b.hp=Math.min(b.maxhp,b.hp+dt*.6);
   checkQuests(dt);
+  achT-=dt; if(achT<=0){ achT=2; checkAch(); }
   if(S.time<100) return;
   S.nextEvent-=dt; if(S.nextEvent>0||enemies.length) return;
   S.nextEvent=100+Math.random()*80;
-  const r=Math.random();
-  if(r<.22){ spawnCaravan(); toast('🐪 Uzakta bir tüccar kervanı görünüyor…','good'); }
-  else if(r<.42){
+  const pool=[['caravan',18],['migrants',14],['harvest',14],['wanderer',8],['cold',season()===3?16:5],['fire',cnt('firehouse')?6:11],['plague',S.pop>=14?Math.max(3,10-3*cnt('clinic')+(S.laws.work===1?4:0)):0]];
+  let tot=0; pool.forEach(x=>{ tot+=x[1]; });
+  let r=Math.random()*tot, ev='caravan'; for(const x of pool){ r-=x[1]; if(r<=0){ ev=x[0]; break; } }
+  if(ev==='caravan'){ spawnCaravan(); toast('🐪 Uzakta bir tüccar kervanı görünüyor…','good'); }
+  else if(ev==='migrants'){
     if(S.pop<popCap-1){ const n=2+Math.floor(Math.random()*3); S.pop=Math.min(popCap,S.pop+n); toast(`👥 ${n} göçmen köye yerleşti!`,'good'); }
     else { S.res.food+=50; toast('🌾 Bereketli bir hafta: +50 yiyecek','good'); }
   }
-  else if(r<.58){ const f=60+Math.floor(Math.random()*80); S.res.food+=f; toast(`🌾 Bereketli hasat! +${f} yiyecek`,'good'); }
-  else if(r<.70){
+  else if(ev==='harvest'){ const f=60+Math.floor(Math.random()*80); S.res.food+=f; toast(`🌾 Bereketli hasat! +${f} yiyecek`,'good'); }
+  else if(ev==='wanderer'){
     const h=blds.find(b=>b.type==='hall');
-    if(h&&soldiers.length+queuedCount()<armyCap()){ spawnSoldier('spear',h); toast('🔱 Gezgin bir savaşçı ordunuza katıldı!','good'); }
+    if(h&&armyN()+queuedCount()<armyCap()){ spawnSoldier('spear',h); toast('🔱 Gezgin bir savaşçı ordunuza katıldı!','good'); }
     else { S.res.gold+=40; toast('🪙 Bir yolcu bağış bıraktı: +40 altın','good'); }
   }
-  else if(r<.85){ S.coldUntil=S.time+70; toast('❄️ Sert soğuk! 70 sn boyunca yiyecek tüketimi %50 artar.','bad'); }
-  else {
-    const hs=blds.filter(b=>b.type==='house'&&b.prog>=1);
-    if(hs.length){
-      const h=hs[Math.floor(Math.random()*hs.length)]; h.hp=Math.max(5,h.hp-h.maxhp*.6);
-      for(let k=0;k<6;k++) emitSmoke(h.cx+(Math.random()-.5),1.5,h.cz+(Math.random()-.5));
-      toast('🔥 Bir evde yangın çıktı! Evi onarmayı unutma.','bad'); beep(200,.4,'sawtooth',.05,100);
-    } else spawnCaravan();
+  else if(ev==='cold'){ S.coldUntil=S.time+70; toast('❄️ Sert soğuk! 70 sn boyunca yiyecek tüketimi %50 artar.','bad'); }
+  else if(ev==='fire'){
+    const cand=blds.filter(b=>b.prog>=1&&b.type!=='wall'&&b.type!=='gate'&&b.type!=='hall');
+    if(cand.length) igniteBuilding(cand[Math.floor(Math.random()*cand.length)]); else spawnCaravan();
   }
+  else if(ev==='plague') startPlague();
 }
 const cnt = t => blds.filter(b=>b.type===t&&b.prog>=1).length;
 const QUESTS = [
@@ -1265,7 +1490,7 @@ const QUESTS = [
   {id:'q3b',t:'10 yol karosu döşe (🛤️ Yol)',               chk:()=>roadN>=10,                       rw:{wood:60}},
   {id:'q4', t:'Feodal Çağ’a geç',                        chk:()=>S.era>=1,                        rw:{gold:80,stone:60}},
   {id:'q5', t:'Bir kışla ve bir kule kur',               chk:()=>cnt('barracks')>=1&&cnt('tower')>=1, rw:{gold:100}},
-  {id:'q6', t:'Ordunu 6 askere çıkar',                   chk:()=>soldiers.length>=6,              rw:{wood:120,food:100}},
+  {id:'q6', t:'Ordunu 6 askere çıkar',                   chk:()=>armyN()>=6,              rw:{wood:120,food:100}},
   {id:'q7', t:'İlk baskını püskürt',                     chk:()=>S.wave>=1&&enemies.length===0&&S.kills>=4, rw:{gold:120}},
   {id:'q7b',t:'Bir düşman kampını yık (🗡️ Sefer)',          chk:()=>camps.some(c=>c.cleared),        rw:{gold:150,wood:100}},
   {id:'q8', t:'İlk araştırmanı yap (🔬)',                chk:()=>Object.keys(S.tech).length>=1,   rw:{gold:60}},
@@ -1395,7 +1620,7 @@ function updateGuards(dt){
     const g=campGuards[k]; if(g.hp>0) continue;
     scene.remove(g.mesh); scene.remove(g.bar); campGuards.splice(k,1);
     const ix=g.camp.guards.indexOf(g); if(ix>=0) g.camp.guards.splice(ix,1);
-    S.res.gold+=g.rew; S.kills++; beep(200,.08,'square',.03,100);
+    S.res.gold+=g.rew; S.kills++; heroXP(g.mesh.position.x,g.mesh.position.z,g.rew); beep(200,.08,'square',.03,100);
   }
   for(const c of camps){ if(!c.cleared&&c.armed&&c.guards.length===0) clearCamp(c,true); }
   for(const g of campGuards){ g.bar.visible=g.hp<g.maxhp; if(g.bar.visible){ g.bar.position.set(g.mesh.position.x,g.mesh.position.y+g.bh,g.mesh.position.z); g.bar.quaternion.copy(camera.quaternion); setBar(g.bar,g.hp/g.maxhp); } }
@@ -1413,16 +1638,19 @@ function calcHappiness(){
   let sv=0;
   for(const b of blds){
     if(b.prog<1) continue; const m=1+.3*((b.lvl||1)-1);
-    if(b.type==='well') sv+=12*m; else if(b.type==='tavern') sv+=18*m; else if(b.type==='chapel') sv+=22*m; else if(b.type==='market') sv+=8*m;
+    if(b.type==='well') sv+=12*m; else if(b.type==='tavern') sv+=18*m; else if(b.type==='chapel') sv+=22*m; else if(b.type==='market') sv+=8*m; else if(b.type==='clinic') sv+=14*m;
   }
   add('Çeşme, han, şapel, pazar',Math.min(22,Math.round(22*sv/Math.max(10,S.pop*1.2))));
   const hs=blds.filter(b=>b.type==='house'&&b.prog>=1);
   if(hs.length) add('Yol bağlantısı',Math.round(8*hs.filter(h=>h.road).length/hs.length));
   add('Vergi',[10,0,-14][S.tax]);
-  if(S.pop>=8&&soldiers.length>=Math.floor(S.pop/4)) add('Güvenli köy',4);
+  { const L=S.laws; if(L.work===1) add('Uzun mesai',-8); if(L.work===2) add('Kısa mesai',8); if(L.ration===1) add('Yiyecek tayını',-6); if(L.ration===2) add('Şölenler',10); if(L.draft===1) add('Zorunlu askerlik',-6); if(L.martial===1) add('Sıkıyönetim',-10); }
+  if(S.pop>=8&&armyN()>=Math.floor(S.pop/4)) add('Güvenli köy',4);
   if(raidNear()) add('Baskın korkusu',-8);
+  if(S.time<S.plagueUntil) add('Salgın',-10);
   if(S.time<S.coldUntil) add('Sert soğuk',-6);
   if(S.time<S.fearUntil) add('Yıkım yası',-6);
+  if(S.laws.martial===1) v=Math.max(v,30);
   happyT=clamp(Math.round(v),0,100); hparts=parts;
 }
 
@@ -1448,6 +1676,254 @@ function upgradeBuilding(b){
   applyLevelVisual(b); beep(450,.3,'triangle',.07,800); toast('⬆️ '+B[b.type].n+' seviye '+b.lvl+' oldu!','good'); renderInfo(b);
 }
 
+/* ---------- mevsimler & hava ---------- */
+const SEASON_N=['Bahar','Yaz','Sonbahar','Kış'], SEASON_EM=['🌸','☀️','🍂','❄️'];
+const SEASON_EFFECT=['Nüfus artışı +%20.','Çiftlikler +%15.','Hasat zamanı: çiftlikler +%30.','Çiftlikler −%50, yiyecek tüketimi +%20, oduncular −%20.'];
+const SEASON_G=[{h:.27,s:.42,l:.34},{h:.23,s:.46,l:.33},{h:.1,s:.42,l:.33},{h:.55,s:.1,l:.84}];
+const SEASON_TREE=[[0x3f7d3a,0x4a8c3f,0x356f35,0x5a9a45],[0x3a8a3a,0x4f9a40,0x2f7a30,0x5fae48],[0xc0702a,0xd8962f,0xa84b24,0xcfae3a],[0xdde8e4,0xcfdcd8,0xe9f0ee,0xbfd0cc]];
+const SEASON_LEAF=[[.29,.06,.45,.18],[.31,.05,.5,.17],[.05,.1,.7,.33],[.36,.0,.12,.74]];
+function season(){ return Math.floor(S.time/120)%4; }
+function farmSeasonMul(){ return [1,1.15,1.3,.5][season()]*(S.weather==='rain'?1.1:1)*(S.weather==='snow'?.9:1); }
+function buildSky(){
+  const PN=1400; pPos=new Float32Array(PN*3);
+  for(let i=0;i<PN;i++){ pPos[i*3]=(Math.random()-.5)*90; pPos[i*3+1]=Math.random()*40; pPos[i*3+2]=(Math.random()-.5)*90; }
+  const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.BufferAttribute(pPos,3));
+  pMat=new THREE.PointsMaterial({color:0xa8c4ff,size:.22,transparent:true,opacity:.75,depthWrite:false});
+  precip=new THREE.Points(g,pMat); precip.frustumCulled=false; precip.visible=false; scene.add(precip);
+  const SN=500, sp=new Float32Array(SN*3);
+  for(let i=0;i<SN;i++){ const a=Math.random()*6.283, b=Math.acos(Math.random()*.9+.1), r=380; sp[i*3]=Math.cos(a)*Math.sin(b)*r; sp[i*3+1]=Math.cos(b)*r; sp[i*3+2]=Math.sin(a)*Math.sin(b)*r; }
+  const sg=new THREE.BufferGeometry(); sg.setAttribute('position',new THREE.BufferAttribute(sp,3));
+  stars=new THREE.Points(sg,new THREE.PointsMaterial({color:0xffffff,size:2,sizeAttenuation:false,transparent:true,opacity:0,fog:false,depthWrite:false}));
+  stars.frustumCulled=false; stars.visible=false; scene.add(stars);
+}
+function applySeasonVisuals(se){
+  if(groundGeo){
+    const pos=groundGeo.attributes.position, col=groundGeo.attributes.color, arr=col.array, c=new THREE.Color(), g=SEASON_G[se];
+    for(let i=0;i<pos.count;i++){
+      const x=pos.getX(i), z=pos.getZ(i), d=Math.max(Math.abs(x),Math.abs(z));
+      const n=Math.sin(x*.21)*Math.cos(z*.17)*.5+Math.sin(x*.07+z*.11)*.5+Math.sin(x*.9)*Math.sin(z*.8)*.15;
+      const f=clamp((d-(HALF+4))/14,0,1);
+      c.setHSL(g.h+n*.02, g.s-(se<3?.05:0)*f, (g.l+n*.05)*(1-f)+(g.l*.6+n*.03)*f);
+      arr[i*3]=c.r; arr[i*3+1]=c.g; arr[i*3+2]=c.b;
+    }
+    col.needsUpdate=true;
+  }
+  const L=SEASON_LEAF[se], cc=new THREE.Color();
+  forestCones.forEach(m=>{
+    for(let i=0;i<forestVals.length;i++){ const v=forestVals[i]; cc.setHSL(L[0]+v*L[1],L[2],L[3]+v*.1); m.setColorAt(i,cc); }
+    if(m.instanceColor) m.instanceColor.needsUpdate=true;
+  });
+  treeGreens.forEach((hex,i)=>mat(hex).color.setHex(SEASON_TREE[se][i]));
+}
+function updateSeasons(dt){
+  const se=season();
+  if(S.lastSeason!==se){
+    const first=S.lastSeason<0; S.lastSeason=se; applySeasonVisuals(se);
+    if(!first){ toast(`${SEASON_EM[se]} ${SEASON_N[se]} geldi. ${SEASON_EFFECT[se]}`,'good'); beep(420,.3,'triangle',.05,600); }
+  }
+  S.weatherT-=dt;
+  if(S.weatherT<=0){
+    S.weatherT=50+Math.random()*50; const r=Math.random(); let w='clear';
+    if(se===3) w=r<.35?'clear':r<.9?'snow':'fog';
+    else if(se===2) w=r<.4?'clear':r<.8?'rain':'fog';
+    else if(se===1) w=r<.75?'clear':r<.9?'rain':'fog';
+    else w=r<.5?'clear':r<.85?'rain':'fog';
+    if(w!==S.weather){ S.weather=w; toast({rain:'🌧️ Yağmur başladı.',snow:'🌨️ Kar yağıyor.',fog:'🌫️ Yoğun sis çöktü.',clear:'☀️ Hava açıldı.'}[w]); }
+  }
+}
+function updatePrecip(dt){
+  if(!precip) return; const w=S.weather, on=(w==='rain'||w==='snow'); precip.visible=on; if(!on) return;
+  const snow=w==='snow'; pMat.size=snow?.4:.2; pMat.color.setHex(snow?0xffffff:0xa8c4ff); pMat.opacity=snow?.85:.6;
+  precip.position.set(cam.x,0,cam.z);
+  const vy=snow?-3.2:-30, n=pPos.length/3, t=performance.now()/1000;
+  for(let i=0;i<n;i++){ pPos[i*3+1]+=vy*dt; if(snow) pPos[i*3]+=Math.sin(t+i)*.6*dt; if(pPos[i*3+1]<0) pPos[i*3+1]=40; }
+  precip.geometry.attributes.position.needsUpdate=true;
+}
+function healArmy(dt){
+  const srcs=blds.filter(b=>(b.type==='armycamp'||b.type==='clinic')&&b.prog>=1);
+  for(const so of soldiers){
+    if(so.hp>=so.maxhp||so.fighting) continue;
+    let r=0; const x=so.mesh.position.x, z=so.mesh.position.z;
+    for(const c of srcs){ if(Math.hypot(c.cx-x,c.cz-z)<9.5) r=Math.max(r,(c.type==='armycamp'?.03:.015)*(1+.3*((c.lvl||1)-1))); }
+    if(!r&&so.idle) r=.004;
+    if(!r&&so.aura) r=.012;
+    if(r) so.hp=Math.min(so.maxhp,so.hp+so.maxhp*r*dt);
+  }
+}
+
+/* ---------- birim seçimi ve ordu kontrolü ---------- */
+const RING_G=new THREE.RingGeometry(.55,.75,24); RING_G.rotateX(-Math.PI/2);
+let ringV=null;
+function mkRing(col){ const m=new THREE.Mesh(RING_G,new THREE.MeshBasicMaterial({color:col,transparent:true,opacity:.9,depthTest:false})); m.renderOrder=9; scene.add(m); return m; }
+function updateRings(){
+  for(const so of soldiers){
+    if(so.sel){ if(!so.ring) so.ring=mkRing(0x4fd1ff); so.ring.position.set(so.mesh.position.x,.12,so.mesh.position.z); const k=(so.kind==='hero'||so.kind==='knight')?1.4:1; so.ring.scale.set(k,1,k); }
+    else if(so.ring){ scene.remove(so.ring); so.ring=null; }
+  }
+  if(selV&&villagers.includes(selV)&&!selV.hidden){ if(!ringV) ringV=mkRing(0xffe27a); ringV.visible=true; ringV.position.set(selV.mesh.position.x,.12,selV.mesh.position.z); }
+  else if(ringV) ringV.visible=false;
+}
+function pickUnit(x,z){
+  let best=null,bd=1.4;
+  for(const v of villagers){ if(v.hidden) continue; const d=Math.hypot(v.mesh.position.x-x,v.mesh.position.z-z); if(d<bd){bd=d;best=v;} }
+  for(const so of soldiers){ const d=Math.hypot(so.mesh.position.x-x,so.mesh.position.z-z); if(d<bd+.2){bd=d;best=so;} }
+  return best;
+}
+function selUnits(){ return soldiers.filter(so=>so.sel); }
+function toggleSel(u){ u.sel=!u.sel; }
+function clearSel(){ for(const so of soldiers) so.sel=false; }
+function selectBy(f){
+  clearSel(); selected=null; selV=null; soldiers.forEach(so=>{ if(!so.ally&&f(so)) so.sel=true; });
+  if(!selUnits().length) toast('Seçilecek birlik yok.','bad');
+  renderInfo(); renderArmyPanel();
+}
+function layoutUnits(sel){
+  const n=sel.length, f=S.form||'s';
+  sel.forEach((u,i)=>{
+    if(f==='l'){ u.ox=(i-(n-1)/2)*1.3; u.oz=0; }
+    else if(f==='q'){ const cols=Math.ceil(Math.sqrt(n)); u.ox=((i%cols)-(cols-1)/2)*1.3; u.oz=Math.floor(i/cols)*1.3; }
+    else { const a=Math.random()*6.28, r=1+Math.random()*3.2; u.ox=Math.cos(a)*r; u.oz=Math.sin(a)*r; }
+  });
+}
+const STANCE=[['a','⚔️ Saldır'],['d','🛡️ Savun'],['r','↩️ Geri çekil']], FORM=[['s','⋯ Dağınık'],['l','― Hat'],['q','▢ Kare']];
+let apKey='';
+function renderArmyPanel(){
+  const el=$('armyPanel'), sel=selUnits();
+  if(!sel.length||mode.k!=='select'){ el.style.display='none'; apKey=''; return; }
+  const names={spear:'mızraklı',archer:'okçu',knight:'şövalye',hero:'komutan'}, cn={};
+  sel.forEach(u=>{ cn[u.kind]=(cn[u.kind]||0)+1; });
+  const desc=Object.keys(cn).map(k=>cn[k]+' '+names[k]).join(', ');
+  const hero=sel.find(u=>u.kind==='hero'), stance=sel[0].stance||'a', form=S.form||'s';
+  const cryLeft=hero?Math.max(0,Math.ceil(S.cryReady-S.time)):0;
+  const key=[sel.length,desc,stance,form,hero?cryLeft:'',hero?hero.lvl:''].join('|');
+  if(key!==apKey){
+    apKey=key;
+    const sl=STANCE.find(x=>x[0]===stance)[1], fl=FORM.find(x=>x[0]===form)[1];
+    el.innerHTML=`<div class="hd">⚔️ <b>${sel.length}</b> seçili — ${desc}${hero?` · 👑 ${hero.name} Sv${hero.lvl}`:''} · can <span id="ap-hp"></span></div>
+      <button class="btn brass" id="ap-move">📍 Hareket</button><button class="btn" id="ap-stance">${sl}</button><button class="btn" id="ap-form">${fl}</button>
+      <button class="btn" id="ap-g1">💾G1</button><button class="btn" id="ap-g2">💾G2</button><button class="btn" id="ap-g3">💾G3</button>
+      ${hero?`<button class="btn" id="ap-cry">📢 Çığlık${cryLeft?' ('+cryLeft+')':''}</button>`:''}<button class="btn no" id="ap-x">✕</button>`;
+    $('ap-move').onclick=()=>setMode('move');
+    $('ap-stance').onclick=()=>{ const i=STANCE.findIndex(x=>x[0]===stance), ns=STANCE[(i+1)%3][0]; sel.forEach(u=>{ u.stance=ns; }); apKey=''; renderArmyPanel(); };
+    $('ap-form').onclick=()=>{ const i=FORM.findIndex(x=>x[0]===form); S.form=FORM[(i+1)%3][0]; layoutUnits(sel); apKey=''; renderArmyPanel(); };
+    [1,2,3].forEach(n=>{ $('ap-g'+n).onclick=()=>{ groups[n-1]=sel.slice(); toast('Grup '+n+' kaydedildi ('+sel.length+' birlik).','good'); }; });
+    if(hero) $('ap-cry').onclick=()=>{ heroCry(); apKey=''; renderArmyPanel(); };
+    $('ap-x').onclick=()=>{ clearSel(); renderArmyPanel(); };
+  }
+  const hpEl=$('ap-hp'); if(hpEl) hpEl.textContent='%'+Math.round(sel.reduce((a,u)=>a+u.hp/u.maxhp,0)/sel.length*100);
+  el.style.display='flex';
+}
+
+/* ---------- komşu krallıklar ---------- */
+const KD=[
+  {n:'Demir Dağ Krallığı', ic:'🛡️', col:0x3a6ea5, x:128,  z:-20},
+  {n:'Altın Vadi Krallığı',ic:'🌾', col:0xd9a441, x:-120, z:30},
+  {n:'Kara Orman Hanlığı', ic:'🐺', col:0x6a2d7a, x:-10,  z:-130}
+];
+const KSTATE={peace:'Barış',trade:'Ticaret ortağı',ally:'İttifak',war:'SAVAŞ'};
+function freshKingdoms(){ return KD.map(()=>({rel:8+Math.floor(Math.random()*14),state:'peace',t:60+Math.random()*60,caravanT:100,warT:60})); }
+function kingdomRaid(i){
+  const k=KD[i], w=Math.max(2,S.wave+1), dm=[.7,1,1.3][S.diff||1];
+  const nm=Math.floor((3+w*1.1)*dm), na=Math.floor(w/3)+1, list=[];
+  for(let q=0;q<nm;q++) list.push('melee'); for(let q=0;q<na;q++) list.push('archer'); if(w>=6) list.push('brute');
+  list.forEach(kind=>{ const a=Math.random()*6.28, r=2+Math.random()*5; addEnemy(kind,k.x+Math.cos(a)*r,k.z+Math.sin(a)*r,k.col,w); });
+  toast(`⚔️ ${k.n} ordusu geliyor! (${list.length} asker)`,'raid'); beep(110,.7,'sawtooth',.09,70);
+}
+function allyHelp(){
+  const al=S.kd.map((k,i)=>({k:k,i:i})).filter(x=>x.k.state==='ally'); if(!al.length) return;
+  const hall=blds.find(b=>b.type==='hall'); if(!hall) return;
+  let n=0; al.forEach(x=>{ const c=3+Math.floor(S.wave/3); for(let q=0;q<c;q++){ spawnSoldier(q%3===2?'archer':'spear',hall,{col:KD[x.i].col,ally:true,ttl:90}); n++; } });
+  toast(`🤝 Müttefiklerin ${n} asker gönderdi!`,'good');
+}
+function updateKingdoms(dt){
+  S.kd.forEach((k,i)=>{
+    k.t-=dt;
+    if(k.t<=0){
+      k.t=70+Math.random()*50;
+      let d=(Math.random()-.5)*8;
+      if(S.happy>70) d+=1; if(armyN()>=S.pop/3) d+=1; if(S.laws.tariff) d-=3; if(k.state==='ally') d+=2; if(k.state==='trade') d+=1;
+      k.rel=clamp(k.rel+d,-100,100);
+      if(k.state==='ally'&&k.rel<20){ k.state='peace'; toast(`💔 ${KD[i].n} ittifakı bozdu.`,'bad'); }
+      else if(k.state==='trade'&&k.rel<0){ k.state='peace'; toast(`📜 ${KD[i].n} ticaret anlaşmasını iptal etti.`,'bad'); }
+      if(k.state!=='war'&&k.rel<-45&&Math.random()<.6){ k.state='war'; k.warT=45; toast(`⚔️ ${KD[i].n} sana savaş ilan etti!`,'raid'); beep(110,.7,'sawtooth',.09,70); }
+    }
+    if(k.state==='trade'||k.state==='ally'){ k.caravanT-=dt; if(k.caravanT<=0){ k.caravanT=130; spawnCaravan(); toast(`🐪 ${KD[i].n} tüccarları geliyor.`,'good'); } }
+    if(k.state==='war'){ k.warT-=dt; if(k.warT<=0&&!raidNear()&&S.time>60){ k.warT=(190+Math.random()*60)*[1.3,1,.8][S.diff||1]; kingdomRaid(i); } }
+  });
+}
+function dipAct(i,act){
+  const k=S.kd[i], nm=KD[i].n;
+  if(act==='gift'){ if(!canAfford({gold:60})) return toast('60 altın gerekir.','bad'); pay({gold:60}); k.rel=clamp(k.rel+12,-100,100); toast(`🎁 ${nm} hediyeni beğendi (+12).`,'good'); }
+  else if(act==='trade'){ if(k.state!=='peace'||k.rel<15) return toast('Ticaret için barış ve ilişki ≥ 15 gerekir.','bad'); if(!canAfford({gold:100})) return toast('100 altın gerekir.','bad'); pay({gold:100}); k.state='trade'; k.caravanT=30; toast(`📜 ${nm} ile ticaret anlaşması imzalandı!`,'good'); }
+  else if(act==='ally'){ if(k.state==='war'||k.rel<45) return toast('İttifak için ilişki ≥ 45 gerekir.','bad'); if(!canAfford({gold:200})) return toast('200 altın gerekir.','bad'); pay({gold:200}); k.state='ally'; toast(`🤝 ${nm} ile ittifak kuruldu! Baskınlarda asker gönderecek.`,'good'); }
+  else if(act==='peace'){ if(k.state!=='war') return; if(!canAfford({gold:150})) return toast('150 altın gerekir.','bad'); pay({gold:150}); k.state='peace'; k.rel=Math.max(k.rel,-15); toast(`☮️ ${nm} ile barış yapıldı.`,'good'); }
+  beep(520,.12,'triangle',.05,780); renderTech(); refreshUI();
+}
+
+/* ---------- salgın & yangın ---------- */
+function startPlague(){
+  if(S.time<S.plagueUntil) return;
+  const dur=70*(1-Math.min(.6,.2*cnt('clinic'))); S.plagueUntil=S.time+dur;
+  toast('🤒 Salgın başladı! Üretim düşüyor, halk hastalanıyor. Şifahane bu süreyi kısaltır.','bad'); beep(180,.5,'sawtooth',.06,100);
+}
+function igniteBuilding(b){
+  if(b.fire||b.prog<1) return;
+  b.fire=true; b.fireT=14+Math.random()*8;
+  const f=new THREE.Mesh(GK,new THREE.MeshBasicMaterial({color:0xff6a1a})); f.scale.set(.5,1.2,.5); f.position.y=(HEIGHTS[b.type]||2)*.6; b.mesh.add(f); b.flame=f;
+  toast('🔥 '+B[b.type].n+' yanıyor!','bad'); beep(200,.4,'sawtooth',.05,100);
+}
+function updateFires(dt){
+  const fh=blds.filter(x=>x.type==='firehouse'&&x.prog>=1), t=performance.now()/1000;
+  for(const b of blds){
+    if(!b.fire) continue;
+    b.hp-=3*dt;
+    const near=fh.some(h=>Math.hypot(h.cx-b.cx,h.cz-b.cz)<16);
+    b.fireT-=dt*(near?3.5:1)*(S.weather==='rain'?2:1)*(S.weather==='snow'?1.5:1);
+    if(b.flame) b.flame.scale.set(.5+.1*Math.sin(t*14),1.2+.4*Math.sin(t*19),.5);
+    if(Math.random()<dt*.35) emitSmoke(b.cx,(HEIGHTS[b.type]||2)+.2,b.cz);
+    if(!near&&Math.random()<dt*.06){
+      const c=blds.filter(o=>o!==b&&!o.fire&&o.prog>=1&&Math.hypot(o.cx-b.cx,o.cz-b.cz)<3.4);
+      if(c.length) igniteBuilding(c[Math.floor(Math.random()*c.length)]);
+    }
+    if(b.fireT<=0){ b.fire=false; if(b.flame){ b.mesh.remove(b.flame); b.flame=null; } toast('🧯 '+B[b.type].n+'daki yangın söndü.','good'); }
+  }
+}
+function statusIcons(){
+  let x=''; if(S.time<S.plagueUntil) x+=' 🤒'; if(blds.some(b=>b.fire)) x+=' 🔥'; if(S.time<S.coldUntil) x+=' 🥶'; if(S.kd.some(k=>k.state==='war')) x+=' ⚔️';
+  return x;
+}
+
+/* ---------- yasalar ---------- */
+const LAWS=[
+  {id:'work',  n:'Çalışma düzeni', ic:'⏱️', era:0, opts:[
+    {n:'Normal',d:'Standart çalışma süresi.'},
+    {n:'Uzun mesai',cost:30,d:'Üretim +%25, refah −8, salgın riski artar.'},
+    {n:'Kısa mesai',cost:0,d:'Üretim −%15, refah +8.'}]},
+  {id:'ration',n:'Yiyecek düzeni', ic:'🍞', era:0, opts:[
+    {n:'Serbest',d:'Normal tüketim.'},
+    {n:'Tayın',cost:20,d:'Yiyecek tüketimi −%25, refah −6.'},
+    {n:'Şölenler',cost:40,d:'Yiyecek tüketimi +%20, refah +10.'}]},
+  {id:'draft', n:'Askerlik', ic:'🪖', era:1, opts:[
+    {n:'Gönüllü',d:'Normal.'},
+    {n:'Zorunlu askerlik',cost:60,d:'Ordu sınırı +6, asker maliyeti −%30, refah −6, nüfus artışı −%20.'}]},
+  {id:'tariff',n:'Ticaret politikası', ic:'📦', era:1, opts:[
+    {n:'Serbest ticaret',d:'Normal.'},
+    {n:'Gümrük vergisi',cost:50,d:'Pazar ve han geliri +%25; krallık ilişkileri zamanla bozulur.'}]},
+  {id:'martial',n:'Düzen', ic:'⚖️', era:2, opts:[
+    {n:'Normal',d:'—'},
+    {n:'Sıkıyönetim',cost:80,d:'Refah en az 30 olur, üretim +%10, refah −10.'}]}
+];
+function lawProd(){ const L=S.laws; let m=1; if(L.work===1) m*=1.25; if(L.work===2) m*=.85; if(L.martial===1) m*=1.1; return m; }
+function adoptLaw(id,opt){
+  const law=LAWS.find(l=>l.id===id); if(!law||S.laws[id]===opt) return;
+  if(S.era<law.era) return toast(law.n+' için '+ERAS[law.era].n+' gerekir.','bad');
+  if(S.time<S.lawCd) return toast('Yeni yasa için '+Math.ceil(S.lawCd-S.time)+' sn beklemelisin.','bad');
+  const cost=law.opts[opt].cost||0; if(cost&&!canAfford({gold:cost})) return toast(cost+' altın gerekir.','bad');
+  if(cost) pay({gold:cost}); S.laws[id]=opt; S.lawCd=S.time+90;
+  toast(`📜 Yasa değişti: ${law.n} → ${law.opts[opt].n}`,'good'); beep(300,.2,'triangle',.06,500);
+  calcHappiness(); rates=calcRates(); renderTech(); refreshUI();
+}
+
 /* ---------- ekonomi ---------- */
 function calcRates(){
   const r={wood:0,stone:0,food:0,gold:0}; let cap=6;
@@ -1455,20 +1931,21 @@ function calcRates(){
     if(b.prog<1) continue; const m=1+.15*b.tier;
     switch(b.type){
       case 'house': cap+=4+b.tier+2*((b.lvl||1)-1); break;
-      case 'farm': r.food+=.9*m*staff(b)*(has('agri')?1.3:1); break;
-      case 'lumber': b.nodes=nodesAround(b,'tree',4).length; if(b.nodes>0) r.wood+=(.18+.17*Math.min(b.nodes,6))*m*staff(b)*(has('axe')?1.3:1); break;
+      case 'farm': r.food+=.9*m*staff(b)*(has('agri')?1.3:1)*farmSeasonMul(); break;
+      case 'lumber': b.nodes=nodesAround(b,'tree',4).length; if(b.nodes>0) r.wood+=(.18+.17*Math.min(b.nodes,6))*m*staff(b)*(has('axe')?1.3:1)*(season()===3?.8:1); break;
       case 'quarry': b.nodes=nodesAround(b,'rock',4).length; if(b.nodes>0) r.stone+=(.16+.14*Math.min(b.nodes,6))*m*staff(b)*(has('pick')?1.3:1); break;
-      case 'market': r.gold+=(.5+S.pop*.012)*m*staff(b)*(has('trade')?1.5:1); break;
-      case 'tavern': r.gold+=.3*m*(1+.25*((b.lvl||1)-1)); break;
+      case 'market': r.gold+=(.5+S.pop*.012)*m*staff(b)*(has('trade')?1.5:1)*(S.laws.tariff?1.25:1); break;
+      case 'tavern': r.gold+=.3*m*(1+.25*((b.lvl||1)-1))*(S.laws.tariff?1.25:1); break;
     }
   }
-  const hm=happyMult(); r.wood*=hm; r.stone*=hm; r.food*=hm; r.gold*=hm;
-  r.food-=S.pop*.045*(S.time<S.coldUntil?1.5:1); r.gold+=S.pop*.02*[.5,1,1.8][S.tax]; popCap=cap; return r;
+  const hm=happyMult()*(S.time<S.plagueUntil?.8:1)*lawProd(); r.wood*=hm; r.stone*=hm; r.food*=hm; r.gold*=hm;
+  r.food-=S.pop*.045*(S.time<S.coldUntil?1.5:1)*(season()===3?1.2:1)*(S.laws.ration===1?.75:S.laws.ration===2?1.2:1); r.gold+=S.pop*.02*[.5,1,1.8][S.tax]; popCap=cap; return r;
 }
 let rateT=0;
 function economy(dt){
   rateT-=dt; if(rateT<=0){ syncVillagers(); assignWorkers(); rates=calcRates(); calcHappiness(); rateT=.5; }
   S.happy+=(happyT-S.happy)*Math.min(1,dt*.12);
+  if(S.time<S.plagueUntil&&S.pop>3) S.pop=Math.max(3,S.pop-.08*dt*(1-Math.min(.7,.25*cnt('clinic'))));
   for(const k in rates) S.res[k]+=rates[k]*dt;
   /* odun & taş tükenir */
   for(const b of blds){
@@ -1477,7 +1954,7 @@ function economy(dt){
     if(b.type==='quarry'&&b.nodes>0){ b.harv+=(.16+.14*Math.min(b.nodes,6))*staff(b)*dt; if(b.harv>=70){ b.harv=0; const l=nodesAround(b,'rock',4).sort((a,c)=>a.d-c.d); if(l[0]) removeNode(l[0].i,l[0].j); } }
   }
   if(S.res.food<=0){ S.res.food=0; if(S.pop>2){ S.pop=Math.max(2,S.pop-.15*dt); if(!economy.hungry||S.time-economy.hungry>25){economy.hungry=S.time;toast('Halk aç! Daha fazla çiftlik kur.','bad');} } }
-  else if(S.pop<popCap) S.pop=Math.min(popCap,S.pop+.14*dt*(1+S.era*.3)*(S.happy>=70?1.5:S.happy>=40?1:S.happy>=20?.5:0));
+  else if(S.pop<popCap) S.pop=Math.min(popCap,S.pop+.14*dt*(1+S.era*.3)*(S.happy>=70?1.5:S.happy>=40?1:S.happy>=20?.5:0)*(season()===0?1.2:season()===3?.7:1)*(S.laws.draft?.8:1));
   if(S.happy<20&&S.pop>2){ S.pop=Math.max(2,S.pop-.05*dt); if(!economy.unrest||S.time-economy.unrest>40){ economy.unrest=S.time; toast('😡 Halk huzursuz! Çeşme, han, şapel yap veya vergiyi düşür.','bad'); } }
   if(S.pop>popCap) S.pop=Math.max(popCap,S.pop-.25*dt);
   /* asker eğitimi */
@@ -1489,11 +1966,11 @@ function economy(dt){
 }
 function simulate(dt){
   S.time+=dt;
-  for(const b of blds){ if(b.prog<1){ b.prog=Math.min(1,b.prog+dt*(has('eng')?2:1)/Math.max(.1,b.bt)); b.mesh.scale.y=.12+.88*b.prog; if(b.prog>=1){ b.mesh.scale.y=1; beep(520,.15,'triangle',.05); if(b.type==='wonder') endGame(true); } } }
+  for(const b of blds){ if(b.prog<1){ b.prog=Math.min(1,b.prog+dt*(has('eng')?2:1)/Math.max(.1,b.bt)); b.mesh.scale.y=.12+.88*b.prog; if(b.prog>=1){ b.mesh.scale.y=1; beep(520,.15,'triangle',.05); if(b.type==='wonder') endGame(true); if(b.type==='armycamp'&&!S.rallyCustom){ S.rally={x:b.cx,z:b.cz+b.s*T*.5+1.6}; updateRallyFlag(); soldiers.forEach(so=>{so.hold=null;}); toast('⛺ Ordu kampı hazır: askerler burada toplanıp iyileşecek.','good'); } } } }
   economy(dt);
   S.nextWave-=dt; if(S.nextWave<=0){ spawnWave(); S.nextWave=Math.max(110,200-S.wave*5)*[1.3,1,.8][S.diff||1]; }
   updateUnits(dt);
-  updateVillagers(dt); updateSheep(dt); updateSmoke(dt); updateEvents(dt); updateCamps(dt); updateGuards(dt);
+  updateVillagers(dt); updateSheep(dt); updateSmoke(dt); updateEvents(dt); updateKingdoms(dt); updateFires(dt); updateSeasons(dt); updateCamps(dt); updateGuards(dt); healArmy(dt);
 }
 
 /* ---------- çağ atlama ---------- */
@@ -1517,6 +1994,12 @@ function updateSky(){
   tmpC.copy(skyNight).lerp(skyDay,day).lerp(skyDusk,dusk*.45);
   scene.background.copy(tmpC); scene.fog.color.copy(tmpC);
   renderer.toneMappingExposure=1.0+.15*day;
+  const wet=(S.weather==='rain'||S.weather==='snow')?.7:(S.weather==='fog'?.8:1);
+  sun.intensity*=wet; hemi.intensity*=(S.weather==='clear'?1:.9);
+  const fn=S.weather==='fog'?25:(S.weather==='rain'?70:(S.weather==='snow'?80:110)), ff=S.weather==='fog'?150:(S.weather==='rain'?230:(S.weather==='snow'?240:330));
+  scene.fog.near+=(fn-scene.fog.near)*.02; scene.fog.far+=(ff-scene.fog.far)*.02;
+  if(S.weather!=='clear'){ tmpC.lerp(new THREE.Color(0x8a96a3),.35*(1-day*.3)); scene.background.copy(tmpC); scene.fog.color.copy(tmpC); }
+  if(stars){ stars.visible=day<.6; stars.material.opacity=clamp(.95-day*1.6,0,.95); stars.position.set(cam.x,0,cam.z); }
 }
 
 /* ---------- arayüz ---------- */
@@ -1526,9 +2009,9 @@ function toast(msg,kind=''){
   while($('toasts').children.length>(MOBILE?2:4)) $('toasts').firstChild.remove();
 }
 const CATS=[
-  {id:'town', ic:'🏠', n:'Köy',     items:['house','well','tavern','chapel','market']},
+  {id:'town', ic:'🏠', n:'Köy',     items:['house','well','tavern','chapel','market','clinic','firehouse']},
   {id:'prod', ic:'🌾', n:'Üretim',  items:['farm','lumber','quarry']},
-  {id:'def',  ic:'🛡️', n:'Savunma', items:['tower','barracks','wall','castle']},
+  {id:'def',  ic:'🛡️', n:'Savunma', items:['tower','barracks','armycamp','wall','gate','castle']},
   {id:'spec', ic:'🏛️', n:'Özel',    items:['wonder']},
   {id:'tool', ic:'🛠️', n:'Araçlar', items:['road','demolish']}
 ];
@@ -1550,18 +2033,20 @@ function buildBar(){
 }
 function buildArmyMenu(){
   const m=$('armyMenu'); m.innerHTML='';
-  [['attack','🗡️','Sefer','kampa saldır'],['rally','🚩','Bayrak','topla / geri çağır']].forEach(a=>{
-    const el=document.createElement('button'); el.className='bb'; el.dataset.k=a[0];
-    el.innerHTML=`<span class="ic">${a[1]}</span><span><span class="nm">${a[2]}</span><br><span class="ct">${a[3]}</span></span>`;
-    el.onclick=()=>{ setMode(mode.k===a[0]?'select':a[0]); closeMenus(); }; m.appendChild(el);
-  });
-  const t=document.createElement('button'); t.className='bb2';
-  t.innerHTML='<span class="ic">🔱</span><span><span class="nm">Asker eğit</span><br><span class="ct">Şehir Merkezi</span></span>';
-  t.onclick=()=>{ const h=blds.find(x=>x.type==='hall'); if(h){ selected=h; setMode('select'); cam.x=h.cx; cam.z=h.cz; renderInfo(); } closeMenus(); };
-  m.appendChild(t);
+  const add=(cls,k,ic,nm,fn)=>{ const el=document.createElement('button'); el.className=cls; if(k) el.dataset.k=k; el.innerHTML=`<span class="ic">${ic}</span><span class="nm">${nm}</span>`; el.onclick=fn; m.appendChild(el); };
+  add('bb','attack','🗡️','Sefer',()=>{ setMode(mode.k==='attack'?'select':'attack'); closeMenus(); });
+  add('bb','rally','🚩','Bayrak',()=>{ setMode(mode.k==='rally'?'select':'rally'); closeMenus(); });
+  add('bb2','','🔱','Asker eğit',()=>{ const h=blds.find(x=>x.type==='hall'); if(h){ clearSel(); selV=null; selected=h; setMode('select'); cam.x=h.cx; cam.z=h.cz; renderInfo(); renderArmyPanel(); } closeMenus(); });
+  add('bb2','','🔘','Hepsi',()=>{ selectBy(()=>true); closeMenus(); });
+  add('bb2','','🔱','Mızraklı',()=>{ selectBy(x=>x.kind==='spear'); closeMenus(); });
+  add('bb2','','🏹','Okçu',()=>{ selectBy(x=>x.kind==='archer'); closeMenus(); });
+  add('bb2','','🐎','Şövalye',()=>{ selectBy(x=>x.kind==='knight'); closeMenus(); });
+  add('bb2','','👑','Komutan',()=>{ selectBy(x=>x.kind==='hero'); closeMenus(); });
+  add('bb2','','📢','Çığlık',()=>{ heroCry(); closeMenus(); });
+  [1,2,3].forEach(n=>add('bb2','','👥','Grup '+n,()=>{ selectBy(x=>groups[n-1].includes(x)); closeMenus(); }));
 }
 function closeMenus(){ ['drawer','armyMenu','menu'].forEach(id=>{ const e=$(id); if(e) e.style.display='none'; }); }
-function toggleMenu(id){ const e=$(id), open=e.style.display!=='flex'; closeMenus(); if(open){ e.style.display='flex'; if(id==='drawer') buildBar(); } }
+function toggleMenu(id){ const e=$(id), open=(e.style.display==='none'||e.style.display===''); closeMenus(); if(open){ e.style.display=((id==='armyMenu'||id==='menu')?'grid':'flex'); if(id==='drawer') buildBar(); } }
 function goFull(){
   try{ const el=document.documentElement; (el.requestFullscreen||el.webkitRequestFullscreen||function(){}).call(el); if(screen.orientation&&screen.orientation.lock) screen.orientation.lock('landscape').catch(()=>{}); }catch(e){}
 }
@@ -1593,16 +2078,25 @@ function renderInfo(b){
   if(mode.k==='road'){ put('road',`<h3>🛤️ Yol</h3><p>Tıkla ya da sürükleyerek döşe (3 odun / karo). Yola bitişik üretim binaları %10 verimli olur, yola bitişik evler refahı artırır, köylüler yolda %50 hızlı yürür.</p>`); return; }
   if(mode.k==='attack'){ put('attack',`<h3>🗡️ Sefer</h3><p>Ormandaki bir düşman kampına dokun / tıkla: tüm ordun saldırır. Kamp yıkılınca ganimet kazanır, baskınlar azalır. Kamplar bir süre sonra yeniden kurulur.</p>`); return; }
   if(mode.k==='rally'){ put('rally',`<h3>🚩 Toplanma noktası</h3><p>Zemine dokun / tıkla: askerler boştayken orada bekler.</p>`); return; }
+  if(selV&&!b){
+    const v=selV;
+    if(!villagers.includes(v)){ selV=null; el.style.display='none'; infoKey=''; return; }
+    put('v'+v.name+v.lvl,`<button class="x" id="infoX">✕</button><h3>👤 ${v.name}</h3><p>${(v.job&&V_JOB[v.job.type])||'Köylü'} · ${V_LVL[v.lvl-1]}</p><div id="i-dyn"></div>`,()=>{ $('infoX').onclick=()=>{ selV=null; infoKey=''; renderInfo(); }; });
+    const st=v.hidden?'Evde dinleniyor':v.state==='work'?'Çalışıyor':v.state==='back'?'Ürün taşıyor':v.state==='go'?'İşe gidiyor':'Köyde dolaşıyor';
+    const rw=(a,x)=>`<div class="row"><span>${a}</span><span>${x}</span></div>`;
+    $('i-dyn').innerHTML=rw('Durum',st)+rw('Meslek',(v.job&&V_JOB[v.job.type])||'İşsiz')+rw('Beceri',V_LVL[v.lvl-1]+(v.lvl<4?` · sonraki seviyeye ${6-(v.skill%6)} tur`:' · en üst seviye'))+rw('Verim','×'+(1+.2*(v.lvl-1)).toFixed(1));
+    return;
+  }
   if(!b){ el.style.display='none'; infoKey=''; return; }
   const d=B[b.type], done=b.prog>=1;
   const ups=done?Object.keys(UNITS).filter(k=>UNITS[k].at.includes(b.type)):[];
   const rc=repairCost(b), hurt=done&&b.hp<b.maxhp-1;
-  const flags=ups.map(k=>(S.era>=UNITS[k].era&&canAfford(UNITS[k].cost))?1:0).join('')+(hurt?'R'+(canAfford(rc)?1:0):'')+(done&&b.lvl<3?'U'+((S.era>=b.lvl&&canAfford(upCost(b)))?1:0):'');
+  const flags=ups.map(k=>(S.era>=UNITS[k].era&&canAfford(unitCost(k)))?1:0).join('')+(hurt?'R'+(canAfford(rc)?1:0):'')+(done&&b.lvl<3?'U'+((S.era>=b.lvl&&canAfford(upCost(b)))?1:0):'');
   const key=['b',b.id,done?1:0,b.tier,S.era,flags].join('|');
   let html=`<button class="x" id="infoX">✕</button><h3>${d.ic} ${d.n}</h3><p>${d.d}</p><div id="i-dyn"></div>`;
   if(ups.length) html+='<div class="tr">'+ups.map(k=>{
-    const U=UNITS[k], lock=S.era<U.era, can=!lock&&canAfford(U.cost);
-    return `<button class="btn" data-u="${k}" ${can?'':'disabled'} title="${U.n}">${lock?'🔒':U.ic} ${U.n}<br><small>${lock?ERAS[U.era].n:costStr(U.cost)}</small></button>`;
+    const U=UNITS[k], lock=S.era<U.era, can=!lock&&canAfford(unitCost(k));
+    return `<button class="btn" data-u="${k}" ${can?'':'disabled'} title="${U.n}">${lock?'🔒':U.ic} ${U.n}<br><small>${lock?ERAS[U.era].n:costStr(unitCost(k))}</small></button>`;
   }).join('')+'</div>';
   if(done&&b.lvl<3){ const uc=upCost(b), lk=S.era<b.lvl; html+=`<button class="btn brass" id="upBtn" style="width:100%;margin-top:6px" ${(lk||!canAfford(uc))?'disabled':''}>⬆ Seviye ${b.lvl+1} · ${lk?'🔒 '+ERAS[b.lvl].n:costStr(uc)}</button>`; }
   if(hurt) html+=`<button class="btn brass" id="repBtn" style="width:100%;margin-top:6px" ${canAfford(rc)?'':'disabled'}>🔧 Onar · ${costStr(rc)}</button>`;
@@ -1622,7 +2116,8 @@ function renderInfo(b){
     if(sl){ const w=b.workers||0; r+=row('İşçi',w+'/'+sl+(w<sl?' · az işçi, yavaş üretim':'')); r+=row('Yol bağlantısı',b.road?'✓ +%10':'—'); }
     if(b.type==='lumber') r+=row('Yakındaki ağaç',b.nodes);
     if(b.type==='quarry') r+=row('Yakındaki kaya',b.nodes);
-    if(ups.length){ r+=row('Ordu',soldiers.length+'/'+armyCap()); if(b.q.length) r+=row('Eğitimde',UNITS[b.q[0].kind].ic+' '+Math.ceil(b.q[0].t)+' sn'+(b.q.length>1?' · sırada '+(b.q.length-1):'')); }
+    if(b.type==='armycamp'){ const n=soldiers.filter(so=>so.hp<so.maxhp&&Math.hypot(so.mesh.position.x-b.cx,so.mesh.position.z-b.cz)<9.5).length; r+=row('Yenilenen asker',n+' · %'+(3*(1+.3*(b.lvl-1))).toFixed(1)+'/sn'); }
+    if(ups.length){ r+=row('Ordu',armyN()+'/'+armyCap()); if(b.q.length) r+=row('Eğitimde',UNITS[b.q[0].kind].ic+' '+Math.ceil(b.q[0].t)+' sn'+(b.q.length>1?' · sırada '+(b.q.length-1):'')); }
   }
   r+=row('Seviye',b.lvl+'/3')+row('Çağ görünümü',b.tier+1)+row('Can',Math.ceil(b.hp)+'/'+b.maxhp)+`<div class="hpb"><i style="width:${b.hp/b.maxhp*100}%"></i></div>`;
   const dy=$('i-dyn'); if(dy) dy.innerHTML=r;
@@ -1635,7 +2130,7 @@ function refreshUI(){
     const sm=el.querySelector('small'); sm.textContent=rateTxt(rates[k]); sm.className=rates[k]<0?'neg':'pos'; el.classList.toggle('low',rates[k]<0);
   });
   $('c-pop').querySelector('b').textContent=Math.floor(S.pop)+' / '+popCap;
-  $('c-army').querySelector('b').textContent=soldiers.length+' / '+armyCap();
+  $('c-army').querySelector('b').textContent=armyN()+' / '+armyCap();
   { const hv=Math.round(S.happy), em=hv>=70?'😄':hv>=55?'🙂':hv>=40?'😐':hv>=20?'😟':'😡', lb=hv>=70?'mutlu':hv>=55?'memnun':hv>=40?'idare eder':hv>=20?'huzursuz':'isyan';
     const hc=$('c-happy'); hc.querySelector('.ic').textContent=em; hc.querySelector('b').textContent=hv; const hs=hc.querySelector('small'); hs.textContent='refah · '+lb; hs.className=hv<40?'neg':'pos'; }
   $('eraName').textContent=MOBILE?ERAS[S.era].n.replace(/ Çağı?$/,''):ERAS[S.era].n;
@@ -1643,19 +2138,86 @@ function refreshUI(){
   if(S.era>=ERAS.length-1){ nb.style.display='none'; }
   else{ nb.style.display=''; nb.title='Çağ atla: '+costStr(ERAS[S.era+1].cost); nb.classList.toggle('ready',canAfford(ERAS[S.era+1].cost)); nb.disabled=false; }
   const day=Math.floor(S.time/260)+1, tt=((.9+S.time/260*Math.PI*2));
-  $('clk').textContent='Gün '+day+(Math.sin(tt)<-.05?' 🌙':' ☀️');
+  $('clk').textContent='Gün '+day+' '+SEASON_EM[season()]+({rain:'🌧️',snow:'🌨️',fog:'🌫️'}[S.weather]||'')+(Math.sin(tt)<-.05?'🌙':'');
   const r=$('raid');
   if(enemies.length){ r.textContent='⚔️ Düşman: '+enemies.length; r.className='warn'; }
   else { const t=Math.max(0,Math.ceil(S.nextWave)); r.textContent='Baskın: '+Math.floor(t/60)+':'+String(t%60).padStart(2,'0'); r.className=t<20?'warn':''; }
+  r.textContent+=statusIcons();
   $('spdBtn').textContent=S.paused?'⏸ Durdu':('▶ '+S.speed+'×');
   refreshBar(); if(selected||mode.k!=='select') { if(mode.k==='select') renderInfo(); }
   if($('techScreen').style.display==='flex' && (++techTick%6===0)) renderTech();
-  updateQuestUI();
+  updateQuestUI(); renderArmyPanel();
 }
 function setSpeed(v){ if(v===0){S.paused=true;} else {S.paused=false;S.speed=v;} refreshUI(); }
 $('spdBtn').onclick=()=>{ const seq=[1,2,4,0], cur=S.paused?0:S.speed; setSpeed(seq[(seq.indexOf(cur)+1)%4]); };
 $('eraBtn').onclick=advanceEra;
-$('saveBtn').onclick=()=>{ saveGame(); toast('Oyun kaydedildi 💾','good'); };
+function slotMeta(key){
+  try{
+    const raw=localStorage.getItem(key); if(!raw) return null; const d=JSON.parse(raw), m=d.meta||{};
+    const t=m.t!==undefined?m.t:((d.S&&d.S.time)||0);
+    return {day:Math.floor(t/260)+1,era:m.era!==undefined?m.era:d.S.era,pop:m.pop!==undefined?m.pop:Math.floor(d.S.pop),wave:m.wave!==undefined?m.wave:d.S.wave,date:m.date||0};
+  }catch(e){ return null; }
+}
+let slotMode='save';
+function openSlots(mode){ slotMode=mode; $('slotTitle').textContent=mode==='save'?'💾 Kaydet / Yükle':'📂 Kayıtlı oyunlar'; renderSlots(); $('slotScreen').style.display='flex'; }
+function renderSlots(){
+  const names=['Otomatik kayıt','Yuva 1','Yuva 2','Yuva 3']; let h='';
+  SLOT_KEYS.forEach((key,i)=>{
+    const m=slotMeta(key);
+    const info=m?`Gün ${m.day} · ${ERAS[m.era].n} · 👥${m.pop} · dalga ${m.wave}`+(m.date?' · '+new Date(m.date).toLocaleString('tr-TR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):''):'Boş';
+    h+=`<div class="trow"><div class="tx"><b>${names[i]}</b><small>${info}</small></div>`+((slotMode==='save'&&i>0&&started&&!S.over)?`<button class="btn brass" data-sv="${i}">Kaydet</button>`:'')+(m?`<button class="btn" data-ld="${i}">Yükle</button>`:'')+'</div>';
+  });
+  $('slotList').innerHTML=h;
+  $('slotList').querySelectorAll('[data-sv]').forEach(b=>b.onclick=()=>{ const i=+b.dataset.sv; if(saveGame(SLOT_KEYS[i])) toast('💾 '+names[i]+' kaydedildi.','good'); else toast('Kayıt başarısız.','bad'); renderSlots(); });
+  $('slotList').querySelectorAll('[data-ld]').forEach(b=>b.onclick=()=>doLoad(SLOT_KEYS[+b.dataset.ld]));
+}
+function doLoad(key){
+  if(loadGame(key)){ started=true; ['startScreen','slotScreen','endScreen'].forEach(id=>{ $(id).style.display='none'; }); closeMenus(); startMusic(); toast('Kayıt yüklendi.','good'); }
+  else toast('Kayıt yüklenemedi.','bad');
+}
+$('saveBtn').onclick=()=>openSlots('save');
+$('slotClose').onclick=()=>{ $('slotScreen').style.display='none'; };
+
+/* ---------- başarımlar ---------- */
+const ACH=[
+  {id:'a1', n:'İlk Adım',        d:'İlk binanı kur',                   chk:()=>blds.length>1},
+  {id:'a2', n:'Köy Doğuyor',     d:'10 ev yap',                         chk:()=>cnt('house')>=10},
+  {id:'a3', n:'Feodal',          d:'Feodal Çağ’a ulaş',                 chk:()=>S.era>=1},
+  {id:'a4', n:'Şato Sahibi',     d:'Kale Çağı’na ulaş',                 chk:()=>S.era>=2},
+  {id:'a5', n:'İmparator',       d:'İmparatorluk Çağı’na ulaş',         chk:()=>S.era>=3},
+  {id:'a6', n:'İlk Kan',         d:'İlk baskını püskürt',               chk:()=>S.wave>=1&&S.kills>=3},
+  {id:'a7', n:'Sağlam Duruş',    d:'5. dalgaya dayan',                  chk:()=>S.wave>=5&&enemies.length===0},
+  {id:'a8', n:'Kamp Yıkıcı',     d:'Bir düşman kampını yık',            chk:()=>camps.some(c=>c.cleared)},
+  {id:'a9', n:'Orman Hâkimi',    d:'Dört kampı da yıkık tut',           chk:()=>camps.length>0&&camps.every(c=>c.cleared)},
+  {id:'a10',n:'Mutlu Halk',      d:'Refahı 85’e çıkar',                 chk:()=>S.happy>=85},
+  {id:'a11',n:'Kalabalık',       d:'Nüfusu 40’a çıkar',                 chk:()=>S.pop>=40},
+  {id:'a12',n:'Büyük Ordu',      d:'20 askerlik ordu kur',              chk:()=>armyN()>=20},
+  {id:'a13',n:'Efsane Komutan',  d:'Komutanı 3. seviyeye çıkar',        chk:()=>soldiers.some(x=>x.kind==='hero'&&x.lvl>=3)},
+  {id:'a14',n:'Tüccar Prens',    d:'Bir krallıkla ticaret anlaşması yap', chk:()=>S.kd.some(k=>k.state==='trade'||k.state==='ally')},
+  {id:'a15',n:'Dost Meclisi',    d:'Bir krallıkla ittifak kur',         chk:()=>S.kd.some(k=>k.state==='ally')},
+  {id:'a16',n:'Ateşe Karşı',     d:'Bir itfaiye kur',                   chk:()=>cnt('firehouse')>=1},
+  {id:'a17',n:'Sur Ustası',      d:'20 sur ve kapı parçası yap',        chk:()=>blds.filter(b=>b.type==='wall'||b.type==='gate').length>=20},
+  {id:'a18',n:'Kanun Koyucu',    d:'Bir yasa çıkar',                    chk:()=>Object.keys(S.laws).some(k=>S.laws[k]>0)},
+  {id:'a19',n:'Dört Mevsim',     d:'Bir yıl yaşat (4 mevsim)',          chk:()=>S.time>=480},
+  {id:'a20',n:'Zafer',           d:'Harika’yı tamamla',                 chk:()=>S.won}
+];
+let achDone={}; try{ achDone=JSON.parse(localStorage.getItem('krallik3d_ach')||'{}'); }catch(e){ achDone={}; }
+let achT=0;
+function checkAch(){
+  if(!S) return;
+  for(const a of ACH){
+    if(achDone[a.id]) continue; let ok=false; try{ ok=!!a.chk(); }catch(e){}
+    if(ok){ achDone[a.id]=Date.now(); try{ localStorage.setItem('krallik3d_ach',JSON.stringify(achDone)); }catch(e){} toast('🏆 Başarım: '+a.n+' — '+a.d,'good'); beep(800,.3,'triangle',.06,1200); }
+  }
+}
+function openAch(){
+  const n=ACH.filter(a=>achDone[a.id]).length;
+  $('achTitle').textContent=`🏆 Başarımlar ${n}/${ACH.length}`;
+  $('achList').innerHTML=ACH.map(a=>`<div class="trow" style="${achDone[a.id]?'':'opacity:.5'}"><span class="ic">${achDone[a.id]?'🏆':'🔒'}</span><div class="tx"><b>${a.n}</b><small>${a.d}</small></div></div>`).join('');
+  $('achScreen').style.display='flex';
+}
+$('achBtn').onclick=openAch;
+$('achClose').onclick=()=>{ $('achScreen').style.display='none'; };
 
 /* ---------- araştırma & takas ---------- */
 let techTab='tech', techTick=0;
@@ -1677,6 +2239,21 @@ function renderTech(){
     h+=`<p class="note">Refah ${hv}/100 (hedef ${happyT}). 70 üstü: üretim +%10, nüfus artışı hızlı. 40 altı: üretim düşer. 20 altı: halk huzursuz olur, nüfus azalır.</p>`;
     hparts.forEach(pt=>{ h+=`<div class="trow"><div class="tx"><b>${pt[0]}</b></div><b style="color:${pt[1]<0?'var(--bad)':'var(--good)'}">${pt[1]>0?'+':''}${pt[1]}</b></div>`; });
     h+='<p class="note" style="margin-top:12px">Vergi seviyesi:</p><div class="tabs">'+['Düşük','Normal','Yüksek'].map((nm,i)=>`<button class="btn ${S.tax===i?'on':''}" data-tax="${i}">${nm}</button>`).join('')+'</div><p class="note">Düşük: gelir %50, refah +10 · Normal: gelir %100 · Yüksek: gelir %180, refah −14.</p>';
+  } else if(techTab==='dip'){
+    h+='<p class="note">Komşu krallıklarla ilişkini yönet. Ticaret ortakları kervan gönderir, müttefikler baskınlarda asker yollar. İlişki çok düşerse savaş ilan ederler.</p>';
+    S.kd.forEach((k,i)=>{
+      const d=KD[i], war=k.state==='war';
+      h+=`<div class="trow" style="flex-wrap:wrap"><span class="ic">${d.ic}</span><div class="tx"><b>${d.n}</b><small>${KSTATE[k.state]} · ilişki ${Math.round(k.rel)}</small><div class="relbar"><i style="width:${(k.rel+100)/2}%;background:${k.rel<0?'var(--bad)':'var(--good)'}"></i></div></div></div>`;
+      h+=`<div class="tabs" style="margin:2px 0 8px 42px"><button class="btn" data-dip="${i}:gift" ${(war||!canAfford({gold:60}))?'disabled':''}>🎁 Hediye · 🪙60</button><button class="btn" data-dip="${i}:trade" ${(k.state!=='peace'||k.rel<15||!canAfford({gold:100}))?'disabled':''}>📜 Ticaret · 🪙100</button><button class="btn" data-dip="${i}:ally" ${(war||k.state==='ally'||k.rel<45||!canAfford({gold:200}))?'disabled':''}>🤝 İttifak · 🪙200</button>`+(war?`<button class="btn brass" data-dip="${i}:peace" ${canAfford({gold:150})?'':'disabled'}>☮️ Barış · 🪙150</button>`:'')+'</div>';
+    });
+  } else if(techTab==='laws'){
+    const cd=Math.max(0,Math.ceil(S.lawCd-S.time));
+    h+=`<p class="note">Yasalar faydalıdır ama bedelleri vardır. Yasa değiştirdikten sonra 90 sn beklemelisin${cd?` (kalan ${cd} sn)`:''}.</p>`;
+    LAWS.forEach(l=>{
+      const lock=S.era<l.era;
+      h+=`<div class="trow"><span class="ic">${l.ic}</span><div class="tx"><b>${l.n}</b><small>${lock?'🔒 '+ERAS[l.era].n:l.opts[S.laws[l.id]].d}</small></div></div>`;
+      if(!lock) h+='<div class="tabs" style="margin:6px 0 4px 42px">'+l.opts.map((o,i)=>`<button class="btn ${S.laws[l.id]===i?'on':''}" data-law="${l.id}:${i}" ${(S.laws[l.id]===i||cd||(o.cost&&!canAfford({gold:o.cost})))?'disabled':''}>${o.n}${(o.cost&&S.laws[l.id]!==i)?' · 🪙'+o.cost:''}</button>`).join('')+'</div>';
+    });
   } else {
     const mk=marketCount();
     h+= mk ? `<p class="note">${mk} Pazar sayesinde kurlar %${Math.min(mk,10)*5} daha iyi.</p>` : '<p class="note">Takas için tamamlanmış en az bir Pazar gerekir (Feodal Çağ). Her Pazar kuru %5 iyileştirir, en çok %50.</p>';
@@ -1688,6 +2265,8 @@ function renderTech(){
   body.innerHTML=h;
   body.querySelectorAll('button[data-t]').forEach(b=>b.onclick=()=>researchTech(b.dataset.t));
   body.querySelectorAll('button[data-x]').forEach(b=>b.onclick=()=>doExchange(+b.dataset.x));
+  body.querySelectorAll('button[data-dip]').forEach(b=>b.onclick=()=>{ const q=b.dataset.dip.split(':'); dipAct(+q[0],q[1]); });
+  body.querySelectorAll('button[data-law]').forEach(b=>b.onclick=()=>{ const q=b.dataset.law.split(':'); adoptLaw(q[0],+q[1]); });
   body.querySelectorAll('button[data-tax]').forEach(b=>b.onclick=()=>{ S.tax=+b.dataset.tax; calcHappiness(); renderTech(); });
 }
 function researchTech(id){
@@ -1709,29 +2288,29 @@ $('cfOk').onclick=()=>{ if(pending){ doPlace(pending); pending=null; updateConfi
 $('cfNo').onclick=()=>{ setMode('select'); };
 
 /* ---------- kayıt ---------- */
-function saveGame(){
-  if(!S||S.over) return;
+function saveGame(key){
+  key=key||SAVE_KEY; if(!S||S.over) return false;
   try{
-    const data={v:1,S:{...S,paused:false},cut,army:soldiers.map(s=>s.kind),roads:roadList(),camps:camps.map(c=>({cl:c.cleared,rt:c.respawn,lv:c.lvl})),b:blds.map(b=>({t:b.type,i:b.i,j:b.j,tier:b.tier,hp:b.hp,mh:b.maxhp,lv:b.lvl,prog:b.prog}))};
-    localStorage.setItem(SAVE_KEY,JSON.stringify(data));
-  }catch(e){}
+    const data={v:2,meta:{t:S.time,era:S.era,pop:Math.floor(S.pop),wave:S.wave,date:Date.now()},S:{...S,paused:false},cut,army:soldiers.filter(s=>!s.ally).map(s=>s.kind==='hero'?{k:'hero',name:s.name,lvl:s.lvl,xp:s.xp}:s.kind),roads:roadList(),camps:camps.map(c=>({cl:c.cleared,rt:c.respawn,lv:c.lvl})),b:blds.map(b=>({t:b.type,i:b.i,j:b.j,tier:b.tier,hp:b.hp,mh:b.maxhp,lv:b.lvl,prog:b.prog}))};
+    localStorage.setItem(key,JSON.stringify(data)); return true;
+  }catch(e){ return false; }
 }
-function loadGame(){
+function loadGame(key){
   try{
-    const raw=localStorage.getItem(SAVE_KEY); if(!raw) return false;
+    const raw=localStorage.getItem(key||SAVE_KEY); if(!raw) return false;
     const d=JSON.parse(raw); clearWorld(); S=Object.assign(freshState(),d.S); S.paused=false;
     genNodes(); (d.cut||[]).forEach(c=>removeNode(c[1],c[2],true));
     d.b.forEach(x=>{ const b=placeBuilding(x.t,x.i,x.j,x.tier,true); b.lvl=x.lv||1; applyLevelVisual(b); b.maxhp=Math.max(b.maxhp,x.mh||x.hp); b.hp=x.hp; b.prog=x.prog; if(x.prog<1) b.mesh.scale.y=.12+.88*x.prog; });
     (d.roads||[]).forEach(r=>placeRoad(r[0],r[1],true)); recolorRoads(); initCamps(d.camps);
-    const hh=blds.find(x=>x.type==='hall'); (d.army||[]).forEach(k=>{ if(hh&&UNITS[k]) spawnSoldier(k,hh); });
-    syncVillagers(); assignWorkers(); updateRallyFlag(); rates=calcRates(); setMode('select'); refreshUI(); return true;
+    const hh=blds.find(x=>x.type==='hall'); (d.army||[]).forEach(k=>{ const kk=typeof k==='string'?k:k.k; if(hh&&UNITS[kk]) spawnSoldier(kk,hh,typeof k==='object'?k:null); });
+    applySeasonVisuals(season()); syncVillagers(); assignWorkers(); updateRallyFlag(); rates=calcRates(); setMode('select'); refreshUI(); return true;
   }catch(e){ return false; }
 }
-function hasSave(){ try{ return !!localStorage.getItem(SAVE_KEY); }catch(e){ return false; } }
+function hasSave(){ try{ return SLOT_KEYS.some(k=>!!localStorage.getItem(k)); }catch(e){ return false; } }
 
 /* ---------- bitiş ---------- */
 function endGame(won){
-  if(S.over) return; S.over=true; S.won=won;
+  if(S.over) return; S.over=true; S.won=won; checkAch();
   try{localStorage.removeItem(SAVE_KEY);}catch(e){}
   $('endTitle').textContent = won ? '🏛️ Zafer!' : '💀 Krallığın yıkıldı';
   $('endText').textContent = won
@@ -1764,7 +2343,7 @@ function frame(){
   if(started && S){
     if(!S.over && !S.paused){ const dt=raw*S.speed; simulate(dt); }
     for(const b of blds){ if(b.mesh.userData.blades) b.mesh.userData.blades.rotation.z+=raw*(S.paused?0:1.2); }
-    updateSky();
+    updateSky(); updatePrecip(raw); updateRings();
     /* hayalet */
     const tl=hoverTile();
     if(mode.k==='build' && ghost){
@@ -1779,9 +2358,9 @@ function frame(){
       if(tl){ const o=occ[tl.i][tl.j]; const p=o&&o.kind==='bld'?centerOf(o.b.type,o.b.i,o.b.j):tileToWorld(tl.i,tl.j); const s=o&&o.kind==='bld'?o.b.s*T:T; footprint.scale.set(s,1,s); footprint.position.set(p.x,.06,p.z); footprint.material.color.setHex(o?0xec6a5e:0x888888); footprint.visible=true; }
       else footprint.visible=false;
     } else if(mode.k==='select' && tl && !drag && !touchMode){
-      const o=occ[tl.i][tl.j]; if(!selected&&o&&o.kind==='bld') renderInfoHover(o.b); else if(!selected) $('info').style.display='none';
+      const o=occ[tl.i][tl.j]; if(!selected&&o&&o.kind==='bld') renderInfoHover(o.b); else if(!selected&&!selV) $('info').style.display='none';
     }
-    uiT-=raw; if(uiT<=0){ refreshUI(); uiT=.25; if(selected&&mode.k==='select') renderInfo(); }
+    uiT-=raw; if(uiT<=0){ refreshUI(); uiT=.25; if((selected||selV)&&mode.k==='select') renderInfo(); }
     saveT-=raw; if(saveT<=0){ saveGame(); saveT=25; }
   }
   renderer.render(scene,camera);
@@ -1791,13 +2370,23 @@ function renderInfoHover(b){ if(hoverShown===b && performance.now()-hoverTick<30
 
 /* ---------- başlangıç ---------- */
 function boot(){
-  resize(); buildBar(); buildArmyMenu();
+  resize(); buildBar(); buildArmyMenu(); applyGfx(); refreshPrefsUI();
   S=freshState(); clearOcc(); genNodes(); placeBuilding('hall',N/2-1,N/2-1,0,true); initCamps();
   cam.yaw=.6; cam.dist=62; cam.pitch=.7; updateCamera(); updateSky();
   $('loading').style.display='none'; $('startScreen').style.display='flex';
   $('contBtn').style.display=hasSave()?'':'none';
   frame();
 }
+function applyGfx(){
+  const low=PREFS.gfx==='low';
+  renderer.setPixelRatio(low?1:Math.min(window.devicePixelRatio||1,MOBILE?1.5:2)); sun.castShadow=!low; resize();
+}
+function refreshPrefsUI(){
+  $('sfxBtn').textContent='🔊 Ses: '+(PREFS.sfx?'Açık':'Kapalı'); $('musBtn').textContent='🎵 Müzik: '+(PREFS.music?'Açık':'Kapalı'); $('gfxBtn').textContent='🖼️ Grafik: '+(PREFS.gfx==='low'?'Düşük':'Yüksek');
+}
+$('sfxBtn').onclick=()=>{ PREFS.sfx=!PREFS.sfx; savePrefs(); refreshPrefsUI(); updateAmbience(); };
+$('musBtn').onclick=()=>{ PREFS.music=!PREFS.music; savePrefs(); refreshPrefsUI(); if(musicG) musicG.gain.value=PREFS.music?1:0; };
+$('gfxBtn').onclick=()=>{ PREFS.gfx=PREFS.gfx==='low'?'high':'low'; savePrefs(); refreshPrefsUI(); applyGfx(); toast(PREFS.gfx==='low'?'Düşük grafik: gölgeler kapalı, çözünürlük düşük (daha akıcı).':'Yüksek grafik açıldı.'); };
 $('buildBtn').onclick=()=>{ if(started&&!S.over) toggleMenu('drawer'); };
 $('armyBtn').onclick=()=>{ if(started&&!S.over) toggleMenu('armyMenu'); };
 $('menuBtn').onclick=()=>toggleMenu('menu');
@@ -1808,8 +2397,8 @@ const openHelp=()=>{ $('helpScreen').style.display='flex'; };
 $('helpBtn').onclick=openHelp; $('helpBtn2').onclick=openHelp; $('helpClose').onclick=()=>{ $('helpScreen').style.display='none'; };
 let diffSel=1;
 document.querySelectorAll('#diffRow [data-d]').forEach(b=>b.onclick=()=>{ diffSel=+b.dataset.d; document.querySelectorAll('#diffRow [data-d]').forEach(x=>x.classList.toggle('on',x===b)); });
-$('newBtn').onclick=()=>{ if(MOBILE) goFull(); $('startScreen').style.display='none'; started=true; startNew(); beep(440,.15,'triangle',.05,660); };
-$('contBtn').onclick=()=>{ if(MOBILE) goFull(); if(loadGame()){ $('startScreen').style.display='none'; started=true; toast('Kayıt yüklendi.','good'); } };
+$('newBtn').onclick=()=>{ if(MOBILE) goFull(); startMusic(); $('startScreen').style.display='none'; started=true; startNew(); beep(440,.15,'triangle',.05,660); };
+$('contBtn').onclick=()=>{ if(MOBILE) goFull(); openSlots('load'); };
 $('againBtn').onclick=()=>{ $('endScreen').style.display='none'; startNew(); };
 try{ boot(); }catch(err){ $('loading').textContent='Hata: '+err.message; console.error(err); }
 </script>
