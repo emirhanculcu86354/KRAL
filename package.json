@@ -1,0 +1,32 @@
+{
+  "name": "krallik-3d",
+  "version": "1.0.0",
+  "description": "Krallık 3D - şehir kurma ve savunma oyunu",
+  "main": "main.js",
+  "scripts": {
+    "copy3": "node copy-three.js",
+    "start": "npm run copy3 && electron .",
+    "dist": "npm run copy3 && electron-builder --win portable"
+  },
+  "devDependencies": {
+    "electron": "^31.0.0",
+    "electron-builder": "^24.13.3",
+    "three": "0.128.0"
+  },
+  "build": {
+    "appId": "com.krallik.game",
+    "productName": "Krallik3D",
+    "files": [
+      "index.html",
+      "main.js",
+      "three.min.js",
+      "package.json"
+    ],
+    "win": {
+      "target": "portable"
+    },
+    "directories": {
+      "output": "dist"
+    }
+  }
+}

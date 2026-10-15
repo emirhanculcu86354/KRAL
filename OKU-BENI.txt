@@ -1,0 +1,10 @@
+KRALLIK 3D - PC SURUMU
+
+1) Node.js'i kur (https://nodejs.org - LTS surumu). Bir kere yapman yeterli.
+2) Bu klasorde EXE-YAP.bat dosyasina cift tikla.
+   -> Bitince "dist" klasorunde tek dosyalik .exe olusur (kurulum gerektirmez, internetsiz calisir).
+3) Sadece denemek istersen OYNA.bat yeterli (exe uretmeden pencerede acar).
+
+Oyun icinde: F11 = tam ekran.
+Kontroller: sol tik insa/sec, sag tik surukle kamera, WASD gez, tekerlek zoom,
+Q/E dondur, X yik, 1-0 bina sec, Bosluk duraklat.
