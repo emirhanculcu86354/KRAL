@@ -137,7 +137,51 @@ button.pill{color:var(--txt)} button.pill:active{background:rgba(255,255,255,.2)
 .touchhelp{display:none}
 .screen .btns{display:flex;gap:10px;flex-wrap:wrap}
 .screen .btn{padding:10px 20px;font-size:15px}
-#loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:var(--ink);z-index:20;color:var(--mut)}
+input{user-select:text;-webkit-user-select:text}
+input.txt{width:100%;padding:9px 11px;border-radius:8px;border:1px solid var(--edge);background:rgba(0,0,0,.35);color:var(--txt);font:inherit}
+.logo{width:92px;height:92px;flex:0 0 auto;filter:drop-shadow(0 4px 14px rgba(224,170,72,.3))}
+/* yüklenme ekranı */
+#loading{position:fixed;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 40%,#1a2a3d 0%,#0b1119 72%);transition:opacity .7s ease,visibility .7s}
+#loading.hide{opacity:0;visibility:hidden}
+.ld-box{text-align:center;width:min(360px,86vw)}
+.ld-logo{width:110px;height:110px;filter:drop-shadow(0 6px 22px rgba(224,170,72,.35));animation:ldfloat 3s ease-in-out infinite}
+@keyframes ldfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.ld-title{font-family:Georgia,"Times New Roman",serif;font-size:34px;letter-spacing:5px;color:var(--brass);margin-top:8px;font-weight:700}
+.ld-title span,.mm-title span{font-size:.42em;letter-spacing:2px;background:var(--brass);color:#1a1205;border-radius:5px;padding:1px 7px;vertical-align:middle;margin-left:6px}
+.ld-sub{color:var(--mut);font-size:12.5px;margin:4px 0 18px}
+.ld-bar{height:7px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden}
+.ld-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#b9822c,#f6d27a);border-radius:4px;transition:width .35s ease}
+.ld-bar i.ind{width:35%;animation:ldslide 1.3s ease-in-out infinite}
+@keyframes ldslide{0%{transform:translateX(-110%)}100%{transform:translateX(300%)}}
+.ld-txt{margin-top:10px;font-size:13px;color:#c3ccd8}
+.ld-tip{margin-top:16px;font-size:12px;color:var(--mut);min-height:32px;line-height:1.4}
+/* ana menü */
+#startScreen{justify-content:flex-start;background:linear-gradient(90deg,rgba(6,9,14,.94) 0%,rgba(6,9,14,.72) 38%,rgba(6,9,14,.1) 78%)}
+.mm{width:min(540px,100%);padding:0 clamp(18px,6vw,70px) 0 calc(clamp(18px,6vw,70px) + var(--sl))}
+.mm-brand{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+.mm-title{font-family:Georgia,"Times New Roman",serif;font-size:40px;font-weight:700;letter-spacing:4px;color:var(--brass);line-height:1;white-space:nowrap}
+.mm-sub{color:#aeb9c7;font-size:13px;margin-top:7px}
+.mm-btns{display:flex;flex-direction:column;gap:8px;width:min(300px,100%)}
+.mbtn{display:flex;align-items:center;gap:12px;padding:11px 16px;border-radius:10px;border:1px solid var(--edge);background:rgba(20,28,40,.78);backdrop-filter:blur(6px);font-size:15px;text-align:left;transition:transform .12s,background .12s}
+.mbtn span{font-size:19px;width:26px;text-align:center}
+.mbtn:hover{background:rgba(255,255,255,.14);transform:translateX(3px)}
+.mbtn:active{transform:scale(.98)}
+.mbtn.brass{background:linear-gradient(180deg,#f0be5c,#d9a441);color:#1a1205;font-weight:700;border-color:transparent}
+.mbtn.brass:hover{background:linear-gradient(180deg,#f6cb74,#e2b052)}
+.mm-foot{margin-top:18px;color:var(--mut);font-size:11.5px}
+.diffcards{display:flex;gap:8px;flex-wrap:wrap}
+.dcard{flex:1;min-width:110px;padding:10px;border-radius:10px;border:1px solid var(--edge);background:rgba(255,255,255,.05);text-align:left;font-size:12.5px;color:var(--mut)}
+.dcard b{display:block;color:var(--txt);font-size:15px;margin-bottom:3px}
+.dcard.on{border-color:var(--brass);background:rgba(224,170,72,.18)}
+body.menu #hudL,body.menu #hudR,body.menu .fab,body.menu #modebar,body.menu #info,body.menu #armyPanel,body.menu #rot,body.menu #toasts,body.menu #menu,body.menu #drawer,body.menu #armyMenu{display:none!important}
+@media (max-height:480px){
+  .mm-brand{margin-bottom:10px}.logo{width:62px;height:62px}.mm-title{font-size:27px}.mm-sub{font-size:11.5px;margin-top:4px}
+  .mm-btns{display:grid;grid-template-columns:1fr 1fr;width:min(440px,100%);gap:6px}
+  .mbtn{padding:8px 12px;font-size:13.5px;gap:8px}.mbtn span{font-size:16px;width:20px}
+  .mm-foot{display:none}
+  .ld-logo{width:76px;height:76px}.ld-title{font-size:26px;margin-top:2px}.ld-sub{margin-bottom:10px}.ld-tip{margin-top:8px}
+}
+@media (orientation:portrait){ #startScreen{justify-content:center;background:rgba(6,9,14,.84)} .mm{padding:0 22px} }
 #rot{display:none;position:fixed;left:50%;bottom:calc(84px + var(--sb));transform:translateX(-50%);z-index:8;padding:8px 14px;background:rgba(224,170,72,.95);color:#1a1205;border-radius:20px;font-size:13px;font-weight:600;pointer-events:none}
 
 /* --- telefon / dokunmatik --- */
@@ -170,7 +214,40 @@ button.pill{color:var(--txt)} button.pill:active{background:rgba(255,255,255,.2)
 </head>
 <body>
 <canvas id="c" tabindex="0"></canvas>
-<div id="loading">3D dünya yükleniyor…</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="lgG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6d27a"/><stop offset="1" stop-color="#b9822c"/></linearGradient>
+    <linearGradient id="lgB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#24394f"/><stop offset="1" stop-color="#0e1824"/></linearGradient>
+    <symbol id="logoSym" viewBox="0 0 120 120">
+      <path d="M60 4 L111 21 V60 C111 91 88 111 60 119 C32 111 9 91 9 60 V21 Z" fill="url(#lgB)" stroke="url(#lgG)" stroke-width="4.5" stroke-linejoin="round"/>
+      <path d="M60 11 L104 26 V60 C104 87 84 104 60 112 C36 104 16 87 16 60 V26 Z" fill="none" stroke="rgba(246,210,122,.32)" stroke-width="1.2"/>
+      <g fill="url(#lgG)">
+        <rect x="30" y="60" width="60" height="32"/>
+        <rect x="25" y="46" width="19" height="46"/><rect x="76" y="46" width="19" height="46"/>
+        <rect x="46" y="40" width="28" height="52"/>
+        <rect x="25" y="41" width="5" height="5"/><rect x="32" y="41" width="5" height="5"/><rect x="39" y="41" width="5" height="5"/>
+        <rect x="76" y="41" width="5" height="5"/><rect x="83" y="41" width="5" height="5"/><rect x="90" y="41" width="5" height="5"/>
+        <rect x="46" y="35" width="5" height="5"/><rect x="55" y="35" width="5" height="5"/><rect x="64" y="35" width="5" height="5"/><rect x="69" y="35" width="5" height="5"/>
+        <rect x="59" y="19" width="2.2" height="16"/>
+      </g>
+      <path d="M61.2 20 L76 25.5 L61.2 31 Z" fill="#e0453a"/>
+      <path d="M52 92 V77 a8 8 0 0 1 16 0 V92 Z" fill="#0e1824"/>
+      <rect x="31" y="68" width="4" height="9" rx="2" fill="#0e1824"/><rect x="85" y="68" width="4" height="9" rx="2" fill="#0e1824"/>
+      <rect x="32" y="53" width="3" height="7" rx="1.5" fill="#0e1824"/><rect x="85" y="53" width="3" height="7" rx="1.5" fill="#0e1824"/>
+      <rect x="57" y="52" width="6" height="10" rx="3" fill="#0e1824"/>
+    </symbol>
+  </defs>
+</svg>
+<div id="loading">
+  <div class="ld-box">
+    <svg class="ld-logo"><use href="#logoSym"/></svg>
+    <div class="ld-title">KRALLIK<span>3D</span></div>
+    <div class="ld-sub">Şehir kur · Orduyu yönet · Krallığını koru</div>
+    <div class="ld-bar"><i id="ldFill" class="ind"></i></div>
+    <div class="ld-txt" id="ldTxt">Dünya yükleniyor…</div>
+    <div class="ld-tip" id="ldTip"></div>
+  </div>
+</div>
 
 <div id="hudL">
   <div class="hrow">
@@ -198,9 +275,8 @@ button.pill{color:var(--txt)} button.pill:active{background:rgba(255,255,255,.2)
 <div class="panel" id="menu">
   <button class="btn" id="saveBtn">💾 Kaydet / Yükle</button>
   <button class="btn" id="achBtn">🏆 Başarımlar</button>
-  <button class="btn" id="sfxBtn">🔊 Ses: Açık</button>
-  <button class="btn" id="musBtn">🎵 Müzik: Açık</button>
-  <button class="btn" id="gfxBtn">🖼️ Grafik: Yüksek</button>
+  <button class="btn" id="setBtn">⚙️ Ayarlar</button>
+  <button class="btn" id="homeBtn">🏠 Ana menü</button>
   <button class="btn" id="fsBtn">⛶ Tam ekran</button>
   <button class="btn" id="helpBtn2">❔ Nasıl oynanır</button>
 </div>
@@ -231,16 +307,21 @@ button.pill{color:var(--txt)} button.pill:active{background:rgba(255,255,255,.2)
 </div>
 
 <div class="screen" id="startScreen" style="display:none">
-  <div class="panel box">
-    <h1>Krallık 3D</h1>
-    <p>Küçük bir köyle başla. Ormanda düşman kampları var, baskınlar oradan gelir. Köylülerin işte çalışır, geceleri evine döner, baskında saklanır; ordunu Şehir Merkezi’nde ve Kışla’da eğit. Odun, taş ve yiyecek topla; çağ atla; surlar, kuleler ve kışlalarla baskınlara karşı koy. Harika’yı tamamlayan kazanır.</p>
-    
-    <div class="btns">
-      <span id="diffRow" style="display:flex;gap:6px;align-items:center;width:100%;margin-bottom:4px"><span style="color:var(--mut);font-size:13px">Zorluk:</span><button class="btn" data-d="0">Kolay</button><button class="btn on" data-d="1">Normal</button><button class="btn" data-d="2">Zor</button></span>
-      <button class="btn brass" id="newBtn">Yeni oyun</button>
-      <button class="btn" id="contBtn" style="display:none">Kayıtlı oyunlar</button>
-      <button class="btn" id="helpBtn">❔ Nasıl oynanır</button>
+  <div class="mm">
+    <div class="mm-brand">
+      <svg class="logo"><use href="#logoSym"/></svg>
+      <div><div class="mm-title">KRALLIK<span>3D</span></div><div class="mm-sub">Şehir kur · Orduyu yönet · Krallığını koru</div></div>
     </div>
+    <div class="mm-btns">
+      <button class="mbtn brass" id="resBtn" style="display:none"><span>▶</span>Devam et</button>
+      <button class="mbtn brass" id="newBtn"><span>🆕</span>Yeni oyun</button>
+      <button class="mbtn" id="contBtn"><span>📂</span>Oyunu yükle</button>
+      <button class="mbtn" id="setMainBtn"><span>⚙️</span>Ayarlar</button>
+      <button class="mbtn" id="achMainBtn"><span>🏆</span>Başarımlar</button>
+      <button class="mbtn" id="helpBtn"><span>❔</span>Nasıl oynanır</button>
+      <button class="mbtn" id="aboutBtn"><span>ℹ️</span>Hakkında</button>
+    </div>
+    <div class="mm-foot">Sürüm 1.0 · Üç boyutlu şehir kurma ve savunma oyunu</div>
   </div>
 </div>
 
@@ -248,10 +329,43 @@ button.pill{color:var(--txt)} button.pill:active{background:rgba(255,255,255,.2)
   <div class="panel box">
     <h2 id="endTitle"></h2>
     <p id="endText"></p>
-    <div class="btns"><button class="btn brass" id="againBtn">Yeniden başla</button></div>
+    <div class="btns"><button class="btn brass" id="againBtn">Yeniden başla</button><button class="btn" id="endMenu">Ana menü</button></div>
   </div>
 </div>
 
+<div class="screen" id="newScreen" style="display:none">
+  <div class="panel box">
+    <h2>🆕 Yeni oyun</h2>
+    <p style="margin-bottom:6px">Zorluk</p>
+    <div class="diffcards" id="diffRow">
+      <button class="dcard" data-d="0"><b>Kolay</b>İlk baskın 10 dk · zayıf düşman</button>
+      <button class="dcard on" data-d="1"><b>Normal</b>İlk baskın 7 dk</button>
+      <button class="dcard" data-d="2"><b>Zor</b>İlk baskın 5 dk · güçlü düşman</button>
+    </div>
+    <p style="margin:14px 0 6px">Harita tohumu <span style="color:var(--mut);font-size:12px">(isteğe bağlı · aynı sayı aynı harita)</span></p>
+    <input class="txt" id="seedIn" placeholder="Boş bırak: rastgele harita" inputmode="numeric" maxlength="12">
+    <div class="btns" style="margin-top:18px"><button class="btn brass" id="newGo">▶ Başla</button><button class="btn" id="newBack">Geri</button></div>
+  </div>
+</div>
+<div class="screen" id="setScreen" style="display:none">
+  <div class="panel box wide">
+    <div class="tabs"><b style="font-size:18px;flex:1">⚙️ Ayarlar</b><button class="btn" id="setClose">✕</button></div>
+    <div class="trow"><div class="tx"><b>🔊 Ses efektleri</b><small>Savaş, inşaat, yağmur, kuş sesleri</small></div><button class="btn" id="setSfx"></button></div>
+    <div class="trow"><div class="tx"><b>🎵 Müzik</b><small>Mevsime ve tehlikeye göre değişir</small></div><button class="btn" id="setMus"></button></div>
+    <div class="trow"><div class="tx"><b>🔈 Ana ses seviyesi</b><small id="volTxt"></small></div><input type="range" id="volRange" min="0" max="100" step="5" style="width:130px"></div>
+    <div class="trow"><div class="tx"><b>🖼️ Grafik kalitesi</b><small>Düşük: gölgeler kapalı, daha akıcı</small></div><button class="btn" id="setGfx"></button></div>
+    <div class="trow"><div class="tx"><b>🗑️ Verileri sıfırla</b><small>Tüm kayıtları ve başarımları siler</small></div><button class="btn no" id="setWipe">Sıfırla</button></div>
+  </div>
+</div>
+<div class="screen" id="aboutScreen" style="display:none">
+  <div class="panel box" style="text-align:center">
+    <svg class="logo" style="width:84px;height:84px"><use href="#logoSym"/></svg>
+    <h2 style="margin-top:6px">Krallık 3D</h2>
+    <p>Sürüm 1.0 — üç boyutlu şehir kurma ve savunma oyunu.<br>Three.js ile yapıldı. Müzik ve sesler tarayıcıda üretilir.</p>
+    <p>🏆 Başarımlar: <b id="abAch"></b></p>
+    <div class="btns" style="justify-content:center"><button class="btn brass" id="aboutClose">Tamam</button></div>
+  </div>
+</div>
 <div class="screen" id="slotScreen" style="display:none">
   <div class="panel box wide">
     <div class="tabs"><b id="slotTitle" style="font-size:18px;flex:1">💾 Kaydet</b><button class="btn" id="slotClose">✕</button></div>
@@ -372,13 +486,13 @@ const tileToWorld = (i,j) => new THREE.Vector3((i-N/2+.5)*T,0,(j-N/2+.5)*T);
 
 /* ---------- ses ---------- */
 let actx=null, masterG=null, musicG=null, ambG=null, noiseBuf=null, rainG=null, windG=null, lastHitT=0, musicTimer=null, musicIdx=0;
-const PREFS=(function(){ try{ return Object.assign({sfx:true,music:true,gfx:'high'},JSON.parse(localStorage.getItem('krallik3d_prefs')||'{}')); }catch(e){ return {sfx:true,music:true,gfx:'high'}; } })();
+const PREFS=(function(){ try{ return Object.assign({sfx:true,music:true,gfx:'high',vol:.8},JSON.parse(localStorage.getItem('krallik3d_prefs')||'{}')); }catch(e){ return {sfx:true,music:true,gfx:'high'}; } })();
 function savePrefs(){ try{ localStorage.setItem('krallik3d_prefs',JSON.stringify(PREFS)); }catch(e){} }
 function ensureAudio(){
   if(actx){ if(actx.state==='suspended') actx.resume(); return actx; }
   try{
     actx=new (window.AudioContext||window.webkitAudioContext)();
-    masterG=actx.createGain(); masterG.gain.value=1; masterG.connect(actx.destination);
+    masterG=actx.createGain(); masterG.gain.value=PREFS.vol; masterG.connect(actx.destination);
     musicG=actx.createGain(); musicG.gain.value=PREFS.music?1:0; musicG.connect(masterG);
     ambG=actx.createGain(); ambG.gain.value=1; ambG.connect(masterG);
     const len=actx.sampleRate*2, buf=actx.createBuffer(1,len,actx.sampleRate), dd=buf.getChannelData(0);
@@ -790,7 +904,7 @@ function clearWorld(){
 }
 
 function startNew(){
-  clearWorld(); S=freshState(); S.diff=diffSel; S.nextWave=[600,420,300][diffSel]; recolorRoads(); genNodes();
+  clearWorld(); S=freshState(); S.diff=diffSel; S.nextWave=[600,420,300][diffSel]; if(seedSel) S.seed=seedSel; recolorRoads(); genNodes();
   placeBuilding('hall', N/2-1, N/2-1, 0, true);
   startingArmy(); syncVillagers(); updateRallyFlag(); initCamps();
   cam.x=0; cam.z=0; cam.dist=46; cam.yaw=.8; cam.pitch=.85;
@@ -2172,7 +2286,7 @@ function renderSlots(){
   $('slotList').querySelectorAll('[data-ld]').forEach(b=>b.onclick=()=>doLoad(SLOT_KEYS[+b.dataset.ld]));
 }
 function doLoad(key){
-  if(loadGame(key)){ started=true; ['startScreen','slotScreen','endScreen'].forEach(id=>{ $(id).style.display='none'; }); closeMenus(); startMusic(); toast('Kayıt yüklendi.','good'); }
+  if(loadGame(key)){ started=true; inSession=true; document.body.classList.remove('menu'); ['startScreen','slotScreen','endScreen'].forEach(id=>{ $(id).style.display='none'; }); closeMenus(); startMusic(); toast('Kayıt yüklendi.','good'); }
   else toast('Kayıt yüklenemedi.','bad');
 }
 $('saveBtn').onclick=()=>openSlots('save');
@@ -2333,6 +2447,7 @@ function frame(){
   if(keys.KeyA||keys.ArrowLeft){cam.x-=rx*sp;cam.z-=rz*sp;}
   if(keys.KeyQ) cam.yaw+=raw*1.6; if(keys.KeyE) cam.yaw-=raw*1.6;
   cam.x=clamp(cam.x,-HALF-70,HALF+70); cam.z=clamp(cam.z,-HALF-70,HALF+70);
+  if(!started) cam.yaw+=raw*.05;
   updateCamera();
 
   const t=performance.now()/1000;
@@ -2369,24 +2484,48 @@ let hoverShown=null,hoverTick=0;
 function renderInfoHover(b){ if(hoverShown===b && performance.now()-hoverTick<300) return; hoverShown=b; hoverTick=performance.now(); renderInfo(b); }
 
 /* ---------- başlangıç ---------- */
-function boot(){
-  resize(); buildBar(); buildArmyMenu(); applyGfx(); refreshPrefsUI();
-  S=freshState(); clearOcc(); genNodes(); placeBuilding('hall',N/2-1,N/2-1,0,true); initCamps();
+const TIPS=['İpucu: Çiftlik ve oduncu işçi ister; ev yaparak nüfusu artır.','İpucu: Yola bitişik üretim binaları %10 daha verimlidir.','İpucu: Ordu Kampı yakınında bekleyen askerlerin canı yenilenir.','İpucu: Düşman kamplarını yıkarsan baskınlar azalır.','İpucu: Surları sürükleyerek çek; kapılar ok atar.','İpucu: Refah düşerse üretim yavaşlar; çeşme, han ve şapel yap.','İpucu: Kışın çiftlikler yarı verimle çalışır, yiyecek stokla.','İpucu: Komutan yakınındaki askerleri güçlendirir ve iyileştirir.','İpucu: Komşu krallıklarla ittifak, baskınlarda sana asker yollar.','İpucu: Yangında itfaiye, salgında şifahane işini görür.'];
+function setLoad(p,txt){ const f=$('ldFill'); f.classList.remove('ind'); f.style.width=p+'%'; if(txt) $('ldTxt').textContent=txt; }
+async function boot(){
+  const wait=ms=>new Promise(r=>setTimeout(r,ms)), t0=performance.now();
+  $('ldTip').textContent=TIPS[Math.floor(Math.random()*TIPS.length)];
+  setLoad(30,'Köy kuruluyor…'); resize();
+  S=freshState(); clearOcc(); genNodes(); placeBuilding('hall',N/2-1,N/2-1,0,true);
+  await wait(120);
+  setLoad(58,'Ormandaki düşman kampları kuruluyor…'); initCamps();
+  await wait(120);
+  setLoad(82,'Arayüz ve ses hazırlanıyor…'); buildBar(); buildArmyMenu(); applyGfx(); refreshPrefsUI();
   cam.yaw=.6; cam.dist=62; cam.pitch=.7; updateCamera(); updateSky();
-  $('loading').style.display='none'; $('startScreen').style.display='flex';
-  $('contBtn').style.display=hasSave()?'':'none';
-  frame();
+  document.body.classList.add('menu'); frame();
+  await wait(120);
+  setLoad(100,'Hazır!');
+  await wait(Math.max(300,2300-(performance.now()-t0)));
+  $('loading').classList.add('hide'); showMain();
+  setTimeout(()=>{ $('loading').style.display='none'; },800);
 }
 function applyGfx(){
   const low=PREFS.gfx==='low';
   renderer.setPixelRatio(low?1:Math.min(window.devicePixelRatio||1,MOBILE?1.5:2)); sun.castShadow=!low; resize();
 }
 function refreshPrefsUI(){
-  $('sfxBtn').textContent='🔊 Ses: '+(PREFS.sfx?'Açık':'Kapalı'); $('musBtn').textContent='🎵 Müzik: '+(PREFS.music?'Açık':'Kapalı'); $('gfxBtn').textContent='🖼️ Grafik: '+(PREFS.gfx==='low'?'Düşük':'Yüksek');
+  $('setSfx').textContent=PREFS.sfx?'Açık':'Kapalı'; $('setMus').textContent=PREFS.music?'Açık':'Kapalı'; $('setGfx').textContent=PREFS.gfx==='low'?'Düşük':'Yüksek';
+  $('setSfx').classList.toggle('on',PREFS.sfx); $('setMus').classList.toggle('on',PREFS.music);
+  $('volRange').value=Math.round(PREFS.vol*100); $('volTxt').textContent='%'+Math.round(PREFS.vol*100);
 }
-$('sfxBtn').onclick=()=>{ PREFS.sfx=!PREFS.sfx; savePrefs(); refreshPrefsUI(); updateAmbience(); };
-$('musBtn').onclick=()=>{ PREFS.music=!PREFS.music; savePrefs(); refreshPrefsUI(); if(musicG) musicG.gain.value=PREFS.music?1:0; };
-$('gfxBtn').onclick=()=>{ PREFS.gfx=PREFS.gfx==='low'?'high':'low'; savePrefs(); refreshPrefsUI(); applyGfx(); toast(PREFS.gfx==='low'?'Düşük grafik: gölgeler kapalı, çözünürlük düşük (daha akıcı).':'Yüksek grafik açıldı.'); };
+$('setSfx').onclick=()=>{ PREFS.sfx=!PREFS.sfx; savePrefs(); refreshPrefsUI(); updateAmbience(); };
+$('setMus').onclick=()=>{ PREFS.music=!PREFS.music; savePrefs(); refreshPrefsUI(); if(musicG) musicG.gain.value=PREFS.music?1:0; };
+$('setGfx').onclick=()=>{ PREFS.gfx=PREFS.gfx==='low'?'high':'low'; savePrefs(); refreshPrefsUI(); applyGfx(); };
+$('volRange').oninput=()=>{ PREFS.vol=(+$('volRange').value)/100; if(masterG) masterG.gain.value=PREFS.vol; savePrefs(); $('volTxt').textContent='%'+Math.round(PREFS.vol*100); };
+let wipeT=0;
+$('setWipe').onclick=()=>{
+  if(wipeT&&performance.now()-wipeT<4000){
+    try{ Object.keys(localStorage).filter(k=>k.indexOf('krallik3d_')===0&&k!=='krallik3d_prefs').forEach(k=>localStorage.removeItem(k)); }catch(e){}
+    achDone={}; wipeT=0; $('setWipe').textContent='Sıfırla'; $('contBtn').style.display=hasSave()?'':'none'; toast('Tüm kayıtlar ve başarımlar silindi.','bad');
+  } else { wipeT=performance.now(); $('setWipe').textContent='Emin misin? Tekrar dokun'; setTimeout(()=>{ $('setWipe').textContent='Sıfırla'; wipeT=0; },4000); }
+};
+$('setBtn').onclick=()=>{ $('setScreen').style.display='flex'; };
+$('setMainBtn').onclick=()=>{ $('setScreen').style.display='flex'; };
+$('setClose').onclick=()=>{ $('setScreen').style.display='none'; };
 $('buildBtn').onclick=()=>{ if(started&&!S.over) toggleMenu('drawer'); };
 $('armyBtn').onclick=()=>{ if(started&&!S.over) toggleMenu('armyMenu'); };
 $('menuBtn').onclick=()=>toggleMenu('menu');
@@ -2395,12 +2534,34 @@ $('quest').onclick=()=>$('quest').classList.toggle('open');
 $('fsBtn').onclick=()=>{ if(document.fullscreenElement) document.exitFullscreen(); else goFull(); };
 const openHelp=()=>{ $('helpScreen').style.display='flex'; };
 $('helpBtn').onclick=openHelp; $('helpBtn2').onclick=openHelp; $('helpClose').onclick=()=>{ $('helpScreen').style.display='none'; };
-let diffSel=1;
+let diffSel=1, seedSel=0, inSession=false;
 document.querySelectorAll('#diffRow [data-d]').forEach(b=>b.onclick=()=>{ diffSel=+b.dataset.d; document.querySelectorAll('#diffRow [data-d]').forEach(x=>x.classList.toggle('on',x===b)); });
-$('newBtn').onclick=()=>{ if(MOBILE) goFull(); startMusic(); $('startScreen').style.display='none'; started=true; startNew(); beep(440,.15,'triangle',.05,660); };
-$('contBtn').onclick=()=>{ if(MOBILE) goFull(); openSlots('load'); };
+function showMain(){
+  document.body.classList.add('menu'); started=false; closeMenus();
+  ['newScreen','setScreen','aboutScreen','slotScreen','achScreen','helpScreen','techScreen','endScreen'].forEach(id=>{ $(id).style.display='none'; });
+  $('startScreen').style.display='flex';
+  $('resBtn').style.display=(inSession&&S&&!S.over)?'':'none';
+  $('contBtn').style.display=hasSave()?'':'none';
+  cam.x=0; cam.z=0; cam.dist=62; cam.pitch=.7;
+}
+function hideMain(){ document.body.classList.remove('menu'); $('startScreen').style.display='none'; }
+$('resBtn').onclick=()=>{ hideMain(); started=true; startMusic(); };
+$('newBtn').onclick=()=>{ $('newScreen').style.display='flex'; };
+$('newBack').onclick=()=>{ $('newScreen').style.display='none'; };
+$('newGo').onclick=()=>{
+  const v=($('seedIn').value||'').trim(); seedSel=0;
+  if(v){ const n=Number(v); if(isFinite(n)&&n>0) seedSel=(Math.floor(n)%1000000000)||1; else { let h=7; for(let i=0;i<v.length;i++) h=(h*31+v.charCodeAt(i))|0; seedSel=Math.abs(h)%1000000000+1; } }
+  $('newScreen').style.display='none'; hideMain(); if(MOBILE) goFull(); startMusic(); started=true; inSession=true; startNew(); beep(440,.15,'triangle',.05,660);
+  if(seedSel) toast('🗺️ Harita tohumu: '+seedSel);
+};
+$('contBtn').onclick=()=>{ openSlots('load'); };
+$('achMainBtn').onclick=openAch;
+$('aboutBtn').onclick=()=>{ $('abAch').textContent=ACH.filter(a=>achDone[a.id]).length+'/'+ACH.length; $('aboutScreen').style.display='flex'; };
+$('aboutClose').onclick=()=>{ $('aboutScreen').style.display='none'; };
+$('homeBtn').onclick=()=>{ if(S&&!S.over) saveGame(); inSession=true; showMain(); };
 $('againBtn').onclick=()=>{ $('endScreen').style.display='none'; startNew(); };
-try{ boot(); }catch(err){ $('loading').textContent='Hata: '+err.message; console.error(err); }
+$('endMenu').onclick=()=>{ $('endScreen').style.display='none'; inSession=false; showMain(); };
+boot().catch(err=>{ $('ldTxt').textContent='Hata: '+err.message; console.error(err); });
 </script>
 </body>
 </html>
