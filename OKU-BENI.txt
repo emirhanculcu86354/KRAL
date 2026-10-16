@@ -1,4 +1,4 @@
-KINGDOM - PC SURUMU (Surum 2.0)
+KINGDOM - PC SURUMU (Surum 2.3)
 
 1) Node.js'i kur (https://nodejs.org - LTS surumu). Bir kere yapman yeterli.
 2) Bu klasorde EXE-YAP.bat dosyasina cift tikla.
@@ -10,9 +10,19 @@ Oyun icinde: F11 = tam ekran.
 Kontroller: sol tik insa/sec, sag tik surukle kamera, WASD gez, tekerlek zoom,
 Q/E dondur, X yik, 1-0 bina sec, Bosluk duraklat. Sol ustteki mini haritaya tiklayarak hizli gez.
 
+SURUM 2.3 YENILIKLERI
+- "Minecraft gibi" kutu karakterler kaldirildi. Yerine orta cag karakterleri geldi
+  (KayKit - Kay Lousberg, CC0): sovalye (kilic+kalkan), okcu (arbalet), buyucu (asa),
+  koylu (kapusonlu), tuccar, barbar/ork, haydut (cift hancer), iskelet ordusu (savasci,
+  okcu, minyon), dusman krali. Her biri iskeletli ve 25 animasyonlu (yurume, kosma,
+  kilic savurma, ates etme, buyu, olum, kutlama, oturma...).
+- Yeni at modeli (yumusak hatlar, dizden bukulen bacaklar, renkli ortu).
+- Baskin puskurtulunce askerler zaferi kutluyor.
+- Indirilen tum modeller D:\kingdom klasorunde yedekleniyor (bkz. D:\kingdom\KAYNAKLAR.txt).
+
 SURUM 2.0 YENILIKLERI
 - Tum binalar, askerler, koyluler, dusmanlar, agaclar ve kayalar gercek 3B modellerle yenilendi
-  (Kenney.nl CC0 paketleri: Castle Kit, Fantasy Town Kit, Nature Kit, Blocky Characters).
+  (Kenney.nl CC0 paketleri: Castle Kit, Fantasy Town Kit, Nature Kit).
 - Karakterler yuruyor, saldiriyor, odun kesiyor, olunce yere dusuyor (animasyonlu).
 - Binalar cag atladikca degisir (ahsap -> kumtasi -> gri tas -> mermer).
 - Insaat iskelesi, secili bina halkasi, gece pencere isiklari, simsek ve gok gurultusu.

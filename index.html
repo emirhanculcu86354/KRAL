@@ -372,11 +372,13 @@ body.menu #banner{display:none}
       <button class="mbtn" id="helpBtn"><span>❔</span>Nasıl oynanır</button>
       <button class="mbtn" id="aboutBtn"><span>ℹ️</span>Hakkında</button>
     </div>
-    <div class="mm-foot">Sürüm 2.0 · Üç boyutlu şehir kurma ve savunma oyunu</div>
+    <div class="mm-foot">Sürüm 2.3 · Üç boyutlu şehir kurma ve savunma oyunu</div>
   </div>
   <div class="news panel">
-    <b>✨ Sürüm 2.0 yenilikleri</b>
+    <b>✨ Sürüm 2.3 yenilikleri</b>
     <ul>
+      <li>⚔️ YENİ: Orta çağ karakterleri — şövalye, barbar, büyücü, haydut, iskelet ordusu (76 animasyonlu)</li>
+      <li>🐎 Yeni at modeli, zafer kutlaması</li>
       <li>🏰 Tüm binalar, askerler ve doğa gerçek 3B modellerle yenilendi</li>
       <li>🐎 Animasyonlu karakterler, atlı şövalyeler, inşaat yapan köylüler</li>
       <li>🐉 Ejderha baskınları, düşman kralları, 4 düşman fraksiyonu</li>
@@ -458,7 +460,7 @@ body.menu #banner{display:none}
     <svg class="logo" style="width:84px;height:84px"><use href="#logoSym"/></svg>
     <h2 style="margin-top:6px">Kingdom</h2>
     <p>Sürüm 2.0 — üç boyutlu şehir kurma ve savunma oyunu.<br>Three.js ile yapıldı. Müzik tarayıcıda üretilir.</p>
-    <p style="font-size:12.5px">3B modeller ve ses efektleri: <b>Kenney.nl</b> (Castle Kit, Fantasy Town Kit, Nature Kit, Blocky Characters, RPG Audio, Impact Sounds, Music Jingles) — CC0 lisanslı. Ejderha modeli oyun içinde elle modellendi.</p>
+    <p style="font-size:12.5px">3B modeller ve ses efektleri: <b>Kenney.nl</b> (Castle Kit, Fantasy Town Kit, Nature Kit, Survival Kit, RPG Audio, Impact Sounds, Music Jingles) · Karakterler: <b>KayKit — Kay Lousberg</b> (Adventurers, Skeletons) — hepsi CC0 lisanslı. Ejderha ve at modelleri oyun içinde elle modellendi.</p>
     <p>🏆 Başarımlar: <b id="abAch"></b></p>
     <div class="btns" style="justify-content:center"><button class="btn brass" id="aboutClose">Tamam</button></div>
   </div>
@@ -521,6 +523,7 @@ body.menu #banner{display:none}
 <script src="three.min.js"></script>
 <script>window.THREE||document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>')</script>
 <script src="GLTFLoader.js"></script>
+<script src="SkeletonUtils.js"></script>
 <script src="assets.js"></script>
 <script src="models.js"></script>
 <script>
@@ -1470,6 +1473,7 @@ function wpn(kind,col){
 function krBone(w,re){ let f=null; w.traverse(o=>{ if(!f&&re.test(o.name)) f=o; }); return f; }
 function krDress(w,o){
   o=o||{};
+  if(w.userData.ch&&w.userData.ch.kk){ if(o.crown) KR.crown(w); return w; }
   if(o.weapon){ const arm=krBone(w,/^arm-right/); if(arm) arm.add(wpn(o.weapon)); }
   if(o.shield){ const arm=krBone(w,/^arm-left/); if(arm){ const s=box(o.shield,.14,1.0,.85,0,0,0); s.position.set(.32,-1.15,.1); const b=box(0xe0aa48,.16,.25,.25,0,0,0); b.position.set(.33,-.75,.1); arm.add(s,b); } }
   if(o.helm){ const h=krBone(w,/^head/); if(h){ h.add(box(o.helm,1.08,.36,1.08,0,.8,0)); if(o.plume) h.add(box(o.plume,.18,.45,.6,0,1.15,0)); } }
@@ -1478,20 +1482,52 @@ function krDress(w,o){
   if(o.tabard){ const t=krBone(w,/^torso/); if(t){ t.add(box(o.tabard,.82,.7,.06,0,.15,.32)); } }
   return w;
 }
+const HORSE_G={}; 
+function hgeo(k,f){ return HORSE_G[k]||(HORSE_G[k]=f()); }
 function makeHorse(col,caparison){
-  const g=new THREE.Group(), C=col||0x7a4a2a, D=0x3a2414;
-  g.add(box(C,.55,.6,1.5,0,.95,0));
-  const neck=box(C,.32,.75,.35,0,1.3,.75); neck.rotation.x=-.55; g.add(neck);
-  const head=new THREE.Group(); head.position.set(0,1.85,1.05); g.add(head); head.add(box(C,.3,.32,.62,0,-.16,.18)); head.add(box(D,.08,.25,.5,0,.05,-.05)); head.add(box(0x222222,.07,.07,.05,.13,-.05,.3)); head.add(box(0x222222,.07,.07,.05,-.13,-.05,.3));
-  const tl=box(D,.12,.6,.12,0,.75,-.85); tl.rotation.x=.5; g.add(tl);
-  if(caparison){ g.add(box(caparison,.62,.45,1.2,0,.82,0)); g.add(box(0xe0aa48,.64,.06,1.22,0,.82,0)); }
-  const legs=[]; [[-.18,.55],[.18,.55],[-.18,-.55],[.18,-.55]].forEach(([x,z])=>{ const lg=new THREE.Group(); lg.position.set(x,.95,z); lg.add(box(C,.14,.95,.14,0,-.95,0)); lg.add(box(D,.16,.12,.18,0,-.97,0)); g.add(lg); legs.push(lg); });
-  g.traverse(o=>{ if(o.isMesh) o.castShadow=true; }); g.userData.legs=legs; return g;
+  const g=new THREE.Group(), C=col||0x7a4a2a;
+  const cm=(c,r)=>{ const m=new THREE.MeshStandardMaterial({color:new THREE.Color(c).convertSRGBToLinear(),roughness:r||.85,metalness:0,flatShading:true}); return m; };
+  const mC=cm(C), mD=cm(new THREE.Color(C).multiplyScalar(.45).getHex()), mH=cm(0x2a2420), mL=cm(new THREE.Color(C).lerp(new THREE.Color(0xffffff),.25).getHex());
+  const SPH=hgeo('s',()=>new THREE.SphereGeometry(1,12,9)), CYL=hgeo('c',()=>new THREE.CylinderGeometry(1,1,1,9)), CON=hgeo('k',()=>new THREE.ConeGeometry(1,1,6));
+  const add=(geo,m,sx,sy,sz,x,y,z,rx,rz,par)=>{ const o=new THREE.Mesh(geo,m); o.scale.set(sx,sy,sz); o.position.set(x,y,z); if(rx) o.rotation.x=rx; if(rz) o.rotation.z=rz; o.castShadow=true; (par||g).add(o); return o; };
+  // gövde
+  add(SPH,mC,.40,.42,.80,0,1.08,0);
+  add(SPH,mC,.37,.42,.40,0,1.10,.48);   // göğüs
+  add(SPH,mC,.39,.41,.42,0,1.12,-.50);  // sağrı
+  add(SPH,mL,.30,.18,.62,0,.80,0);      // karın
+  // boyun + baş
+  const neck=new THREE.Group(); neck.position.set(0,1.28,.62); neck.rotation.x=-.62; g.add(neck);
+  add(CYL,mC,.17,.78,.25,0,.36,0,0,0,neck);
+  add(CYL,mD,.05,.80,.10,0,.38,-.21,0,0,neck); // yele
+  const head=new THREE.Group(); head.position.set(0,.78,.02); head.rotation.x=2.45; neck.add(head);
+  add(SPH,mC,.15,.20,.17,0,.02,0,0,0,head);
+  add(CYL,mC,.11,.42,.13,0,.24,0,0,0,head);   // burun
+  add(SPH,mD,.10,.08,.11,0,.44,.01,0,0,head);
+  add(CON,mC,.05,.16,.05,.08,-.1,-.15,-.5,0,head); add(CON,mC,.05,.16,.05,-.08,-.1,-.15,-.5,0,head); // kulaklar
+  const eyeM=cm(0x111111,.3); add(SPH,eyeM,.025,.03,.03,.13,.08,.06,0,0,head); add(SPH,eyeM,.025,.03,.03,-.13,.08,.06,0,0,head);
+  // kuyruk
+  const tail=new THREE.Group(); tail.position.set(0,1.28,-.86); tail.rotation.x=.55; g.add(tail);
+  add(CON,mD,.12,.75,.12,0,-.36,0,Math.PI,0,tail);
+  // eyer ve örtü
+  add(CYL,cm(0x5a3a22,.7),.30,.10,.34,0,1.50,-.02);
+  add(CYL,cm(0x3a2414,.7),.32,.05,.36,0,1.47,-.02);
+  if(caparison){ const cp=cm(caparison,.9), gd=cm(0xe0aa48,.4); const BX=hgeo('b',()=>new THREE.BoxGeometry(1,1,1));
+    [-1,1].forEach(sd=>{ const p=add(BX,cp,.04,.5,1.05,sd*.43,1.12,0,0,sd*.18); add(BX,gd,.05,.05,1.07,sd*.475,.88,0,0,sd*.18); });
+    add(BX,cp,.82,.05,.75,0,1.47,-.02); }
+  // bacaklar (omuz/kalça pivotlu)
+  const legs=[]; [[-.2,.5],[.2,.5],[-.2,-.52],[.2,-.52]].forEach(([x,z],i)=>{ const lg=new THREE.Group(); lg.position.set(x,1.0,z); g.add(lg);
+    add(CYL,mC,.11,.48,.13,0,-.22,0,0,0,lg);
+    const kn=new THREE.Group(); kn.position.set(0,-.46,0); lg.add(kn); lg.userData.kn=kn;
+    add(CYL,mC,.065,.42,.07,0,-.2,0,0,0,kn); add(SPH,mL,.075,.06,.075,0,-.38,0,0,0,kn); add(CYL,mH,.08,.09,.09,0,-.46,.01,0,0,kn);
+    legs.push(lg); });
+  g.userData.legs=legs; return g;
 }
+var RIDE_Y=.86;
 function krMounted(role,opt,horseCol,capCol,sc){
   const rider=krUnit(role,opt); if(!rider) return null;
   const g=new THREE.Group(), h=makeHorse(horseCol,capCol); g.add(h);
-  rider.position.set(0,.62,-.05); g.add(rider);
+  const kk=rider.userData.ch&&rider.userData.ch.kk; if(kk) h.scale.setScalar(.72);
+  rider.position.set(0,kk?RIDE_Y:.62,kk?-.12:-.05); g.add(rider);
   g.userData.ch=rider.userData.ch; g.userData.mount=h; g.scale.setScalar(sc||1);
   return g;
 }
@@ -1516,7 +1552,8 @@ function animUnits(dt){
     u._mv=(u._mv||0)*.8+mv*.2;
     let a='idle';
     const mt=m.userData.mount;
-    if(mt){ const mv=u._mv>.6; if(mv){ u._hp=(u._hp||0)+dt*u._mv*2.2; } mt.userData.legs.forEach((lg,i)=>{ lg.rotation.x=mv?Math.sin(u._hp+(i%2?Math.PI:0)+(i>1?Math.PI/2:0))*.7:0; }); mt.position.y=mv?Math.abs(Math.sin(u._hp*2))*.08:0; KR.play(m,'sit'); ch.mixer.update(dt); if((u.fight||u.fighting)&&!mv){ if(!ch.armR) ch.armR=krBone(m,/^arm-right/); if(ch.armR) ch.armR.rotation.x=-1.3+Math.sin(performance.now()/90)*.9; } continue; }
+    if(mt){ const mv=u._mv>.6; if(mv){ u._hp=(u._hp||0)+dt*u._mv*2.2; } mt.userData.legs.forEach((lg,i)=>{ const ph=u._hp+(i%2?Math.PI:0)+(i>1?Math.PI/2:0); lg.rotation.x=mv?Math.sin(ph)*.6:0; if(lg.userData.kn) lg.userData.kn.rotation.x=mv?(i<2?-1:1)*Math.max(0,Math.cos(ph))*.9:0; }); mt.position.y=mv?Math.abs(Math.sin(u._hp*2))*.08:0; KR.play(m,'sit'); ch.mixer.update(dt); if((u.fight||u.fighting)&&!mv){ if(!ch.armR){ ch.armR=krBone(m,ch.kk?/^upperarmr$/:/^arm-right/); if(ch.armR) ch.armR0=ch.armR.quaternion.clone(); } if(ch.armR){ if(ch.kk){ ch.armR.quaternion.copy(ch.armR0); ch.armR.rotateX(-1.4+Math.sin(performance.now()/90)*.9); } else ch.armR.rotation.x=-1.3+Math.sin(performance.now()/90)*.9; } } continue; }
+    if(u.cheerT>0){ u.cheerT-=dt; if(u._mv<.6&&!u.fight&&!u.fighting){ KR.play(m,'emote-yes'); ch.mixer.update(dt); continue; } }
     if(u._mv>.6) a=u._mv>5.2?'sprint':'walk';
     else if(u.fight||u.fighting) a=u.range?'holding-right-shoot':'attack-melee-right';
     else if(u.state==='build') a='attack-melee-right';
@@ -1542,10 +1579,10 @@ function makeSiege(){
   return g;
 }
 const FAC=[
-  {n:'Ork',      ic:'👹', melee:'orc',    mt:0,        brute:'brute', bt:0,        arch:'earcher', at:0,        helm:0x3a3a3a},
-  {n:'Haydut',   ic:'🗡️', melee:'bandit', mt:0x806060, brute:'barb',  bt:0x7a4a4a, arch:'earcher', at:0,        helm:0x2a2a2a},
-  {n:'Ölü Ordu', ic:'💀', melee:'zombie', mt:0xa0b0a0, brute:'zombie',bt:0x8a9a8a, arch:'zombie',  at:0xa0b0a0, helm:0x555555},
-  {n:'Barbar',   ic:'🪓', melee:'barb',   mt:0xd09080, brute:'orc',   bt:0xb07060, arch:'barb',    at:0xd09080, helm:0x8a3a2a}
+  {n:'Ork',      ic:'👹', melee:'orc',    mt:0,        brute:'brute', bt:0,        arch:'earcher', at:0x9cc488, helm:0x3a3a3a},
+  {n:'Haydut',   ic:'🗡️', melee:'bandit', mt:0,        brute:'barb',  bt:0x9a8080, arch:'earcher', at:0,        helm:0x2a2a2a},
+  {n:'Ölü Ordu', ic:'💀', melee:'zombie', mt:0,        brute:'zbrute',bt:0,        arch:'zarcher', at:0,        helm:0x555555},
+  {n:'Barbar',   ic:'🪓', melee:'barb',   mt:0,        brute:'brute', bt:0xf0d8c8, arch:'earcher', at:0xd8b8a0, helm:0x8a3a2a}
 ];
 let curFac=null;
 function addEnemy(kind,x,z,col,wv){
@@ -1587,7 +1624,7 @@ function makeSoldierMesh(kind,col){
     if(kind==='archer') g=krUnit('archer',{weapon:'bow',tint,helm:0x2e6b3a,tabard:team});
     else if(kind==='knight') g=krMounted('knight',{weapon:'spear',shield:team,helm:0xb8c0cc,plume:0xc0392b,scale:.5,tint},0x6a4024,team,1.05);
     else if(kind==='hero') g=krMounted('hero',{weapon:'sword',shield:0xc0392b,crown:1,cape:0xc0392b,scale:.52},0xeeeae0,0xc0392b,1.12);
-    else if(kind==='mage') g=krUnit('villager',{weapon:'staff',helm:0x4a2a8a,cape:0x4a2a8a,tint:0x9a8ad0});
+    else if(kind==='mage') g=krUnit('mage',{weapon:'staff',helm:0x4a2a8a,cape:0x4a2a8a});
     else if(kind==='catapult'){ const o=KR.get('castle/siege-catapult'); if(o){ g=new THREE.Group(); o.scale.setScalar(1.25); o.rotation.y=-Math.PI/2; g.add(o); } }
     else g=krUnit('spear',{weapon:'spear',shield:team,helm:0x9a9aa4,tint});
     if(g) return g;
@@ -1797,6 +1834,7 @@ function updateUnits(dt){
   }
   /* ölenler */
   for(let k=enemies.length-1;k>=0;k--){ const e=enemies[k]; if(e.hp<=0){ burst(e.mesh.position.x,.8,e.mesh.position.z,[0x7a1010,0x3a3a3a,0x9b1c1c],e.big?14:7,3,.16,.7); if(e.rew>=5) floatText(e.mesh.position.x,2,e.mesh.position.z,'+'+e.rew+'🪙'); if(e.fly){ toast('🐉 Ejderha yere çakıldı! +'+e.rew+' altın','good'); burst(e.mesh.position.x,e.mesh.position.y,e.mesh.position.z,[0x8a1c1c,0xd9a441,0xff9a30],40,8,.4,1.6); shake(.8,.6); S.dragonKills=(S.dragonKills||0)+1; } creditKill(e); killMesh(e); enemies.splice(k,1); S.res.gold+=e.rew; S.kills++; heroXP(e.mesh.position.x,e.mesh.position.z,e.rew); beep(200,.08,'square',.03,100);} }
+  if(enemies.length) S._enN=1; else if(S._enN){ S._enN=0; if(S.wave>0&&!S.over){ soldiers.forEach(u=>{ if(!u.ally) u.cheerT=2.6; }); toast('🎉 Baskın püskürtüldü! Askerler zaferi kutluyor.','good'); } }
   for(let k=soldiers.length-1;k>=0;k--){ const s=soldiers[k]; if(s.hp<=0){ killMesh(s); if(s.kind==='hero') toast('💀 '+s.name+' savaşta düştü!','bad'); soldiers.splice(k,1);} }
   for(let k=blds.length-1;k>=0;k--){
     const b=blds[k];
@@ -2064,6 +2102,16 @@ const TUNICS=[0xb5651d,0x4a7c59,0x8a5a9b,0xc0a060,0x5b7fa6,0xa04040,0x6b8e4e];
 function makeVillager(){
   if(KRU()){
     const w=krUnit('villager',{scale:.55});
+    if(w&&w.userData.ch.kk){
+      const ch=w.userData.ch, hand=ch.hand, chest=ch.chest;
+      const mk=(n,sc,fb)=>{ let o=KR.get(n); if(!o){ o=new THREE.Group(); fb.forEach(x=>o.add(x)); } o.scale.setScalar(sc); const t=new THREE.Group(); t.add(o); t.position.set(0,-.2,0); t.rotation.y=Math.PI; t.visible=false; if(hand) hand.add(t); return t; };
+      const axe=mk('survival/tool-axe',5.5,[box(0x6b4423,.03,.25,.03,0,.12,0)]), pick=mk('survival/tool-pickaxe',5.5,[box(0x6b4423,.03,.25,.03,0,.12,0)]);
+      const hammer=mk('survival/tool-hammer',5,[box(0x6b4423,.03,.2,.03,0,.1,0)]), hoe=mk('survival/tool-hoe',5.5,[box(0x6b4423,.03,.3,.03,0,.15,0)]);
+      const bow=new THREE.Group(); { const o=KR.glb['kk/sk_crossbow']?KR.glb['kk/sk_crossbow'].clone():box(0x6b4423,.1,.6,.1,0,0,0); bow.add(o); bow.visible=false; if(hand) hand.add(bow); }
+      const carry=(n,sc,y,fb)=>{ let o=KR.get(n)||fb; o.scale.setScalar(sc); const t=new THREE.Group(); t.add(o); t.position.set(0,y,-.62); t.visible=false; if(chest) chest.add(t); else w.add(t); return t; };
+      const log=carry('survival/resource-wood',3.2,.15,box(0x6b4423,.6,.16,.16,0,0,0)), stone=carry('survival/resource-stone',3,.1,box(0x8b8b8b,.3,.25,.3,0,0,0)), wheat=carry('x',1,.2,box(0xe3c35a,.35,.3,.3,0,0,0));
+      w.userData.tl={hand:new THREE.Object3D(),axe,pick,hoe,hammer,bow,log,stone,wheat}; return w;
+    }
     if(w){
       const arm=krBone(w,/^arm-right/), torso=krBone(w,/^torso/), hand=new THREE.Group(); hand.position.set(0,-1.0,.12); if(arm) arm.add(hand);
       const mk=(parts,rx)=>{ const t=new THREE.Group(); parts.forEach(x=>t.add(x)); t.rotation.x=rx||0; t.visible=false; hand.add(t); return t; };

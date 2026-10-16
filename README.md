@@ -18,7 +18,8 @@ GitHub Pages adresini telefonda Chrome ile aç → menü (⋮) → **Ana ekrana 
 - `index.html` — oyun mantığı ve arayüz
 - `models.js` — 3B bina/karakter modellerini birleştiren kütüphane
 - `assets.js` — gömülü modeller, dokular ve sesler (~10 MB)
-- `three.min.js`, `GLTFLoader.js` — Three.js r128
+- `three.min.js`, `GLTFLoader.js`, `SkeletonUtils.js` — Three.js r128
 
 ## Emeği geçenler
-3B modeller ve sesler: [Kenney.nl](https://kenney.nl) (CC0) — Castle Kit, Fantasy Town Kit, Nature Kit, Survival Kit, Blocky Characters, RPG Audio, Impact Sounds, Music Jingles.
+3B modeller ve sesler: [Kenney.nl](https://kenney.nl) (CC0) — Castle Kit, Fantasy Town Kit, Nature Kit, Survival Kit, RPG Audio, Impact Sounds, Music Jingles.
+Karakterler: [KayKit — Kay Lousberg](https://kaylousberg.itch.io) (CC0) — Adventurers, Skeletons.

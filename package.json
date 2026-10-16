@@ -1,6 +1,6 @@
 {
   "name": "krallik-3d",
-  "version": "2.0.0",
+  "version": "2.3.0",
   "description": "Kingdom - şehir kurma ve savunma oyunu",
   "main": "main.js",
   "scripts": {
@@ -21,6 +21,7 @@
       "main.js",
       "three.min.js",
       "GLTFLoader.js",
+      "SkeletonUtils.js",
       "models.js",
       "assets.js",
       "icon.png",

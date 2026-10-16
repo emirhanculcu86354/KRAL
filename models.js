@@ -1,7 +1,7 @@
 /* =========================================================
    KRALLIK 3D — model kütüphanesi
    Kenney.nl (CC0) Castle Kit, Fantasy Town Kit, Nature Kit,
-   Blocky Characters modellerini yükler ve bina/karakter
+   KayKit (Kay Lousberg) Adventurers ve Skeletons karakter modellerini yükler ve bina/karakter
    "prefab"larını parçalardan birleştirir.
    ========================================================= */
 (function(){
@@ -31,7 +31,7 @@ KR.load=async function(onProg){
           o.castShadow=true; o.receiveShadow=true;
           const ms=Array.isArray(o.material)?o.material:[o.material];
           const out=ms.map(m=>{
-            const mk=pack+'/'+(m.name||'m')+(m.map?'#t':'')+(pack==='nature'?('#'+m.color.getHexString()):'');
+            const mk=pack+'/'+(pack==='kk'?k.slice(3)+'/':'')+(m.name||'m')+(m.map?'#t':'')+(o.isSkinnedMesh?'#s':'')+(pack==='nature'?('#'+m.color.getHexString()):'');
             if(KR.mats[mk]) return KR.mats[mk];
             if(m.map){ const tk=pack==='blocky'?null:pack+'/colormap.png'; const t=tk&&texFrom(tk); if(t) m.map=t; else { m.map.magFilter=THREE.NearestFilter; m.map.minFilter=THREE.NearestFilter; m.map.generateMipmaps=false; } }
             if(pack==='nature'&&!m.map){ const NC={stone:0x8a8c88,dirt:0x9a6b4a,grass:0x5d9a3c,woodBark:0x7a5032,woodBarkDark:0x5a3a26,woodInner:0xd9b47a,leafsGreen:0x4f9a3f,leafsDark:0x2f7a35,leafs:0x4f9a3f}; if(NC[m.name]!==undefined) m.color.setHex(NC[m.name]).convertSRGBToLinear(); else m.color.convertSRGBToLinear(); }
@@ -78,7 +78,7 @@ function snowify(m){
   m.customProgramCacheKey=function(){ return 'snow'; };
   m.needsUpdate=true;
 }
-function addSnow(){ Object.keys(KR.mats).forEach(k=>{ if(!k.startsWith('blocky/')) snowify(KR.mats[k]); }); Object.values(PAL).forEach(m=>{ if(m&&m.isMaterial) snowify(m); }); if(PAL.era) PAL.era.forEach(snowify); }
+function addSnow(){ Object.keys(KR.mats).forEach(k=>{ if(!k.startsWith('blocky/')&&!k.startsWith('kk/')) snowify(KR.mats[k]); }); Object.values(PAL).forEach(m=>{ if(m&&m.isMaterial) snowify(m); }); if(PAL.era) PAL.era.forEach(snowify); }
 KR.snowify=snowify;
 function setMat(g,m){ if(!m) return g; g.traverse(o=>{ if(o.isMesh&&o.material&&o.material.map&&!o.userData.keep) o.material=m; }); return g; }
 KR.setMat=setMat;
@@ -324,38 +324,75 @@ KR.season=function(se){
   Object.keys(KR.mats).filter(k=>k.startsWith('nature/')&&/leaf|grass/i.test(k)).forEach(k=>{ const m=KR.mats[k]; m.color.setHex(/Dark/.test(k)?C[1]:(/grass/i.test(k)&&se<3?0x5d9a3c:C[0])).convertSRGBToLinear(); });
 };
 
-/* ---------- karakterler (Blocky Characters, düğüm animasyonlu) ---------- */
+/* ---------- karakterler: KayKit Adventurers + Skeletons (CC0, iskeletli + 25 animasyon) ---------- */
+const VT=[0xffffff,0xd8c0a0,0xb8c8d8,0xd0d0a8,0xd8b0a8,0xc0c0c0,0xa8c8a8];
 const ROLE={
-  villager:['blocky/character-a','blocky/character-b','blocky/character-c','blocky/character-e','blocky/character-f','blocky/character-k','blocky/character-m','blocky/character-n','blocky/character-i','blocky/character-q'],
-  spear:['blocky/character-j'], archer:['blocky/character-m'], knight:['blocky/character-g','blocky/character-h'], hero:['blocky/character-p'],
-  melee:['blocky/character-l'], brute:['blocky/character-o'], earcher:['blocky/character-r'], merchant:['blocky/character-d'],
-  orc:['blocky/character-o'], zombie:['blocky/character-l'], bandit:['blocky/character-p','blocky/character-q','blocky/character-r'], barb:['blocky/character-a','blocky/character-k','blocky/character-b'], king:['blocky/character-o']
+  villager:{m:['Rogue_Hooded','Rogue'], show:[], tints:VT, atk:'1H_Melee_Attack_Chop'},
+  merchant:{m:['Barbarian'], show:['Mug'], tints:[0xe8d8c8]},
+  spear:{m:['Knight'], show:['1H_Sword','Round_Shield'], atk:'1H_Melee_Attack_Slice_Diagonal'},
+  archer:{m:['Rogue'], show:['2H_Crossbow'], shoot:'2H_Ranged_Shoot', idle:'Idle'},
+  knight:{m:['Knight'], show:['1H_Sword','Badge_Shield'], atk:'1H_Melee_Attack_Chop'},
+  hero:{m:['Knight'], show:['2H_Sword'], atk:'2H_Melee_Attack_Slice', idle:'2H_Melee_Idle'},
+  mage:{m:['Mage'], show:['2H_Staff'], shoot:'Spellcast_Shoot', atk:'Spellcast_Shoot'},
+  orc:{m:['Barbarian'], show:['1H_Axe','Barbarian_Round_Shield'], tints:[0x9cc488,0x8ab878]},
+  brute:{m:['Barbarian'], show:['2H_Axe'], atk:'2H_Melee_Attack_Chop', idle:'2H_Melee_Idle', tints:[0x9cc488]},
+  barb:{m:['Barbarian'], show:['1H_Axe'], tints:[0xffffff,0xf0d8c8]},
+  bandit:{m:['Rogue_Hooded'], show:['Knife','Knife_Offhand'], atk:'Dualwield_Melee_Attack_Chop', tints:[0x8a7070,0x707a8a,0x6a6a6a]},
+  earcher:{m:['Rogue','Rogue_Hooded'], show:['2H_Crossbow'], shoot:'2H_Ranged_Shoot', tints:[0x9a6a6a,0x8a8a6a]},
+  melee:{m:['Barbarian'], show:['1H_Axe']},
+  zombie:{m:['Skeleton_Minion','Skeleton_Rogue'], add:{r:'sk_blade'}},
+  zbrute:{m:['Skeleton_Warrior'], add:{r:'sk_axe',l:'sk_shield_large_a'}, atk:'1H_Melee_Attack_Chop'},
+  zarcher:{m:['Skeleton_Rogue'], add:{r:'sk_crossbow'}, shoot:'2H_Ranged_Shoot'},
+  zmage:{m:['Skeleton_Mage'], add:{r:'sk_staff'}, shoot:'Spellcast_Shoot'},
+  king:{m:['Barbarian'], show:['2H_Axe'], hide:['Barbarian_Hat'], atk:'2H_Melee_Attack_Chop', idle:'2H_Melee_Idle', tints:[0xd8b8b8]}
 };
 KR.charNames=ROLE;
-const clipCache={};
-function clips(name){ if(clipCache[name]) return clipCache[name]; const a={}; (KR.anims[name]||[]).forEach(c=>a[c.name]=c); return clipCache[name]=a; }
+const ALLW=['1H_Sword_Offhand','Badge_Shield','Rectangle_Shield','Round_Shield','Spike_Shield','1H_Sword','2H_Sword','1H_Axe_Offhand','Barbarian_Round_Shield','1H_Axe','2H_Axe','Mug','Spellbook','Spellbook_open','1H_Wand','2H_Staff','Knife_Offhand','1H_Crossbow','2H_Crossbow','Knife','Throwable'];
+let CLIPS=null;
+function clipsKK(){ if(CLIPS) return CLIPS; CLIPS={}; (KR.anims['kk/anims']||[]).forEach(c=>{ CLIPS[c.name]=c; }); return CLIPS; }
+const GEN={idle:null,walk:'Walking_A',sprint:'Running_A','attack-melee-right':null,'holding-right-shoot':null,die:'Death_A','pick-up':'PickUp','interact-right':'Interact',sit:'Sit_Chair_Idle','emote-yes':'Cheer','holding-right':null,'holding-both':null,hit:'Hit_A',block:'Block',work:'Use_Item',sitfloor:'Sit_Floor_Idle'};
+function animFor(cfg,n){
+  if(n==='idle'||n==='holding-right'||n==='holding-both') return cfg.idle||'Idle';
+  if(n==='attack-melee-right') return cfg.atk||'1H_Melee_Attack_Chop';
+  if(n==='holding-right-shoot') return cfg.shoot||'2H_Ranged_Shoot';
+  return GEN[n]||n;
+}
 function findBone(root,re){ let f=null; root.traverse(o=>{ if(!f&&re.test(o.name)) f=o; }); return f; }
+KR.KK_SCALE=.5;
 KR.char=function(role,opts){
-  if(!KR.ready) return null; opts=opts||{};
-  const list=ROLE[role]||ROLE.villager, name=opts.name||list[Math.floor(Math.random()*list.length)];
-  const src=KR.glb[name]; if(!src) return null;
-  const body=src.clone(); const wrap=new THREE.Group(); wrap.add(body);
-  body.scale.setScalar(opts.scale||.62);
-  const mixer=new THREE.AnimationMixer(body), C=clips(name), acts={};
-  ['idle','walk','sprint','attack-melee-right','holding-right-shoot','die','pick-up','interact-right','emote-yes','holding-right','holding-both','sit'].forEach(n=>{ if(C[n]) acts[n]=mixer.clipAction(C[n]); });
-  const hand=findBone(body,/arm-?right|right-?arm|hand.*r|arm_r/i)||findBone(body,/arm/i);
-  wrap.userData.ch={mixer,acts,cur:null,hand,name,body};
-  if(opts.tint){ body.traverse(o=>{ if(o.isMesh){ const key=o.material.uuid+'*'+opts.tint; if(!tintCache[key]){ const c=o.material.clone(); c.color.multiply(new THREE.Color(opts.tint)); tintCache[key]=c; } o.material=tintCache[key]; } }); }
-  KR.play(wrap,'idle');
+  if(!KR.ready||!THREE.SkeletonUtils) return null; opts=opts||{};
+  const cfg=ROLE[role]||ROLE.villager, nm=opts.name||cfg.m[Math.floor(Math.random()*cfg.m.length)];
+  const src=KR.glb['kk/'+nm]; if(!src) return null;
+  const body=THREE.SkeletonUtils.clone(src); const wrap=new THREE.Group(); wrap.add(body);
+  body.scale.setScalar((opts.scale||.6)/.6*KR.KK_SCALE);
+  // silah/ekipman görünürlüğü
+  const show=new Set(opts.show||cfg.show||[]), hide=new Set(cfg.hide||[]);
+  body.traverse(o=>{ if(ALLW.includes(o.name)) o.visible=show.has(o.name); else if(hide.has(o.name)) o.visible=false; if(o.isMesh){ o.frustumCulled=false; } });
+  if(cfg.add){ for(const side in cfg.add){ const b=findBone(body,side==='r'?/^handslotr$/:/^handslotl$/); const w=KR.glb['kk/'+cfg.add[side]]; if(b&&w) b.add(w.clone()); } }
+  const tint=opts.tint||(cfg.tints?cfg.tints[Math.floor(Math.random()*cfg.tints.length)]:0);
+  if(tint&&tint!==0xffffff){ body.traverse(o=>{ if(o.isMesh){ const key=o.material.uuid+'*'+tint; if(!tintCache[key]){ const c=o.material.clone(); c.color.multiply(new THREE.Color(tint).convertSRGBToLinear()); tintCache[key]=c; } o.material=tintCache[key]; } }); }
+  const mixer=new THREE.AnimationMixer(body), C=clipsKK(), acts={};
+  const getA=n=>{ const cn=animFor(cfg,n); if(!acts[cn]&&C[cn]) acts[cn]=mixer.clipAction(C[cn]); return acts[cn]; };
+  const hand=findBone(body,/^handslotr$/)||findBone(body,/^handr$/);
+  wrap.userData.ch={mixer,acts,getA,cur:null,hand,name:nm,body,kk:true,cfg,
+    head:findBone(body,/^head$/), chest:findBone(body,/^chest$/), handL:findBone(body,/^handslotl$/)};
+  mixer.timeScale=1; KR.play(wrap,'idle');
+  if(opts.offset!==false){ const a=getA('idle'); if(a) a.time=Math.random()*a.getClip().duration; }
   return wrap;
 };
 KR.play=function(w,n,once,speed){
-  const ch=w&&w.userData.ch; if(!ch) return; if(ch.cur===n) return;
-  const a=ch.acts[n]||ch.acts.idle; if(!a) return;
-  const prev=ch.cur&&ch.acts[ch.cur];
-  a.reset(); a.setLoop(once?THREE.LoopOnce:THREE.LoopRepeat); a.clampWhenFinished=!!once; a.timeScale=speed||1; a.play();
-  if(prev&&prev!==a) prev.crossFadeTo(a,.18,false);
-  ch.cur=n;
+  const ch=w&&w.userData.ch; if(!ch) return;
+  if(ch.cur===n){ if(speed&&ch.curA) ch.curA.timeScale=speed; return; }
+  const a=ch.getA?ch.getA(n):(ch.acts[n]||ch.acts.idle); if(!a) return;
+  const prev=ch.curA;
+  if(prev===a){ ch.cur=n; return; }
+  a.reset(); a.setLoop(once?THREE.LoopOnce:THREE.LoopRepeat); a.clampWhenFinished=!!once; a.timeScale=speed||1; a.enabled=true; a.play();
+  if(prev) prev.crossFadeTo(a,.2,false);
+  ch.cur=n; ch.curA=a;
 };
+KR.crown=function(w){ const ch=w&&w.userData.ch; if(!ch||!ch.head) return; const g=new THREE.Group(); const m=new THREE.MeshStandardMaterial({color:new THREE.Color(0xffd54a).convertSRGBToLinear(),metalness:.6,roughness:.35});
+  const ring=new THREE.Mesh(new THREE.CylinderGeometry(.42,.38,.22,10,1,true),m); m.side=THREE.DoubleSide; g.add(ring);
+  for(let i=0;i<5;i++){ const t=new THREE.Mesh(new THREE.ConeGeometry(.08,.22,4),m); const a=i/5*Math.PI*2; t.position.set(Math.cos(a)*.4,.2,Math.sin(a)*.4); g.add(t); }
+  g.position.set(0,1.32,0); g.scale.setScalar(.72); ch.head.add(g); return g; };
 KR.attach=function(w,obj){ const ch=w&&w.userData.ch; if(!ch||!obj) return; (ch.hand||ch.body).add(obj); };
 })();
