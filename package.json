@@ -1,6 +1,6 @@
 {
   "name": "krallik-3d",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Krallık 3D - şehir kurma ve savunma oyunu",
   "main": "main.js",
   "scripts": {
@@ -20,10 +20,15 @@
       "index.html",
       "main.js",
       "three.min.js",
+      "GLTFLoader.js",
+      "models.js",
+      "assets.js",
+      "icon.png",
       "package.json"
     ],
     "win": {
-      "target": "portable"
+      "target": "portable",
+      "icon": "icon.ico"
     },
     "directories": {
       "output": "dist"

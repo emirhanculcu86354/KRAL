@@ -1,10 +1,43 @@
-KRALLIK 3D - PC SURUMU
+KRALLIK 3D - PC SURUMU (Surum 2.0)
 
 1) Node.js'i kur (https://nodejs.org - LTS surumu). Bir kere yapman yeterli.
 2) Bu klasorde EXE-YAP.bat dosyasina cift tikla.
    -> Bitince "dist" klasorunde tek dosyalik .exe olusur (kurulum gerektirmez, internetsiz calisir).
 3) Sadece denemek istersen OYNA.bat yeterli (exe uretmeden pencerede acar).
+   index.html dosyasini dogrudan Chrome/Edge ile acarak da oynayabilirsin.
 
 Oyun icinde: F11 = tam ekran.
 Kontroller: sol tik insa/sec, sag tik surukle kamera, WASD gez, tekerlek zoom,
-Q/E dondur, X yik, 1-0 bina sec, Bosluk duraklat.
+Q/E dondur, X yik, 1-0 bina sec, Bosluk duraklat. Sol ustteki mini haritaya tiklayarak hizli gez.
+
+SURUM 2.0 YENILIKLERI
+- Tum binalar, askerler, koyluler, dusmanlar, agaclar ve kayalar gercek 3B modellerle yenilendi
+  (Kenney.nl CC0 paketleri: Castle Kit, Fantasy Town Kit, Nature Kit, Blocky Characters).
+- Karakterler yuruyor, saldiriyor, odun kesiyor, olunce yere dusuyor (animasyonlu).
+- Binalar cag atladikca degisir (ahsap -> kumtasi -> gri tas -> mermer).
+- Insaat iskelesi, secili bina halkasi, gece pencere isiklari, simsek ve gok gurultusu.
+- Gol, tekne, geyikler, cicekler, mantarlar; daha canli bir dunya.
+- Yeni binalar: Demirci (silah/zirh yukseltmesi), Altin Madeni (sari damarlarin yanina),
+  Degirmen (yakin ciftlikler +%25), Buyucu Kulesi (zincirleme yildirim), Kusatma Atolyesi.
+- Yeni birimler: Mancinik (alan hasari) ve Buyucu.
+- EJDERHA baskinlari: her 6 dalgada bir ejderha gelir, binalari yakar. Sadece okcular,
+  kuleler, kale, buyuculer ve mancinik vurabilir.
+- Yeni oyun modlari: Klasik, Barisci (baskin yok), Yaratici (sinirsiz kaynak).
+- Senaryolar: Kusatma (surlarla basla, 8 dalgaya dayan), Altina Hucum (20 dk icinde 3000 altin), Ejderha Avcisi (3 ejderha indir), Uzun Kis (2 sert kisi en az 12 kisiyle atlat).
+- Kampanya (ana menu > Kampanya): 5 hikayeli bolum - Yeni Bir Baslangic, Uzun Kis, Kusatma, Altina Hucum, Ejderha Avcisi. Her bolum bir sonrakini acar.
+- Harita turleri: Cayir, Sik Orman, Daglik, Ova.
+- Fotograf modu: P ile arayuzu gizle, Enter ile ekran goruntusu kaydet.
+- Gercek ses efektleri ve muzik parcalari, parcacik efektleri, ekran sarsintisi,
+  yuzen kaynak yazilari, mini harita, oyun sonu istatistikleri, yeni gorev ve basarimlar.
+
+- Atli birlikler: sovalyeler ve komutan atlara biner; dusmanlarda atli akincilar ve koc basi.
+- Koyluler insaat alanlarina gidip cekicle calisir (insaat hizlanir).
+- Binalari yerlestirirken F tusu (veya ↻) ile dondurebilirsin.
+- Sus binalari: Bahce, Fener, Heykel, Sancak (refah verir). Avci Kulubesi: geyik avlayarak yiyecek uretir.
+- Rekorlar (Basarimlar ekraninda), kayit yuvalarinda kucuk resim, C: merkeze don, H: birligi takip et.
+- Dort zafer yolu: Harika, Fetih (4 kampi ayni anda yik), Refah (nufus 60+, refah 80+), Diplomasi (3 krallikla ittifak).
+- Fareyle kutu secimi (sol tik surukle) ve sag tikla birlik komutu.
+- Ayarlar: Grafik (Dusuk/Orta/Yuksek), kenar kaydirma, FPS gostergesi.
+- Kisin catilar karla kaplanir, yagmurda simsek caker, hasat senliginde havai fisek atilir.
+
+Eski surumun yedegi: eski-surum-yedek\index-v1.html
