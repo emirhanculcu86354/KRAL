@@ -22,4 +22,4 @@ GitHub Pages adresini telefonda Chrome ile aç → menü (⋮) → **Ana ekrana 
 
 ## Emeği geçenler
 3B modeller ve sesler: [Kenney.nl](https://kenney.nl) (CC0) — Castle Kit, Fantasy Town Kit, Nature Kit, Survival Kit, RPG Audio, Impact Sounds, Music Jingles.
-Karakterler: [KayKit — Kay Lousberg](https://kaylousberg.itch.io) (CC0) — Adventurers, Skeletons.
+Karakterler: [KayKit — Kay Lousberg](https://kaylousberg.itch.io) (CC0) — Adventurers, Skeletons, Medieval Hexagon.

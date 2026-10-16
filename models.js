@@ -29,6 +29,7 @@ KR.load=async function(onProg){
         root.traverse(o=>{
           if(!o.isMesh) return;
           o.castShadow=true; o.receiveShadow=true;
+          const ga=o.geometry.attributes; for(const an in ga){ const at=ga[an]; if(an==='skinIndex') continue; if(at.isInterleavedBufferAttribute||at.normalized||!(at.array instanceof Float32Array)){ const n=at.count, isz=at.itemSize, f=new Float32Array(n*isz), arr=at.array||(at.data&&at.data.array); const dv=!at.normalized?1:(arr instanceof Int8Array?127:arr instanceof Uint8Array?255:arr instanceof Int16Array?32767:arr instanceof Uint16Array?65535:1); for(let q=0;q<n;q++){ f[q*isz]=at.getX(q)/dv; if(isz>1) f[q*isz+1]=at.getY(q)/dv; if(isz>2) f[q*isz+2]=at.getZ(q)/dv; if(isz>3) f[q*isz+3]=at.getW(q)/dv; } if(at.normalized&&dv===127) for(let q=0;q<f.length;q++) f[q]=Math.max(-1,f[q]); o.geometry.setAttribute(an,new THREE.BufferAttribute(f,isz)); } }
           const ms=Array.isArray(o.material)?o.material:[o.material];
           const out=ms.map(m=>{
             const mk=pack+'/'+(pack==='kk'?k.slice(3)+'/':'')+(m.name||'m')+(m.map?'#t':'')+(o.isSkinnedMesh?'#s':'')+(pack==='nature'?('#'+m.color.getHexString()):'');
@@ -254,9 +255,50 @@ function bake(root,keep){
   return {baked:out, rest};
 }
 KR.bake=bake;
+/* ---------- KayKit Medieval Hexagon binaları (CC0) ---------- */
+const hxBox={};
+function hxPart(n,fit,opt){ const src=KR.glb['hx/'+n]; if(!src) return null; opt=opt||{};
+  if(!hxBox[n]){ const bb=new THREE.Box3().setFromObject(src); hxBox[n]=bb; }
+  const bb=hxBox[n], o=src.clone(), w=Math.max(bb.max.x-bb.min.x,bb.max.z-bb.min.z), sc=opt.sc||fit/w;
+  o.scale.setScalar(sc); o.position.set((opt.x||0)-(bb.max.x+bb.min.x)/2*sc,(opt.y||0)-Math.max(0,bb.min.y)*sc,(opt.z||0)-(bb.max.z+bb.min.z)/2*sc); if(opt.ry) o.rotation.y=opt.ry; return o; }
+const HXB={
+  house:(t,v)=>[[(t>=2)!==(v%2===1)?'home_B':'home_A',1.75], v%2?['p_barrel',.38,{x:.75,z:.55}]:['p_crate_A_big',.4,{x:-.75,z:.6}]],
+  lumber:t=>[['lumbermill',1.9]],
+  market:t=>[['market',1.95]],
+  tower:t=>[[t>=2?'tower_B':'tower_A',1.45]],
+  barracks:t=>[['archeryrange',1.95]],
+  castle:t=>[['castle',3.7]],
+  well:t=>[['well',1.15],['p_bucket_water',.35,{x:.65,z:.4}]],
+  tavern:(t,v)=>[['tavern',1.85],['p_barrel',.36,{x:-.8,z:.65}],['p_barrel',.32,{x:-.45,z:.8}]],
+  chapel:t=>[['church',1.75]],
+  blacksmith:t=>[['blacksmith',1.95]],
+  mine:t=>[['mine',1.95]],
+  mill:t=>[['windmill',1.85]],
+  workshop:t=>[['tower_catapult',1.5],['p_crate_long_A',.6,{x:.75,z:.7,ry:.4}]],
+  armycamp:t=>[['p_tent',1.4,{x:-.95,z:-.9,ry:.3}],['p_tent',1.4,{x:.95,z:-.95,ry:-.2}],['p_tent',1.3,{x:-1.0,z:1.0,ry:Math.PI}],['p_weaponrack',.8,{x:.9,z:.6}],['p_target',.7,{x:1.3,z:1.4,ry:-.5}],['p_bucket_arrows',.35,{x:.2,z:1.3}],['p_flag_blue',.5,{x:0,z:0}],['p_crate_A_big',.45,{x:-1.6,z:.1}]],
+  hall:t=>t>=3?[['castle',3.3]]:[['barracks',2.8,{z:.2}]].concat(t>=1?[['tower_A',1.2,{x:-1.45,z:-1.4}]]:[]).concat(t>=2?[['tower_B',1.3,{x:1.45,z:-1.4}],['p_flag_blue',.45,{x:1.5,z:1.5}],['p_flag_blue',.45,{x:-1.5,z:1.5}]]:[['p_flag_blue',.45,{x:1.4,z:1.4}]])
+};
+const HX_SPIN={windmill:['building_windmill_top_fan_blue','z'],lumbermill:['building_lumbermill_saw_blue','z'],watermill:['building_watermill_wheel_blue','x']};
+KR.hxPart=hxPart;
+function hxBuilding(type,t,v){
+  const list=HXB[type](t,v); const g=new THREE.Group();
+  for(const [n,fit,opt] of list){ const o=hxPart(n,fit,opt); if(!o) return null; g.add(o);
+    if(HX_SPIN[n]){ const bl=o.getObjectByName(HX_SPIN[n][0]); if(bl){ g.userData.blades=bl; bl.userData.ax=HX_SPIN[n][1]; } } }
+  return g;
+}
+KR.hasHex=t=>!!(HXB[t]&&KR.glb['hx/castle']);
 const VARI={house:2,tavern:2,clinic:2,firehouse:2,hunter:2,farm:4};
 KR.building=function(type,tier,variant){
-  if(!KR.ready||!BLD[type]) return null;
+  if(!KR.ready||!(BLD[type]||HXB[type])) return null;
+  if(HXB[type]&&KR.glb['hx/castle']&&KR.useHex!==false){ try{
+    const vr=(variant||0)%2, key='hx|'+type+'|'+(tier||0)+'|'+vr;
+    if(!bakeCache[key]){ const g=hxBuilding(type,tier||0,vr); if(!g) throw 0; const keep=g.userData.blades?[g.userData.blades]:[]; const ax=g.userData.blades&&g.userData.blades.userData.ax;
+      const tmp=new THREE.Group(); tmp.add(g); const r=bake(tmp,keep); const proto=new THREE.Group(); proto.add(r.baked);
+      if(g.userData.blades){ const bl=g.userData.blades; const wp=new THREE.Vector3(), wq=new THREE.Quaternion(), ws=new THREE.Vector3(); bl.updateMatrixWorld(true); bl.matrixWorld.decompose(wp,wq,ws); bl.parent.remove(bl); bl.position.copy(wp); bl.quaternion.copy(wq); bl.scale.copy(ws); bl.name='blades'; bl.userData.ax=ax; proto.add(bl); }
+      bakeCache[key]=proto; }
+    const w=bakeCache[key].clone(); w.userData.kr=1; w.userData.hx=1; const bl=w.getObjectByName('blades'); if(bl) w.userData.blades=bl; return w;
+  }catch(e){ /* eski prefabrike geri dön */ } }
+  if(!BLD[type]) return null;
   try{
     const vr=VARI[type]?((variant||0)%VARI[type]):0;
     const key=type+'|'+(tier||0)+'|'+vr;
@@ -393,6 +435,6 @@ KR.play=function(w,n,once,speed){
 KR.crown=function(w){ const ch=w&&w.userData.ch; if(!ch||!ch.head) return; const g=new THREE.Group(); const m=new THREE.MeshStandardMaterial({color:new THREE.Color(0xffd54a).convertSRGBToLinear(),metalness:.6,roughness:.35});
   const ring=new THREE.Mesh(new THREE.CylinderGeometry(.42,.38,.22,10,1,true),m); m.side=THREE.DoubleSide; g.add(ring);
   for(let i=0;i<5;i++){ const t=new THREE.Mesh(new THREE.ConeGeometry(.08,.22,4),m); const a=i/5*Math.PI*2; t.position.set(Math.cos(a)*.4,.2,Math.sin(a)*.4); g.add(t); }
-  g.position.set(0,1.32,0); g.scale.setScalar(.72); ch.head.add(g); return g; };
+  g.position.set(0,(ch.name==='Barbarian'?1.02:1.32),0); g.scale.setScalar(.72); ch.head.add(g); return g; };
 KR.attach=function(w,obj){ const ch=w&&w.userData.ch; if(!ch||!obj) return; (ch.hand||ch.body).add(obj); };
 })();

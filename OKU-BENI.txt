@@ -1,4 +1,4 @@
-KINGDOM - PC SURUMU (Surum 2.3)
+KINGDOM - PC SURUMU (Surum 2.4)
 
 1) Node.js'i kur (https://nodejs.org - LTS surumu). Bir kere yapman yeterli.
 2) Bu klasorde EXE-YAP.bat dosyasina cift tikla.
@@ -9,6 +9,15 @@ KINGDOM - PC SURUMU (Surum 2.3)
 Oyun icinde: F11 = tam ekran.
 Kontroller: sol tik insa/sec, sag tik surukle kamera, WASD gez, tekerlek zoom,
 Q/E dondur, X yik, 1-0 bina sec, Bosluk duraklat. Sol ustteki mini haritaya tiklayarak hizli gez.
+
+SURUM 2.4 YENILIKLERI
+- Binalar orta cag tarzinda yenilendi (KayKit Medieval Hexagon, CC0): ev, oduncu, pazar,
+  gozcu kulesi, kisla (okculuk alani), kale, cesme, han, kilise, demirci, altin madeni,
+  degirmen (donen pervane), kusatma atolyesi, ordu kampi (cadirlar).
+- Sehir merkezi caga gore buyuyor: kale -> kuleli kale -> dev sato.
+- Komsu krallik kaleleri kendi renklerinde (yesil, sari, kirmizi).
+- Yikilan binalar artik gercek bir enkaz modeli birakiyor.
+- Oyun dosyasi kucultuldu (modeller sikistirildi).
 
 SURUM 2.3 YENILIKLERI
 - "Minecraft gibi" kutu karakterler kaldirildi. Yerine orta cag karakterleri geldi
