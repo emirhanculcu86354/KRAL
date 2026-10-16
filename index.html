@@ -2,11 +2,18 @@
 <html lang="tr">
 <head>
 <meta charset="utf-8">
-<title>Krallık 3D — Şehir Kurma ve Savunma</title>
+<title>Kingdom — Şehir Kurma ve Savunma</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Kingdom">
+<meta name="application-name" content="Kingdom">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="theme-color" content="#0d1219">
 <link rel="icon" href="icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <style>
 :root{
   --ink:#0d1219; --panel:rgba(17,23,32,.88); --edge:rgba(255,255,255,.12);
@@ -273,7 +280,7 @@ body.menu #banner{display:none}
 <div id="loading">
   <div class="ld-box">
     <svg class="ld-logo"><use href="#logoSym"/></svg>
-    <div class="ld-title">KRALLIK<span>3D</span></div>
+    <div class="ld-title">KINGDOM</div>
     <div class="ld-sub">Şehir kur · Orduyu yönet · Krallığını koru</div>
     <div class="ld-bar"><i id="ldFill" class="ind"></i></div>
     <div class="ld-txt" id="ldTxt">Dünya yükleniyor…</div>
@@ -353,7 +360,7 @@ body.menu #banner{display:none}
   <div class="mm">
     <div class="mm-brand">
       <svg class="logo"><use href="#logoSym"/></svg>
-      <div><div class="mm-title">KRALLIK<span>3D</span></div><div class="mm-sub">Şehir kur · Orduyu yönet · Krallığını koru</div></div>
+      <div><div class="mm-title">KINGDOM</div><div class="mm-sub">Şehir kur · Orduyu yönet · Krallığını koru</div></div>
     </div>
     <div class="mm-btns">
       <button class="mbtn brass" id="resBtn" style="display:none"><span>▶</span>Devam et</button>
@@ -449,7 +456,7 @@ body.menu #banner{display:none}
 <div class="screen" id="aboutScreen" style="display:none">
   <div class="panel box" style="text-align:center">
     <svg class="logo" style="width:84px;height:84px"><use href="#logoSym"/></svg>
-    <h2 style="margin-top:6px">Krallık 3D</h2>
+    <h2 style="margin-top:6px">Kingdom</h2>
     <p>Sürüm 2.0 — üç boyutlu şehir kurma ve savunma oyunu.<br>Three.js ile yapıldı. Müzik tarayıcıda üretilir.</p>
     <p style="font-size:12.5px">3B modeller ve ses efektleri: <b>Kenney.nl</b> (Castle Kit, Fantasy Town Kit, Nature Kit, Blocky Characters, RPG Audio, Impact Sounds, Music Jingles) — CC0 lisanslı. Ejderha modeli oyun içinde elle modellendi.</p>
     <p>🏆 Başarımlar: <b id="abAch"></b></p>
@@ -519,7 +526,7 @@ body.menu #banner{display:none}
 <script>
 'use strict';
 /* =========================================================
-   KRALLIK 3D — şehir kurma / savunma / çağ atlama
+   KINGDOM — şehir kurma / savunma / çağ atlama
    ========================================================= */
 const N = 36, T = 2, HALF = N * T / 2;           // 36x36 ızgara, karo = 2 birim
 const SAVE_KEY = 'krallik3d_save_v1';
@@ -1322,7 +1329,7 @@ addEventListener('keydown',e=>{
   if(!started||(S&&S.over)) return;
   if(e.code==='Escape'){ document.body.classList.remove('photo'); closeMenus(); if($('techScreen').style.display==='flex') toggleTech(false); else { selected=null; selV=null; clearSel(); setMode('select'); } }
   else if(e.code==='KeyP'&&inSession&&!S.over){ const on=!document.body.classList.contains('photo'); if(on){ toast('📷 Fotoğraf modu · Enter: kaydet · P: çık'); setTimeout(()=>document.body.classList.add('photo'),900); } else document.body.classList.remove('photo'); }
-  else if(e.code==='Enter'&&document.body.classList.contains('photo')){ try{ renderer.render(scene,camera); const a=document.createElement('a'); a.href=renderer.domElement.toDataURL('image/png'); a.download='krallik-'+new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')+'.png'; document.body.appendChild(a); a.click(); a.remove(); sfx('click',.4); const fl=document.createElement('div'); fl.className='flash'; fl.style.cssText='position:fixed;inset:0;background:#fff;opacity:.7;pointer-events:none;transition:opacity .4s;z-index:99'; document.body.appendChild(fl); requestAnimationFrame(()=>{ fl.style.opacity=0; }); setTimeout(()=>fl.remove(),500); }catch(err){} }
+  else if(e.code==='Enter'&&document.body.classList.contains('photo')){ try{ renderer.render(scene,camera); const a=document.createElement('a'); a.href=renderer.domElement.toDataURL('image/png'); a.download='kingdom-'+new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')+'.png'; document.body.appendChild(a); a.click(); a.remove(); sfx('click',.4); const fl=document.createElement('div'); fl.className='flash'; fl.style.cssText='position:fixed;inset:0;background:#fff;opacity:.7;pointer-events:none;transition:opacity .4s;z-index:99'; document.body.appendChild(fl); requestAnimationFrame(()=>{ fl.style.opacity=0; }); setTimeout(()=>fl.remove(),500); }catch(err){} }
   else if(e.code==='KeyT') toggleTech();
   else if(e.code==='KeyB') setMode(mode.k==='rally'?'select':'rally');
   else if(e.code==='KeyR') setMode(mode.k==='road'?'select':'road');
@@ -3598,6 +3605,7 @@ $('aboutClose').onclick=()=>{ $('aboutScreen').style.display='none'; };
 $('homeBtn').onclick=()=>{ if(S&&!S.over) saveGame(); inSession=true; showMain(); };
 $('againBtn').onclick=()=>{ $('endScreen').style.display='none'; startNew(); };
 $('endMenu').onclick=()=>{ $('endScreen').style.display='none'; inSession=false; showMain(); };
+if('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) window.addEventListener('load',()=>{ navigator.serviceWorker.register('sw.js').catch(()=>{}); });
 boot().catch(err=>{ $('ldTxt').textContent='Hata: '+err.message; console.error(err); });
 </script>
 </body>

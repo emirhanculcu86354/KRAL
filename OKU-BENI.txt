@@ -1,4 +1,4 @@
-KRALLIK 3D - PC SURUMU (Surum 2.0)
+KINGDOM - PC SURUMU (Surum 2.0)
 
 1) Node.js'i kur (https://nodejs.org - LTS surumu). Bir kere yapman yeterli.
 2) Bu klasorde EXE-YAP.bat dosyasina cift tikla.

@@ -5,7 +5,7 @@ function createWindow() {
   const win = new BrowserWindow({
     width: 1600, height: 900,
     backgroundColor: '#0d1219',
-    title: 'Krallık 3D',
+    title: 'Kingdom',
     icon: path.join(__dirname, 'icon.png'),
     autoHideMenuBar: true,
     webPreferences: { contextIsolation: true }

@@ -1,7 +1,7 @@
 {
   "name": "krallik-3d",
   "version": "2.0.0",
-  "description": "Krallık 3D - şehir kurma ve savunma oyunu",
+  "description": "Kingdom - şehir kurma ve savunma oyunu",
   "main": "main.js",
   "scripts": {
     "copy3": "node copy-three.js",

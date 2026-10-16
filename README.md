@@ -1,4 +1,4 @@
-# Krallık 3D
+# Kingdom
 
 Üç boyutlu şehir kurma ve savunma oyunu (Three.js + Electron).
 
@@ -6,6 +6,9 @@
 1. Bu klasördeki dosyaları GitHub deposunun ana dizinine yükle.
 2. **Settings → Pages → Build and deployment → Source: Deploy from a branch**, branch: `main`, klasör: `/ (root)` seç, kaydet.
 3. Birkaç dakika sonra `https://KULLANICI-ADIN.github.io/DEPO-ADI/` adresinden oyun açılır (telefonda da çalışır).
+
+## Uygulama olarak yükle (PWA)
+GitHub Pages adresini telefonda Chrome ile aç → menü (⋮) → **Ana ekrana ekle / Uygulamayı yükle**. iPhone'da Safari → Paylaş → **Ana Ekrana Ekle**. Kingdom logosuyla ana ekrana eklenir, tam ekran ve yatay açılır, ilk açılıştan sonra internetsiz de çalışır.
 
 ## Bilgisayarda oyna (Windows)
 - `OYNA.bat` → Electron penceresinde açar (Node.js kurulu olmalı: https://nodejs.org).
