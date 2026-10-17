@@ -1,4 +1,4 @@
-KINGDOM - PC SURUMU (Surum 2.4)
+KINGDOM - PC SURUMU (Surum 2.5)
 
 1) Node.js'i kur (https://nodejs.org - LTS surumu). Bir kere yapman yeterli.
 2) Bu klasorde EXE-YAP.bat dosyasina cift tikla.
@@ -9,6 +9,19 @@ KINGDOM - PC SURUMU (Surum 2.4)
 Oyun icinde: F11 = tam ekran.
 Kontroller: sol tik insa/sec, sag tik surukle kamera, WASD gez, tekerlek zoom,
 Q/E dondur, X yik, 1-0 bina sec, Bosluk duraklat. Sol ustteki mini haritaya tiklayarak hizli gez.
+
+SURUM 2.5 YENILIKLERI
+- ONLINE MOD (ana menu > Online): "Yeni oda" ile 5 harfli kod al, arkadasin "Odaya katil"
+  ile baglansin (internet gerekir, sunucu gerekmez - WebRTC/PeerJS).
+  Baglaninca ikiniz de kendi krallginizi oynarsiniz; sag ustteki 🌐 dugmesinden:
+  sohbet, 100'luk kaynak hediyesi, yardim askeri (45 sn bekleme) ve saldiri ordusu
+  (75 sn bekleme, ilk 4 dakika baris donemi). Saldiri basarili olursa ganimet kazanirsin.
+  Asker secip gonderebilirsin; secim yoksa bostaki askerler gider.
+- Dusman rutbeleri: Kidemli (🔸), Elit (⭐, altin hale) ve Sampiyon (🔥, kirmizi hale,
+  cani yavas yavas dolar). Dalga ilerledikce ve zorluk arttikca daha sik gelirler,
+  daha cok altin verirler. Dalga duyurusunda kac elit/sampiyon geldigi yazar.
+- Yeni basarimlar: Elit Avcisi, Sampiyon Katili.
+- Duzeltme: "Kolay" zorluk secilince oyun aslinda "Normal" gibi davraniyordu; duzeltildi.
 
 SURUM 2.4 YENILIKLERI
 - Binalar orta cag tarzinda yenilendi (KayKit Medieval Hexagon, CC0): ev, oduncu, pazar,

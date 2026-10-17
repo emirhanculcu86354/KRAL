@@ -10,6 +10,9 @@
 ## Uygulama olarak yükle (PWA)
 GitHub Pages adresini telefonda Chrome ile aç → menü (⋮) → **Ana ekrana ekle / Uygulamayı yükle**. iPhone'da Safari → Paylaş → **Ana Ekrana Ekle**. Kingdom logosuyla ana ekrana eklenir, tam ekran ve yatay açılır, ilk açılıştan sonra internetsiz de çalışır.
 
+## Online mod
+Ana menü → Online → "Yeni oda" ile kod al, arkadaşın aynı kodla "Odaya katıl". İnternet gerekir (PeerJS/WebRTC, kendi sunucun gerekmez).
+
 ## Bilgisayarda oyna (Windows)
 - `OYNA.bat` → Electron penceresinde açar (Node.js kurulu olmalı: https://nodejs.org).
 - `EXE-YAP.bat` → `dist` klasörüne taşınabilir `.exe` oluşturur.
