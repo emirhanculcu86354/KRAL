@@ -1,0 +1,41 @@
+KINGDOM - YAYINLAMA REHBERI
+===========================
+
+1) GITHUB PAGES (ucretsiz web sitesi + telefona uygulama gibi kurulum)
+   - GitHub'da yeni depo ac > kingdom.zip icindeki krallik-3d klasorunun ICINDEKI dosyalari yukle.
+   - Settings > Pages > Source: "Deploy from a branch", branch: main, klasor: / (root) > Save.
+   - 2-3 dakika sonra: https://KULLANICI-ADIN.github.io/DEPO-ADI/
+   - Telefonda bu adresi Chrome ile ac > ⋮ > "Uygulamayi yukle" (iPhone: Safari > Paylas > Ana Ekrana Ekle).
+
+2) ITCH.IO (oyuncularin bulabilecegi oyun sitesi, ucretsiz)
+   - https://itch.io adresinde hesap ac > "Upload new project".
+   - Kind of project: HTML.
+   - "Upload files": kingdom-itch.zip dosyasini yukle (index.html zip'in en ustunde olmali - bu zip oyle hazirlandi)
+     ve "This file will be played in the browser" kutusunu isaretle.
+   - Embed options: 1280 x 720, "Fullscreen button" acik, "Mobile friendly" acik (Landscape).
+   - Kapak gorseli: oyunda P tusu (fotograf modu) + Enter ile ekran goruntusu al.
+   - Fiyat: ucretsiz ya da "No payments"/"Donate". Visibility: Public > Save.
+   - Not: Modeller Kenney ve KayKit (CC0) - ticari kullanim dahil serbest, isim vermek sart degil
+     ama sayfaya "Assets: Kenney.nl, KayKit by Kay Lousberg (CC0)" yazmak guzel olur.
+
+3) ANDROID UYGULAMASI (APK / Play Store)
+   - Once oyunu GitHub Pages'e koy (madde 1).
+   - https://www.pwabuilder.com adresine git > GitHub Pages adresini yapistir > "Start".
+   - "Package for stores" > Android > "Generate Package" > indirilen zip icinde .apk (deneme icin)
+     ve .aab (Google Play icin) dosyalari olur.
+   - APK'yi telefona atip kurabilirsin (Bilinmeyen kaynaklara izin ver).
+   - Google Play'e koymak icin Google Play Console hesabi gerekir (tek seferlik 25 $).
+
+4) WINDOWS .EXE
+   - Bilgisayarinda Node.js kurulu olsun (https://nodejs.org, LTS).
+   - Oyun klasorunde EXE-YAP.bat'a cift tikla > "dist" klasorunde Kingdom .exe olusur.
+   - Steam'de yayinlamak istersen: Steamworks hesabi (oyun basina 100 $) + bu .exe.
+
+5) ONLINE SIRALAMA (istege bagli, ucretsiz)
+   - https://console.firebase.google.com > "Proje ekle" (Google hesabinla) > Analytics kapali.
+   - Sol menu: Build > Realtime Database > "Create Database" > konum: europe-west1 > "Start in test mode".
+   - Rules sekmesinde su kurallari yaz ve Publish et:
+       { "rules": { "kingdom": { ".read": true, "$k": { ".write": true } } } }
+   - Ustte gorunen adresi kopyala (ornek: https://kingdom-1234-default-rtdb.europe-west1.firebasedatabase.app)
+   - Oyunda: Ana menu > Siralama > adresi yapistir > Kaydet. Arkadaslarin da ayni adresi girerse
+     ayni tabloda yarisirsiniz.

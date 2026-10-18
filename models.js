@@ -227,6 +227,8 @@ BLD.statue=t=>G([['castle/tower-square-base',0,0,0,0,1.1,.35,1.1],['nature/statu
 BLD.garden=t=>G([['nature/fence_simple',0,0,0,0,1.8],['nature/fence_simple',0,0,0,Math.PI/2,1.8],['nature/fence_simple',0,0,0,Math.PI,1.8],['nature/fence_simple',0,0,0,-Math.PI/2,1.8],['nature/flower_redA',-.4,0,-.35,0,3.4],['nature/flower_yellowA',.4,0,.35,0,3.4],['nature/flower_purpleA',.35,0,-.4,0,3.4],['nature/flower_redB',-.35,0,.4,0,3.4],['nature/plant_bushDetailed',0,0,0,0,3.2],['nature/flower_yellowB',0,0,.5,0,3],['nature/flower_purpleA',-.5,0,0,1,3]]);
 BLD.lamp=t=>G([['town/lantern',0,0,0,0,1.4],['nature/flower_yellowB',.35,0,.3,0,2],['nature/grass_large',-.3,0,-.25,0,2]]);
 BLD.banner=t=>G([['castle/flag-wide',0,0,0,0,2.0],['nature/stone_smallA',.3,0,.3,0,1.2]]);
+BLD.harbor=t=>{ const g=G([['nature/bridge_wood',0,0,.45,0,2.1],['nature/bridge_wood',0,0,1.5,0,2.1],['nature/canoe',.75,0,1.6,.3,1.3],['survival/barrel',-.75,0,-.55,0,2.2],['survival/barrel',-.45,0,-.8,0,2.0],['survival/box-large',.6,0,-.6,.3,1.9],['town/lantern',.85,0,.2,0,.9],['nature/log_stack',-.75,0,.3,H,1.1]]);
+  [['p_crate_long_A',.55,{x:.1,z:-.85,ry:.2}],['p_sack',.35,{x:-.2,z:-.3}]].forEach(([n,f,o])=>{ const p=KR.hxPart&&KR.hxPart(n,f,o); if(p) g.add(p); }); return g; };
 BLD.dock=t=>G([['nature/bridge_wood',0,0,0,0,2.0],['nature/canoe',.3,0,.4,.3,1.4]]);
 /* aynı malzemeli parçaları tek ağa birleştir (çizim çağrısını azaltır) */
 const bakeCache={};
@@ -273,6 +275,8 @@ const HXB={
   chapel:t=>[['church',1.75]],
   blacksmith:t=>[['blacksmith',1.95]],
   mine:t=>[['mine',1.95]],
+  ironmine:t=>[['mine',1.75,{x:-.1,z:-.1}],['p_resource_stone',.55,{x:.75,z:.75}],['p_wheelbarrow',.5,{x:-.75,z:.8,ry:.6}]],
+  bakery:t=>[['home_A',1.5,{x:-.15,z:-.15}],['p_sack',.42,{x:.75,z:.55}],['p_sack',.36,{x:.85,z:.15,ry:.7}],['p_crate_open',.42,{x:.55,z:.9}],['p_barrel',.34,{x:-.85,z:.8}]],
   mill:t=>[['windmill',1.85]],
   workshop:t=>[['tower_catapult',1.5],['p_crate_long_A',.6,{x:.75,z:.7,ry:.4}]],
   armycamp:t=>[['p_tent',1.4,{x:-.95,z:-.9,ry:.3}],['p_tent',1.4,{x:.95,z:-.95,ry:-.2}],['p_tent',1.3,{x:-1.0,z:1.0,ry:Math.PI}],['p_weaponrack',.8,{x:.9,z:.6}],['p_target',.7,{x:1.3,z:1.4,ry:-.5}],['p_bucket_arrows',.35,{x:.2,z:1.3}],['p_flag_blue',.5,{x:0,z:0}],['p_crate_A_big',.45,{x:-1.6,z:.1}]],

@@ -1,4 +1,4 @@
-KINGDOM - PC SURUMU (Surum 2.5)
+KINGDOM - PC SURUMU (Surum 3.0)
 
 1) Node.js'i kur (https://nodejs.org - LTS surumu). Bir kere yapman yeterli.
 2) Bu klasorde EXE-YAP.bat dosyasina cift tikla.
@@ -9,6 +9,45 @@ KINGDOM - PC SURUMU (Surum 2.5)
 Oyun icinde: F11 = tam ekran.
 Kontroller: sol tik insa/sec, sag tik surukle kamera, WASD gez, tekerlek zoom,
 Q/E dondur, X yik, 1-0 bina sec, Bosluk duraklat. Sol ustteki mini haritaya tiklayarak hizli gez.
+
+SURUM 3.0 YENILIKLERI
+KESIF VE FETIH
+- Kesif noktalari (❓): harabe, hazine sandigi, gezgin bilge (bedava arastirma), haydut ini
+  (muhafizlari yen) ve kadim sunak. Yanina bir asker gondermen yeter.
+- Dunya haritasi (sag ustte 🗺️): 8 komsu bolge. Ordunu sefere gonder (45 sn), kazanirsan bolge
+  her saniye kaynak getirir. Basari sansi ordunun gucune gore.
+SIRALAMA
+- Ana menu > Siralama: her oyunun puani kaydedilir. Haftalik turnuva: herkes ayni haritada 20 dk.
+  Online siralama icin Firebase adresi girilebilir (YAYINLAMA-REHBERI.txt madde 5).
+ONLINE
+- Takas teklifi (kaynak ver/al), ittifak (+%10 uretim, saldiri kapali), ortak savunma
+  (ikinize ayni anda buyuk dalga; ikiniz de puskurtursenis buyuk odul).
+GORSEL / SES / AYARLAR
+- K: sinematik kamera. Koyluler konusuyor (💬). Geyikler yeni modelle.
+- Dusman yaklasinca savas davullari caliyor.
+- Ayarlar: Dil (Turkce / English), tus atamalari, otomatik grafik (oyun yavaslarsa kaliteyi dusurur).
+- Ansiklopedi (☰ menu ya da Nasil oynanir): tum binalar, birlikler, dusmanlar ve sistemler.
+- Ilk oyunda adim adim rehber.
+- Yayinlama: YAYINLAMA-REHBERI.txt (itch.io, GitHub Pages, Android APK, exe, online siralama).
+
+SURUM 2.6 YENILIKLERI
+SAVAS
+- Karsitlik: mizrakli atliya, atli okcuya, okcu mizrakliya +%50 hasar verir (ters yonde -%25).
+  Kusatma araclarina piyade/atli +%40. Formasyonlar: Daginik +%10 hiz, Hat okcu +%15, Kare piyade -%25 hasar alir.
+- Sur savunmasi: okcular sur/kapi/kule uzerinde durunca +3 menzil, +%25 hasar, -%40 hasar alir.
+  Yeni: Kazik Tuzagi (4 kullanim), Hendek (dusmani %55 yavaslatir), arastirma: Kaynar Yag.
+- Boss'lar (6. dalgadan itibaren her 3 dalgada): Dev Trol (binalari hizla yikar), Nekromant
+  (iskelet diriltir), Savas Lordu (yanindakileri hizlandirir/guclendirir).
+- Kahraman: 10 seviye, 3 yetenek dali (Savasci, Lider, Dayaniklilik) ve ekipman (silah, zirh, at/sancak).
+  Elit/sampiyon/boss/krallardan ganimet duser. Komutani sec > 📜 Kahraman.
+- Savas sisi: kesfedilmemis yerler bulutla kapli; bina, asker ve koyluler cevreyi acar (Ayarlar'dan kapatilabilir).
+SEHIR
+- Demir (⛓️) ve Demir Madeni: sovalye, mancinik ve demirci yukseltmeleri demir ister.
+- Firin: ekmek uretir, refahi artirir; yaninda degirmen varsa iki kat verimli.
+- Gol artik haritanin kenarinda. Liman: balikci tekneleri, ticaret gemisi altini; korsan cikarmalari.
+- Evler cevresindeki cesme/pazar/han/sapel/firin sayisina gore Kulube > Ev > Konak olur (daha cok nufus ve vergi).
+- Askerler de yolda %30 hizli yurur.
+- Afetler: kuraklik, sel, cekirge istilasi, deprem.
 
 SURUM 2.5 YENILIKLERI
 - ONLINE MOD (ana menu > Online): "Yeni oda" ile 5 harfli kod al, arkadasin "Odaya katil"
