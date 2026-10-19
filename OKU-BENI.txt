@@ -1,4 +1,4 @@
-KINGDOM - PC SURUMU (Surum 3.0)
+KINGDOM - PC SURUMU (Surum 3.5)
 
 1) Node.js'i kur (https://nodejs.org - LTS surumu). Bir kere yapman yeterli.
 2) Bu klasorde EXE-YAP.bat dosyasina cift tikla.
@@ -9,6 +9,19 @@ KINGDOM - PC SURUMU (Surum 3.0)
 Oyun icinde: F11 = tam ekran.
 Kontroller: sol tik insa/sec, sag tik surukle kamera, WASD gez, tekerlek zoom,
 Q/E dondur, X yik, 1-0 bina sec, Bosluk duraklat. Sol ustteki mini haritaya tiklayarak hizli gez.
+
+SURUM 3.5 YENILIKLERI
+- Her yapi 5 seviyeye kadar yukseltilir; seviye arttikca bina buyur, kanat/kule/bayrak eklenir.
+- Insaat ve yukseltmede binanin ustunde dolan cubuk, yuzde ve kalan saniye.
+- Yeni yapilar: Depo, Ambar (depolama siniri), Okul, Kutuphane (arastirma), Ahir (sovalye),
+  Katedral, Arena, Saray. Araclar menusunde "Agac Dik".
+- Depolar dolunca uretim durur (ust cubukta "DOLU"). Cag atlamak Sehir Merkezi seviyesi ister,
+  Harika icin Saray gerekir.
+- Zaferden sonra "Devam et": oyun bitmez, sehrini gelistirmeye devam edersin (baskinlar guclenir).
+- Harita 48x48 (%78 daha buyuk), engebeli arazi; binalar zemini duzler.
+  Dagli harita: yuksek tepeler ve daglar, Sik orman: cok yogun agac, Ova: duz ve acik.
+- Yollar artik tek parca toprak yol (Kale cagindan sonra tas doseme).
+- Eski kayitlar yeni haritanin ortasina yerlestirilerek yuklenir.
 
 SURUM 3.0 YENILIKLERI
 KESIF VE FETIH

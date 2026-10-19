@@ -1,5 +1,5 @@
 /* Kingdom — çevrimdışı önbellek (PWA) */
-const CACHE = 'kingdom-v3.0';
+const CACHE = 'kingdom-v3.5';
 const FILES = ['./', 'index.html', 'three.min.js', 'GLTFLoader.js', 'SkeletonUtils.js', 'models.js', 'online.js', 'lang-en.js', 'assets.js', 'manifest.webmanifest',
   'icon.png', 'icon-192.png', 'icon-512.png', 'icon-maskable-192.png', 'icon-maskable-512.png', 'apple-touch-icon.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting())); });

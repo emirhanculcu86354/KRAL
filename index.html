@@ -399,10 +399,17 @@ body.menu #banner{display:none}
       <button class="mbtn" id="helpBtn"><span>❔</span>Nasıl oynanır</button>
       <button class="mbtn" id="aboutBtn"><span>ℹ️</span>Hakkında</button>
     </div>
-    <div class="mm-foot">Sürüm 3.0 · Üç boyutlu şehir kurma ve savunma oyunu</div>
+    <div class="mm-foot">Sürüm 3.5 · Üç boyutlu şehir kurma ve savunma oyunu</div>
   </div>
   <div class="news panel">
-    <b>✨ Sürüm 3.0 yenilikleri</b>
+    <b>✨ Sürüm 3.5 yenilikleri</b>
+    <ul>
+      <li>⬆️ Her yapı 5 seviye: seviye arttıkça görünüm değişir · 🔨 inşaat çubuğu ve kalan süre</li>
+      <li>🏗️ Yeni yapılar: Depo, Ambar, Okul, Kütüphane, Ahır, Katedral, Arena, Saray · 🌱 ağaç dikme</li>
+      <li>🗺️ %78 daha büyük, engebeli harita · ⛰️ dağlık / 🌲 orman / 🌾 ova belirgin şekilde farklı</li>
+      <li>🛤️ Tek parça toprak yollar · ♾️ zaferden sonra şehrini geliştirmeye devam et</li>
+    </ul>
+    <b style="display:block;margin-top:6px;opacity:.8">Sürüm 3.0</b>
     <ul>
       <li>⚔️ Karşıtlık sistemi, formasyonlar, sur savunması, tuzak ve hendek</li>
       <li>👹 Boss'lar: Dev Trol, Nekromant, Savaş Lordu</li>
@@ -420,7 +427,7 @@ body.menu #banner{display:none}
     <h2 id="endTitle"></h2>
     <p id="endText"></p>
     <div id="endStats" class="stats"></div>
-    <div class="btns"><button class="btn brass" id="nextChBtn" style="display:none">Sonraki bölüm ▶</button><button class="btn brass" id="againBtn">Yeniden başla</button><button class="btn" id="endMenu">Ana menü</button></div>
+    <div class="btns"><button class="btn brass" id="nextChBtn" style="display:none">Sonraki bölüm ▶</button><button class="btn brass" id="contBtn" style="display:none">♾️ Devam et</button><button class="btn brass" id="againBtn">Yeniden başla</button><button class="btn" id="endMenu">Ana menü</button></div>
   </div>
 </div>
 
@@ -601,7 +608,7 @@ body.menu #banner{display:none}
 /* =========================================================
    KINGDOM — şehir kurma / savunma / çağ atlama
    ========================================================= */
-const N = 36, T = 2, HALF = N * T / 2;           // 36x36 ızgara, karo = 2 birim
+const N = 48, T = 2, HALF = N * T / 2;           // 48x48 ızgara, karo = 2 birim (v3.5: büyük harita)
 const SAVE_KEY = 'krallik3d_save_v1';
 const SLOT_KEYS = [SAVE_KEY,'krallik3d_slot1','krallik3d_slot2','krallik3d_slot3'];
 const RI = {wood:'🪵', stone:'🪨', food:'🌾', gold:'🪙', iron:'⛓️'};
@@ -623,7 +630,7 @@ const B = {
   barracks:{n:'Kışla',       ic:'⚔️', cost:{wood:80, stone:50},           era:1, s:1, hp:180, bt:7,  d:'Mızraklı, okçu ve şövalye eğitir. Ordu sınırını +4 artırır.'},
   wall:    {n:'Sur',         ic:'🧱', cost:{stone:8},                     era:1, s:1, hp:260, bt:2,  d:'Birbirine bağlanır, düşmanı durdurur. Sürükleyerek uzun sur çekebilirsin.'},
   castle:  {n:'Kale',        ic:'🏰', cost:{wood:150, stone:300, gold:100}, era:2, s:2, hp:600, bt:14, d:'Güçlü ok yağmuru. 2×2.', range:23, dmg:30, cd:1.3, ah:3.6},
-  wonder:  {n:'Harika',      ic:'🏛️', cost:{wood:500, stone:600, gold:500, food:200}, era:3, s:3, hp:700, bt:60, d:'Tamamlanırsa oyunu kazanırsın. 3×3.'},
+  wonder:  {n:'Harika',      ic:'🏛️', cost:{wood:500, stone:600, gold:500, food:200}, era:3, s:3, hp:700, bt:90, d:'Tamamlanırsa zafer kazanırsın, ama istersen şehrini geliştirmeye devam edebilirsin. Saray gerektirir. 3×3, tek.', req:{b:'palace',one:1}},
   well:    {n:'Çeşme',       ic:'⛲', cost:{wood:30, stone:15},           era:0, s:1, hp:80,  bt:3,  d:'Halkın refahını artırır.'},
   tavern:  {n:'Han',         ic:'🍺', cost:{wood:70, stone:20},           era:1, s:1, hp:110, bt:5,  d:'Refahı artırır ve biraz altın kazandırır.'},
   chapel:  {n:'Şapel',       ic:'⛪', cost:{wood:40, stone:80},           era:1, s:1, hp:140, bt:7,  d:'Refahı güçlü biçimde artırır.'},
@@ -646,9 +653,17 @@ const B = {
   garden:  {n:'Bahçe',       ic:'🌷', cost:{wood:20, food:20},            era:0, s:1, hp:60,  bt:2,  d:'Çiçekli küçük bahçe. Süs: refah +2.', deco:2},
   lamp:    {n:'Fener',       ic:'🏮', cost:{wood:10, stone:10},           era:0, s:1, hp:50,  bt:1,  d:'Geceleri sokakları aydınlatır. Süs: refah +1.', deco:1},
   banner:  {n:'Sancak',      ic:'🚩', cost:{wood:15, gold:10},            era:1, s:1, hp:60,  bt:1,  d:'Krallığın sancağı. Süs: refah +1.', deco:1},
+  storage: {n:'Depo',        ic:'📦', cost:{wood:60, stone:10},           era:0, s:1, hp:150, bt:5,  d:'Odun, taş ve demir depolama sınırını artırır (seviye başına daha çok). Depolar dolunca üretim durur!'},
+  granary: {n:'Ambar',       ic:'🛖', cost:{wood:50, stone:10},           era:0, s:1, hp:130, bt:5,  d:'Yiyecek depolama sınırını artırır. Kışa hazırlık için şart.'},
+  school:  {n:'Okul',        ic:'📚', cost:{wood:90, stone:40, gold:30},  era:1, s:1, hp:140, bt:8,  d:'Köylüler mesleklerinde daha hızlı ustalaşır (beceri kazanımı +%50/seviye) ve refah +4.'},
+  library: {n:'Kütüphane',   ic:'📜', cost:{wood:80, stone:80, gold:60},  era:1, s:1, hp:150, bt:9,  d:'Araştırmalar her seviyede %6 ucuzlar (en çok %30). Kale ve İmparatorluk çağı araştırmaları için gereklidir.'},
+  stable:  {n:'Ahır',        ic:'🐴', cost:{wood:120, stone:60, food:60}, era:2, s:1, hp:200, bt:9,  d:'Şövalye eğitir (kışladan daha hızlı) ve ordu sınırını +3 artırır.'},
+  cathedral:{n:'Katedral',   ic:'⛪', cost:{wood:150, stone:400, gold:200}, era:2, s:2, hp:700, bt:30, d:'Büyük katedral: refah +10 (seviye başına +2) ve salgın etkisini azaltır. Şapel gerektirir. 2×2.', req:{b:'chapel'}},
+  arena:   {n:'Arena',       ic:'🏟️', cost:{wood:200, stone:250, gold:120}, era:2, s:2, hp:600, bt:28, d:'Gladyatör oyunları: refah +7 ve altın geliri. Kışla gerektirir. 2×2.', req:{b:'barracks'}},
+  palace:  {n:'Saray',       ic:'👑', cost:{wood:400, stone:500, gold:400}, era:3, s:2, hp:1200, bt:45, d:'Kralın sarayı: büyük altın geliri, refah +8, nüfus +10. Harika için gerekir. Şehir Merkezi seviye 4 ister. 2×2, tek.', req:{hall:4,one:1}},
   hall:    {n:'Şehir Merkezi', ic:'🏯', cost:{}, era:0, s:2, hp:900, bt:0, d:'Mızraklı eğitir ve ok atar. Yıkılırsa oyun biter.', range:15, dmg:12, cd:1.4, ah:4.3}
 };
-const ORDER = ['house','farm','lumber','quarry','well','market','tavern','chapel','tower','barracks','armycamp','wall','gate','clinic','firehouse','castle','wonder','blacksmith','mine','mill','magetower','workshop','statue','garden','lamp','banner','hunter','trap','moat','ironmine','bakery','harbor'];
+const ORDER = ['house','farm','lumber','quarry','well','market','tavern','chapel','tower','barracks','armycamp','wall','gate','clinic','firehouse','castle','wonder','blacksmith','mine','mill','magetower','workshop','statue','garden','lamp','banner','hunter','trap','moat','ironmine','bakery','harbor','storage','granary','school','library','stable','cathedral','arena','palace'];
 const TECHS = [
   {id:'agri',  n:'Sabancılık',      ic:'🌾', era:0, cost:{wood:80,food:40},               d:'Çiftlikler %30 daha fazla yiyecek üretir.'},
   {id:'axe',   n:'Çelik Balta',     ic:'🪓', era:0, cost:{wood:60,stone:30},              d:'Oduncular %30 daha fazla odun keser.'},
@@ -678,7 +693,7 @@ const CAMP_POS = [{x:-84,z:-76},{x:88,z:-62},{x:16,z:100},{x:-98,z:56}];
 const UNITS = {
   spear: {n:'Mızraklı', ic:'🔱', cost:{food:25,wood:15}, era:0, time:6,  hp:80,  dmg:9,  spd:4.2, range:0, at:['hall','barracks']},
   archer:{n:'Okçu',     ic:'🏹', cost:{wood:35,gold:20}, era:1, time:7,  hp:50,  dmg:8,  spd:4.0, range:9, at:['barracks']},
-  knight:{n:'Şövalye',  ic:'🐎', cost:{food:50,gold:45,iron:10}, era:2, time:10, hp:170, dmg:20, spd:6.5, range:0, at:['barracks']},
+  knight:{n:'Şövalye',  ic:'🐎', cost:{food:50,gold:45,iron:10}, era:2, time:10, hp:170, dmg:20, spd:6.5, range:0, at:['barracks','stable']},
   hero:  {n:'Komutan',  ic:'👑', cost:{gold:150,food:80}, era:1, time:15, hp:300, dmg:24, spd:5.0, range:0, at:['barracks'], limit:1},
   catapult:{n:'Mancınık', ic:'🪨', cost:{wood:120,stone:60,gold:40,iron:15}, era:2, time:14, hp:140, dmg:26, spd:2.2, range:16, at:['workshop']},
   mage:  {n:'Büyücü',   ic:'🧙', cost:{gold:90,food:40}, era:2, time:11, hp:70, dmg:10, spd:3.8, range:12, at:['magetower']}
@@ -1012,7 +1027,7 @@ function bFirehouse(t){const g=new THREE.Group();
   g.add(box(0xe8e8e8,.9,.95,.05,-.2,0,.66)); g.add(box(0x444444,.9,.06,.05,-.2,.5,.69));
   g.add(box(STONE[t],.45,2.2,.45,.6,0,-.4)); g.add(cone(0x3a3a3a,.38,.5,.6,2.2,-.4)); g.add(box(0xffd54a,.18,.18,.18,.6,1.7,-.1));
   return g;}
-function mdl(type,t,v){ const k=(window.KR&&KR.ready)?KR.building(type,t,v):null; return k||MODELS[type](t); }
+function mdl(type,t,v,L){ const k=(window.KR&&KR.ready)?KR.building(type,t,v,L||1):null; return k||MODELS[type](t); }
 function bHeight(m){ const bb=new THREE.Box3().setFromObject(m); return Math.max(1,bb.max.y-bb.min.y); }
 function bBlacksmith(t){const g=new THREE.Group(); g.add(box(STONE[t],1.6,1.0,1.2,0,0,-.2)); g.add(roof4(0x3a3a3a,1.6,.5,1.0,0,-.2,1,.75)); g.add(box(0x555555,.4,1.8,.4,-.5,0,-.5)); g.add(box(0x333333,.5,.4,.3,.4,0,.65)); return g;}
 function bMine(t){const g=new THREE.Group(); g.add(box(0x6f6a62,1.9,.12,1.9)); const r=new THREE.Mesh(GI,mat(0x8a7a50)); r.scale.set(.9,.8,.8); r.position.set(-.2,.6,-.3); g.add(r); g.add(box(0x6b4423,.9,.9,.15,.2,0,.4)); g.add(box(0x111111,.55,.6,.16,.2,0,.42)); g.add(box(0xffd54a,.25,.2,.25,.7,.1,.6)); return g;}
@@ -1022,8 +1037,8 @@ function bWorkshop(t){const g=new THREE.Group(); g.add(box(0x8a5a2b,1.9,.1,1.9))
 function bDeco(c){ return function(t){ const g=new THREE.Group(); g.add(box(0x9a9a96,.9,.3,.9)); g.add(cyl(c,.25,1.2,0,.3,0)); return g; }; }
 function bTrap(t){ const g=new THREE.Group(); const wd=mat(0x6b4423), tip=mat(0xd8c8a0); for(let i=0;i<9;i++){ const x=((i%3)-1)*.55, z=(Math.floor(i/3)-1)*.55; const c=new THREE.Mesh(GC,i%2?wd:tip); c.scale.set(.12,.55,.12); c.position.set(x+(Math.random()-.5)*.15,.2,z+(Math.random()-.5)*.15); c.rotation.set((Math.random()-.5)*.5,0,(Math.random()-.5)*.5); c.castShadow=true; g.add(c); } const base=new THREE.Mesh(new THREE.BoxGeometry(1.7,.06,1.7),mat(0x5a4632)); base.position.y=.02; g.add(base); return g; }
 function bMoat(t){ const g=new THREE.Group(); const w=new THREE.Mesh(new THREE.BoxGeometry(1.95,.08,1.95),new THREE.MeshStandardMaterial({color:new THREE.Color(0x2f6f8f).convertSRGBToLinear(),roughness:.15,metalness:.2,transparent:true,opacity:.88})); w.position.y=.02; g.add(w); const rim=mat(0x7a6a52); [[0,.98,1.95,.12],[0,-.98,1.95,.12],[.98,0,.12,1.95],[-.98,0,.12,1.95]].forEach(([x,z,sx,sz])=>{ const r=new THREE.Mesh(new THREE.BoxGeometry(sx,.14,sz),rim); r.position.set(x,.05,z); g.add(r); }); return g; }
-const MODELS = {harbor:bDeco(0x6b4423),ironmine:bQuarry,bakery:bHouse,trap:bTrap,moat:bMoat,hunter:bDeco(0x6b4423),statue:bDeco(0xd8d8d0),garden:bDeco(0x5a9a3c),lamp:bDeco(0x444444),banner:bDeco(0xc0392b),blacksmith:bBlacksmith,mine:bMine,mill:bMill,magetower:bMage,workshop:bWorkshop,gate:function(t){return bGateArms(t,0);},clinic:bClinic,firehouse:bFirehouse,armycamp:bArmyCamp,well:bWell,tavern:bTavern,chapel:bChapel,house:bHouse,farm:bFarm,lumber:bLumber,quarry:bQuarry,market:bMarket,tower:bTower,barracks:bBarracks,wall:bWall,castle:bCastle,wonder:bWonder,hall:bHall};
-const HEIGHTS = {hunter:2,statue:3,garden:.8,lamp:1.6,banner:1.8,blacksmith:2,mine:1.6,mill:3,magetower:5.4,workshop:1.8,gate:2.3,clinic:2.4,firehouse:2.8,armycamp:3.0,well:2.0,tavern:2.4,chapel:3.9,house:2.2,farm:1.4,lumber:1.5,quarry:1.8,market:1.5,tower:4.2,barracks:2.2,wall:1.6,castle:4.8,wonder:5.2,hall:5.0};
+const MODELS = {storage:bHouse,granary:bHouse,school:bHouse,library:bHouse,stable:bBarracks,cathedral:bChapel,arena:bArmyCamp,palace:bCastle,harbor:bDeco(0x6b4423),ironmine:bQuarry,bakery:bHouse,trap:bTrap,moat:bMoat,hunter:bDeco(0x6b4423),statue:bDeco(0xd8d8d0),garden:bDeco(0x5a9a3c),lamp:bDeco(0x444444),banner:bDeco(0xc0392b),blacksmith:bBlacksmith,mine:bMine,mill:bMill,magetower:bMage,workshop:bWorkshop,gate:function(t){return bGateArms(t,0);},clinic:bClinic,firehouse:bFirehouse,armycamp:bArmyCamp,well:bWell,tavern:bTavern,chapel:bChapel,house:bHouse,farm:bFarm,lumber:bLumber,quarry:bQuarry,market:bMarket,tower:bTower,barracks:bBarracks,wall:bWall,castle:bCastle,wonder:bWonder,hall:bHall};
+const HEIGHTS = {storage:2,granary:2.2,school:2.4,library:2.8,stable:2.2,cathedral:5.5,arena:2.2,palace:5.2,hunter:2,statue:3,garden:.8,lamp:1.6,banner:1.8,blacksmith:2,mine:1.6,mill:3,magetower:5.4,workshop:1.8,gate:2.3,clinic:2.4,firehouse:2.8,armycamp:3.0,well:2.0,tavern:2.4,chapel:3.9,house:2.2,farm:1.4,lumber:1.5,quarry:1.8,market:1.5,tower:4.2,barracks:2.2,wall:1.6,castle:4.8,wonder:5.2,hall:5.0};
 
 /* ---------- dünya: zemin, su, tepeler, bulutlar ---------- */
 var water, waterBase; var clouds=[];
@@ -1032,7 +1047,35 @@ var forestPts=[], forestMeshes=[], decorMeshes=[];
 var groundGeo=null, forestCones=[], forestVals=[], stars=null, precip=null, pPos=null, pMat=null;
 const LAKE={x:47,z:21,r:14};
 const inLake=(x,z,m)=>Math.hypot(x-LAKE.x,z-LAKE.z)<LAKE.r+(m||0);
+/* ---- engebeli arazi: karo köşe yükseklikleri (CH) ---- */
+var MAPK='meadow';
+const CN=N+1, CH=new Float32Array(CN*CN), CLK=new Uint8Array(CN*CN);
+const MAPAMP={meadow:2.6,forest:3.0,highland:6.0,plains:.6};
+const sstep=(a,b,x)=>{ const t=clamp((x-a)/(b-a),0,1); return t*t*(3-2*t); };
+function terrainRaw(x,z,ph,A,map){
+  let n=.5*Math.sin(x*.105+ph[0])*Math.cos(z*.09+ph[1])+.3*Math.sin((x*.62+z*.78)*.16+ph[2])+.2*Math.sin(x*.27+ph[3])*Math.sin(z*.24+ph[4]);
+  if(map==='highland'){ const rg=1-Math.abs(Math.sin(x*.07+ph[5])*Math.cos(z*.06+ph[1])); n+=.9*rg*rg-.35; }
+  let h=A*(.5+.5*n); const dc=Math.hypot(x,z); h*=sstep(9,25,dc);
+  const ld=Math.hypot(x-LAKE.x,z-LAKE.z); h*=sstep(LAKE.r+1.5,LAKE.r+9,ld);
+  return Math.max(0,h);
+}
+function genTerrain(){
+  const r=mulberry32((S.seed||1)+777), ph=[0,0,0,0,0,0].map(()=>r()*6.283), A=MAPAMP[S.map||'meadow']||1.6;
+  CLK.fill(0); MAPK=S.map||'meadow';
+  for(let a=0;a<CN;a++) for(let c=0;c<CN;c++){ const x=(a-N/2)*T, z=(c-N/2)*T; let h=terrainRaw(x,z,ph,A,S.map);
+    const ld=Math.hypot(x-LAKE.x,z-LAKE.z); if(ld<LAKE.r+2.5){ const k2=clamp((LAKE.r+2.5-ld)/3.5,0,1); h=h*(1-k2)-2.2*k2; }
+    CH[a*CN+c]=h; }
+}
+function chAt(x,z){ const fx=clamp(x/T+N/2,0,N), fz=clamp(z/T+N/2,0,N), a=Math.min(N-1,Math.floor(fx)), c=Math.min(N-1,Math.floor(fz)), u=fx-a, v=fz-c;
+  const h00=CH[a*CN+c], h10=CH[(a+1)*CN+c], h01=CH[a*CN+c+1], h11=CH[(a+1)*CN+c+1];
+  return (h00*(1-u)+h10*u)*(1-v)+(h01*(1-u)+h11*u)*v; }
+function gOff(x,z){ return Math.max(0,hgt(x,z)); }
 function hgt(x,z){
+  const d=Math.max(Math.abs(x),Math.abs(z));
+  if(d<=HALF) return chAt(x,z);
+  const k=clamp((d-HALF)/12,0,1); return chAt(x,z)*(1-k)+hgtOut(x,z)*k;
+}
+function hgtOut(x,z){
   const d=Math.max(Math.abs(x),Math.abs(z)), e=Math.max(0,d-(HALF+9));
   const ld=Math.hypot(x-LAKE.x,z-LAKE.z);
   if(ld<LAKE.r+2.5){ const k2=clamp((LAKE.r+2.5-ld)/3.5,0,1); const base=hgt0(x,z,d,e); return base*(1-k2)-2.2*k2; }
@@ -1043,11 +1086,12 @@ function hgt0(x,z,d,e){
   const k=Math.min(1,e/25);
   let h=k*(1.1+.9*Math.sin(x*.045+1)*Math.cos(z*.04)+.5*Math.sin(x*.12)*Math.cos(z*.1));
   if(d>150) h+=(d-150)*.35;
+  if(MAPK==='highland') h*=1.9; else if(MAPK==='plains') h*=.6;
   return h;
 }
 function buildForest(rnd){
   const pts=[]; let tries=0;
-  while(pts.length<2600&&tries<14000){
+  while(pts.length<3800&&tries<20000){
     tries++;
     const x=(rnd()-.5)*440, z=(rnd()-.5)*440, d=Math.max(Math.abs(x),Math.abs(z));
     if(d<HALF+4) continue;
@@ -1072,7 +1116,7 @@ function buildForest(rnd){
   [trunk].concat(cones).forEach(m=>{ m.frustumCulled=false; m.castShadow=false; m.receiveShadow=false; m.instanceMatrix.needsUpdate=true; if(m.instanceColor) m.instanceColor.needsUpdate=true; scene.add(m); });
 }
 (function buildWorld(){
-  const SZ=520, seg=130;
+  const SZ=520, seg=260;
   const gg=new THREE.PlaneGeometry(SZ,SZ,seg,seg); gg.rotateX(-Math.PI/2);
   const pos=gg.attributes.position, col=new Float32Array(pos.count*3), c=new THREE.Color();
   for(let i=0;i<pos.count;i++){
@@ -1108,6 +1152,77 @@ function buildForest(rnd){
 })();
 
 
+/* harita türüne göre zemin rengi, yükseklik ve manzara */
+const GPAL={meadow:[.27,.42,.34],forest:[.29,.46,.27],highland:[.22,.3,.36],plains:[.21,.45,.4]};
+let mapDecor=[], gridLines=null;
+function rebuildGround(){
+  if(!groundGeo) return; const pos=groundGeo.attributes.position, col=groundGeo.attributes.color, c=new THREE.Color(), rock=new THREE.Color(), pal=GPAL[S.map]||GPAL.meadow;
+  for(let i=0;i<pos.count;i++){ const x=pos.getX(i), z=pos.getZ(i); pos.setY(i,hgt(x,z)); }
+  for(let i=0;i<pos.count;i++){ const x=pos.getX(i), z=pos.getZ(i), d=Math.max(Math.abs(x),Math.abs(z)), y=pos.getY(i);
+    const n=Math.sin(x*.21)*Math.cos(z*.17)*.5+Math.sin(x*.07+z*.11)*.5+Math.sin(x*.9)*Math.sin(z*.8)*.15;
+    const f=clamp((d-(HALF+4))/14,0,1), sl=Math.abs(hgt(x+1,z)-hgt(x-1,z))+Math.abs(hgt(x,z+1)-hgt(x,z-1));
+    c.setHSL(pal[0]+n*.02, pal[1]-.05*f, (pal[2]+n*.05+(d<HALF?Math.min(.09,y*.018)-.03:0))*(1-f)+(.2+n*.03)*f);
+    const rk=clamp((sl-(S.map==='highland'?.55:.9))*1.4,0,.85)+(S.map==='highland'&&y>2.6&&d<HALF?clamp((y-2.6)*.25,0,.4):0);
+    if(rk>0){ rock.setHSL(.08,.12,.36+n*.04); c.lerp(rock,rk); }
+    c.convertSRGBToLinear(); col.setXYZ(i,c.r,c.g,c.b); }
+  pos.needsUpdate=true; col.needsUpdate=true; groundGeo.computeVertexNormals();
+  rebuildGrid(); roadDirty=true; buildMapDecor();
+  if(window.KR&&KR.ready) buildForestKR(); else forestDensity();
+}
+function gIdx(a,c){ const ix=(a-N/2)*T/2+130, iz=(c-N/2)*T/2+130; return iz*261+ix; }
+function syncCorners(list){ if(!groundGeo) return; const pos=groundGeo.attributes.position; for(const [a,c] of list){ pos.setY(gIdx(a,c),CH[a*CN+c]); } pos.needsUpdate=true; groundGeo.computeVertexNormals(); rebuildGrid(); roadDirty=true; }
+function rebuildGrid(){
+  if(gridLines){ scene.remove(gridLines); gridLines.geometry.dispose(); }
+  const v=[]; for(let a=0;a<=N;a++) for(let c=0;c<N;c++){ const x=(a-N/2)*T, z0=(c-N/2)*T; v.push(x,CH[a*CN+c]+.07,z0, x,CH[a*CN+c+1]+.07,z0+T); v.push(z0,CH[c*CN+a]+.07,x, z0+T,CH[(c+1)*CN+a]+.07,x); }
+  const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.Float32BufferAttribute(v,3));
+  gridLines=new THREE.LineSegments(g,new THREE.LineBasicMaterial({color:0xffffff,transparent:true,opacity:.16,depthWrite:false})); gridLines.visible=gridHelper.visible; scene.add(gridLines);
+}
+function forestDensity(){ const fr={plains:.3,meadow:.7,highland:.5,forest:1}[S&&S.map]||.7; forestMeshes.forEach(m=>{ if(m.userData.n0===undefined) m.userData.n0=m.count; m.count=Math.floor(m.userData.n0*fr); }); }
+function buildMapDecor(){
+  mapDecor.forEach(m=>scene.remove(m)); mapDecor=[]; if(!(window.KR&&KR.ready)) return;
+  const r=mulberry32((S.seed||1)+31337), mp=S.map||'meadow';
+  const put=(n,sc,x,z,ry)=>{ const o=KR.hxPart?KR.hxPart(n,1,{sc}):null; if(!o) return; o.position.x+=x; o.position.z+=z; o.position.y+=hgt(x,z)-.5-sc*.16; o.rotation.y=ry; o.traverse(q=>{ if(q.isMesh){ q.castShadow=false; q.receiveShadow=true; } }); scene.add(o); mapDecor.push(o); };
+  const ring=(cnt,names,s0,s1,d0,d1)=>{ for(let k=0;k<cnt;k++){ const a=r()*6.283, d=HALF+d0+r()*(d1-d0), x=Math.cos(a)*d, z=Math.sin(a)*d; if(CAMP_POS.some(c=>Math.hypot(c.x-x,c.z-z)<16)||Math.hypot(x-LAKE.x,z-LAKE.z)<LAKE.r+10) continue; put(names[Math.floor(r()*names.length)],s0+r()*(s1-s0),x,z,r()*6.283); } };
+  const tree=(cnt,s0,s1,d0,d1)=>{ const TN=['nature/tree_pineRoundA','nature/tree_oak','nature/tree_pineDefaultA','nature/tree_fat','nature/tree_tall','nature/tree_detailed'].filter(n=>KR.has(n)); for(let k=0;k<cnt&&TN.length;k++){ const a=r()*6.283, d=HALF+d0+r()*(d1-d0), x=Math.cos(a)*d, z=Math.sin(a)*d; if(CAMP_POS.some(c=>Math.hypot(c.x-x,c.z-z)<12)||Math.hypot(x-LAKE.x,z-LAKE.z)<LAKE.r+4) continue; const o=KR.get(TN[k%TN.length]); if(!o) continue; o.scale.setScalar(s0+r()*(s1-s0)); o.rotation.y=r()*6; o.position.set(x,hgt(x,z)-.1,z); scene.add(o); mapDecor.push(o); } };
+  if(mp==='highland'){ ring(46,['n_mountain_A','n_mountain_B','n_mountain_C'],9,17,14,80); ring(14,['n_mountain_C'],5,8,4,14); }
+  else if(mp==='forest'){ tree(140,2.6,4.6,1,40); ring(4,['n_mountain_B'],12,16,50,90); }
+  else if(mp==='meadow'){ ring(8,['n_mountain_B','n_mountain_C'],8,13,30,80); tree(30,2,3.2,2,30); }
+  else if(mp==='plains'){ ring(5,['n_hill_single_A'],6,9,25,80); }
+}
+/* toprak yollar: tek parça, araziye yapışık doku */
+let roadDirty=true, roadMesh=null, roadCv=null, roadTex=null;
+function paintRoads(){
+  roadDirty=false; const RS=1536, k=RS/(N*T), tp=T*k;
+  if(!roadCv){ roadCv=document.createElement('canvas'); roadCv.width=roadCv.height=RS; roadTex=new THREE.CanvasTexture(roadCv); roadTex.anisotropy=4; roadTex.encoding=THREE.sRGBEncoding;
+    const g=new THREE.PlaneGeometry(N*T,N*T,N,N); g.rotateX(-Math.PI/2);
+    roadMesh=new THREE.Mesh(g,new THREE.MeshStandardMaterial({map:roadTex,transparent:true,depthWrite:false,roughness:1,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2}));
+    roadMesh.receiveShadow=true; roadMesh.renderOrder=1; scene.add(roadMesh); }
+  { const pos=roadMesh.geometry.attributes.position; for(let i=0;i<pos.count;i++){ const x=pos.getX(i), z=pos.getZ(i); pos.setY(i,chAt(x,z)+.05); } pos.needsUpdate=true; roadMesh.geometry.computeVertexNormals(); }
+  const c=roadCv.getContext('2d'); c.clearRect(0,0,RS,RS);
+  const isR=(i,j)=>i>=0&&j>=0&&i<N&&j<N&&occ[i]&&occ[i][j]&&occ[i][j].kind==='road';
+  const isB=(i,j)=>i>=0&&j>=0&&i<N&&j<N&&occ[i]&&occ[i][j]&&occ[i][j].kind==='bld'&&!B[occ[i][j].b.type].passive&&occ[i][j].b.type!=='wall';
+  const P=(i,j)=>[(i+.5)*tp,(j+.5)*tp]; const segs=[], dots=[], stubs=[];
+  for(let i=0;i<N;i++) for(let j=0;j<N;j++){ if(!isR(i,j)) continue; let nb=0;
+    if(isR(i+1,j)){ segs.push([P(i,j),P(i+1,j)]); nb++; } if(isR(i,j+1)){ segs.push([P(i,j),P(i,j+1)]); nb++; }
+    if(isR(i-1,j)) nb++; if(isR(i,j-1)) nb++;
+    if(isR(i+1,j+1)&&!isR(i+1,j)&&!isR(i,j+1)){ segs.push([P(i,j),P(i+1,j+1)]); nb++; } if(isR(i+1,j-1)&&!isR(i+1,j)&&!isR(i,j-1)){ segs.push([P(i,j),P(i+1,j-1)]); nb++; }
+    if(isR(i-1,j+1)&&!isR(i-1,j)&&!isR(i,j+1)) nb++; if(isR(i-1,j-1)&&!isR(i-1,j)&&!isR(i,j-1)) nb++;
+    dots.push(P(i,j)); for(const [di,dj] of [[1,0],[-1,0],[0,1],[0,-1]]) if(isB(i+di,j+dj)){ const a=P(i,j); stubs.push([a,[a[0]+di*tp*.62,a[1]+dj*tp*.62]]); } }
+  const stroke=(w,col,list,cap)=>{ c.strokeStyle=col; c.lineWidth=w; c.lineCap=cap||'round'; c.lineJoin='round'; c.beginPath(); for(const [a,b] of list){ c.moveTo(a[0],a[1]); c.lineTo(b[0],b[1]); } c.stroke(); };
+  const disc=(rad,col)=>{ c.fillStyle=col; c.beginPath(); for(const d of dots){ c.moveTo(d[0]+rad,d[1]); c.arc(d[0],d[1],rad,0,6.283); } c.fill(); };
+  const era=S?S.era:0, cob=era>=2;
+  const base=cob?(era>=3?'#9a958a':'#8f8676'):'#8a6a45', edge=cob?'rgba(70,64,56,.55)':'rgba(84,60,34,.55)', mid=cob?'#a8a397':'#9c7a52';
+  c.save(); c.filter='blur('+Math.round(tp*.12)+'px)'; stroke(tp*1.02,edge,segs); stroke(tp*.8,edge,stubs); disc(tp*.52,edge); c.restore();
+  stroke(tp*.82,base,segs); stroke(tp*.62,base,stubs); disc(tp*.42,base);
+  c.save(); c.globalCompositeOperation='source-atop';
+  c.globalAlpha=.35; stroke(tp*.34,mid,segs);
+  c.globalAlpha=.45; c.lineWidth=tp*.07; c.strokeStyle=cob?'#6f6a60':'#5e4428'; c.beginPath(); for(const [a,b] of segs){ const dx=b[0]-a[0], dy=b[1]-a[1], L=Math.hypot(dx,dy)||1, ox=-dy/L*tp*.2, oy=dx/L*tp*.2; c.moveTo(a[0]+ox,a[1]+oy); c.lineTo(b[0]+ox,b[1]+oy); c.moveTo(a[0]-ox,a[1]-oy); c.lineTo(b[0]-ox,b[1]-oy); } c.stroke();
+  c.globalAlpha=1; const rr=mulberry32(99);
+  if(cob){ for(const d of dots){ for(let q=0;q<26;q++){ const x=d[0]+(rr()-.5)*tp*1.1, y=d[1]+(rr()-.5)*tp*1.1, v=120+rr()*60|0; c.fillStyle=`rgba(${v},${v-4},${v-12},.55)`; c.beginPath(); c.ellipse(x,y,tp*.07+rr()*tp*.04,tp*.055+rr()*tp*.03,rr()*3,0,6.283); c.fill(); } } }
+  else { for(const d of dots){ for(let q=0;q<14;q++){ const x=d[0]+(rr()-.5)*tp*1.1, y=d[1]+(rr()-.5)*tp*1.1, v=rr(); c.fillStyle=v<.5?'rgba(70,50,28,.35)':'rgba(190,170,140,.45)'; c.beginPath(); c.arc(x,y,tp*(.015+rr()*.03),0,6.283); c.fill(); } } }
+  c.restore(); roadTex.needsUpdate=true;
+}
+
 /* Kenney ağaçlarıyla orman (örneklenmiş/instanced) */
 function buildForestKR(){
   if(!(window.KR&&KR.ready)||!forestPts.length) return;
@@ -1123,9 +1238,10 @@ function buildForestKR(){
       if(!ch.isMesh) return;
       const im=new THREE.InstancedMesh(ch.geometry,ch.material,pts.length);
       pts.forEach((p,k)=>{ const x=p[0], z=p[1], s=p[2]*1.25; dm.position.set(x,hgt(x,z)-.05,z); dm.rotation.set(0,p[3],0); dm.scale.setScalar(s); dm.updateMatrix(); mm.multiplyMatrices(dm.matrix,ch.matrixWorld); im.setMatrixAt(k,mm); });
-      im.instanceMatrix.needsUpdate=true; im.castShadow=false; im.receiveShadow=false; im.frustumCulled=false; scene.add(im); forestMeshes.push(im);
+      im.instanceMatrix.needsUpdate=true; im.castShadow=false; im.receiveShadow=false; im.frustumCulled=false; scene.add(im); forestMeshes.push(im); im.userData.n0=pts.length;
     });
   });
+  if(typeof S!=='undefined'&&S) forestDensity();
   /* süs: çiçek, mantar, çalı */
   const r=mulberry32(4242); decorMeshes.forEach(m=>scene.remove(m)); decorMeshes=[];
   for(let k=0;k<170;k++){
@@ -1142,7 +1258,7 @@ function buildForestKR(){
   }
 }
 /* ---------- ızgara, hayalet, ağaç/kaya ---------- */
-const gridHelper = new THREE.GridHelper(N*T, N, 0xffffff, 0xffffff);
+const gridHelper = new THREE.GridHelper(N*T, N, 0xffffff, 0xffffff); gridHelper.material.visible=false;
 gridHelper.material.transparent = true; gridHelper.material.opacity = .14; gridHelper.position.y = .04; gridHelper.visible=false; scene.add(gridHelper);
 const footprint = new THREE.Mesh(new THREE.PlaneGeometry(1,1).rotateX(-Math.PI/2), new THREE.MeshBasicMaterial({color:0x69c47a, transparent:true, opacity:.45, depthWrite:false}));
 footprint.position.y = .06; footprint.visible=false; scene.add(footprint);
@@ -1172,13 +1288,13 @@ function addNode(kind,i,j,r){
   const kr=(window.KR&&KR.ready)?(kind==='tree'?KR.tree(r):KR.rock(r,kind==='ore')):null;
   const g = kr || (kind==='tree' ? makeTree(r) : makeRock(r));
   if(kind==='ore') oreLook(g);
-  const p = tileToWorld(i,j); g.position.set(p.x+(r()-.5)*.8, 0, p.z+(r()-.5)*.8);
+  const p = tileToWorld(i,j); g.position.set(p.x+(r()-.5)*.8, 0, p.z+(r()-.5)*.8); g.position.y=hgt(g.position.x,g.position.z)-.05;
   if(g.userData.sync) g.userData.sync();
   scene.add(g); nodeMeshes.push(g); occ[i][j]={kind, mesh:g};
 }
 function genNodes(){
   const r = mulberry32(S.seed||20240607), cf=[], cr=[];
-  const MP={meadow:[11,5,.018,1,3],forest:[18,4,.06,1.25,2],highland:[6,11,.01,.85,6],plains:[6,3,.006,.8,2]}[S.map||'meadow']||[11,5,.018,1,3];
+  const MP={meadow:[20,9,.02,1.05,5],forest:[40,6,.14,1.5,3],highland:[10,24,.012,.85,9],plains:[9,5,.005,.8,3]}[S.map||'meadow']||[20,9,.02,1.05,5];
   for(let k=0;k<MP[0];k++) cf.push({i:3+r()*(N-6), j:3+r()*(N-6), r:(2.6+r()*3.6)*MP[3]});
   for(let k=0;k<MP[1];k++)  cr.push({i:3+r()*(N-6), j:3+r()*(N-6), r:1.9+r()*2});
   for(let i=1;i<N-1;i++) for(let j=1;j<N-1;j++){
@@ -1197,10 +1313,17 @@ function genNodes(){
 }
 const ORE_MAT=new THREE.MeshStandardMaterial({color:new THREE.Color(0xe8b53a).convertSRGBToLinear(),roughness:.35,metalness:.6,flatShading:true});
 function oreLook(g){ g.traverse(o=>{ if(o.isMesh){ o.material=ORE_MAT; } }); const sp=new THREE.Mesh(GI,new THREE.MeshBasicMaterial({color:0xfff3a0})); sp.scale.setScalar(.06); sp.position.set(.25,.75,.2); g.add(sp); }
+function plantTree(i,j){
+  if(i<1||j<1||i>N-2||j>N-2||occ[i][j]) { beep(160,.12,'square',.04); return toast('Buraya ağaç dikilemez.','bad'); }
+  const p=tileToWorld(i,j); if(Math.hypot(p.x-LAKE.x,p.z-LAKE.z)<LAKE.r+1.5) return;
+  if(!canAfford({wood:5,food:5})) return toast('Ağaç dikmek için 🪵5 🌾5 gerekir.','bad');
+  pay({wood:5,food:5}); addNode('tree',i,j,Math.random); (S.planted=S.planted||[]).push([i,j]);
+  burst(p.x,.4,p.z,[0x5a9a45,0x3f7d3a,0x8bc34a],8,2.5,.15,.7); sfx('build0',.3)||beep(500,.08,'triangle',.04,700); refreshUI();
+}
 function removeNode(i,j,record=true){
   const o=occ[i][j]; if(!o||o.kind==='bld') return null;
   scene.remove(o.mesh); if(o.mesh.userData.free) o.mesh.userData.free(); const ni=nodeMeshes.indexOf(o.mesh); if(ni>=0) nodeMeshes.splice(ni,1); occ[i][j]=null;
-  if(record) cut.push([o.kind,i,j]); return o.kind;
+  if(record){ const pi=S&&S.planted?S.planted.findIndex(q=>q[0]===i&&q[1]===j):-1; if(pi>=0) S.planted.splice(pi,1); else cut.push([o.kind,i,j]); } return o.kind;
 }
 function nodesAround(b,kind,R){
   const list=[];
@@ -1219,7 +1342,7 @@ let mode={k:'select',type:null}, selected=null, started=false;
 const mouse={x:innerWidth/2,y:innerHeight/2,over:true};
 
 function freshState(){
-  return {res:{wood:170,stone:60,food:120,gold:60,iron:0}, era:0, pop:6, time:0, wave:0, nextWave:200, over:false, won:false, speed:1, paused:false, kills:0, seed:Math.floor(Math.random()*1e9)+1, tech:{}, smith:{w:0,a:0}, dragons:0, rally:{x:0,z:6}, nextEvent:150, coldUntil:0, quests:{}, happy:60, tax:1, fearUntil:0, diff:1, weather:'clear', weatherT:60, lastSeason:-1, rallyCustom:false, cryUntil:0, cryReady:0, form:'s', kd:freshKingdoms(), laws:{work:0,ration:0,draft:0,tariff:0,martial:0}, lawCd:0, plagueUntil:0};
+  return {N, res:{wood:170,stone:60,food:120,gold:60,iron:0}, era:0, pop:6, time:0, wave:0, nextWave:200, over:false, won:false, speed:1, paused:false, kills:0, seed:Math.floor(Math.random()*1e9)+1, tech:{}, smith:{w:0,a:0}, dragons:0, rally:{x:0,z:6}, nextEvent:150, coldUntil:0, quests:{}, happy:60, tax:1, fearUntil:0, diff:1, weather:'clear', weatherT:60, lastSeason:-1, rallyCustom:false, cryUntil:0, cryReady:0, form:'s', kd:freshKingdoms(), laws:{work:0,ration:0,draft:0,tariff:0,martial:0}, lawCd:0, plagueUntil:0};
 }
 
 function clearWorld(){
@@ -1244,8 +1367,9 @@ function fowOn(){ return S&&S.fogOn!==false&&S.mode!=='sandbox'&&PREFS.fog!==fal
 function fowInit(){
   const R=N*FOW.res;
   if(!FOW.cv){ FOW.cv=document.createElement('canvas'); FOW.cv.width=FOW.cv.height=R; FOW.ctx=FOW.cv.getContext('2d'); FOW.tex=new THREE.CanvasTexture(FOW.cv); FOW.tex.minFilter=THREE.LinearFilter; FOW.tex.magFilter=THREE.LinearFilter;
-    const g=new THREE.PlaneGeometry(N*T+6,N*T+6); g.rotateX(-Math.PI/2);
-    FOW.mesh=new THREE.Mesh(g,new THREE.MeshBasicMaterial({map:FOW.tex,transparent:true,depthWrite:false,fog:false})); FOW.mesh.position.y=6.2; FOW.mesh.renderOrder=5; scene.add(FOW.mesh); }
+    const g=new THREE.PlaneGeometry(N*T+6,N*T+6,N,N); g.rotateX(-Math.PI/2);
+    FOW.mesh=new THREE.Mesh(g,new THREE.MeshBasicMaterial({map:FOW.tex,transparent:true,depthWrite:false,fog:false})); FOW.mesh.position.y=0; FOW.mesh.renderOrder=5; scene.add(FOW.mesh); }
+  { const pos=FOW.mesh.geometry.attributes.position; for(let i=0;i<pos.count;i++) pos.setY(i,gOff(pos.getX(i),pos.getZ(i))+6.4); pos.needsUpdate=true; }
   const c=FOW.ctx; c.globalCompositeOperation='source-over'; c.clearRect(0,0,R,R);
   const gr=c.createLinearGradient(0,0,R,R); gr.addColorStop(0,'rgba(24,32,44,.94)'); gr.addColorStop(.5,'rgba(34,44,58,.94)'); gr.addColorStop(1,'rgba(22,30,40,.94)'); c.fillStyle=gr; c.fillRect(0,0,R,R);
   for(let k=0;k<160;k++){ c.fillStyle=`rgba(${60+Math.random()*30|0},${70+Math.random()*30|0},${85+Math.random()*30|0},.08)`; c.beginPath(); c.arc(Math.random()*R,Math.random()*R,4+Math.random()*14,0,7); c.fill(); }
@@ -1268,7 +1392,7 @@ function fowTick(dt){
 }
 function startNew(){
   LOG.length=0;
-  clearWorld(); S=freshState(); S.diff=diffSel; S.mode=modeSel; S.map=(modeSel.startsWith('sc_')||campCh!=null)?'meadow':mapSel; S.nextWave=[600,420,300][diffSel]; if(seedSel) S.seed=seedSel; if(S.mode==='peace') S.nextWave=1e9; if(S.mode==='sandbox'){ S.res={wood:99999,stone:99999,food:99999,gold:99999}; S.era=3; } if(S.mode.startsWith('sc_')) setupScenarioPre(); recolorRoads(); genNodes();
+  clearWorld(); S=freshState(); S.diff=diffSel; S.mode=modeSel; S.map=(modeSel.startsWith('sc_')||campCh!=null)?'meadow':mapSel; S.nextWave=[600,420,300][diffSel]; if(seedSel) S.seed=seedSel; genTerrain(); rebuildGround(); if(S.mode==='peace') S.nextWave=1e9; if(S.mode==='sandbox'){ S.res={wood:99999,stone:99999,food:99999,gold:99999}; S.era=3; } if(S.mode.startsWith('sc_')) setupScenarioPre(); recolorRoads(); genNodes();
   placeBuilding('hall', N/2-1, N/2-1, 0, true); S.fogG=''; fowInit();
   startingArmy(); syncVillagers(); updateRallyFlag(); initCamps(); S.poi=null; initPOI(); if(S.mode.startsWith('sc_')) setupScenarioPost();
   cam.x=0; cam.z=0; cam.dist=46; cam.yaw=.8; cam.pitch=.85;
@@ -1279,6 +1403,15 @@ function startNew(){
 }
 
 /* ---------- binalar ---------- */
+function hallLvl(){ const h=blds.find(x=>x.type==='hall'); return h?(h.lvl||1):1; }
+function reqOk(k){ const r=B[k]&&B[k].req; if(!r||!S||S.mode==='sandbox') return true; if(r.hall&&hallLvl()<r.hall) return false; if(r.b&&!blds.some(x=>x.type===r.b&&x.prog>=1)) return false; if(r.one&&blds.some(x=>x.type===k)) return false; return true; }
+function reqTxt(k){ const r=B[k].req; if(!r) return ''; if(r.one&&blds.some(x=>x.type===k)) return 'Zaten var (tek)'; if(r.hall&&hallLvl()<r.hall) return 'Merkez Sv'+r.hall; if(r.b&&!blds.some(x=>x.type===r.b&&x.prog>=1)) return B[r.b].n+' gerekir'; return ''; }
+function lvSum(t){ let n=0; for(const b of blds) if(b.type===t&&b.prog>=1) n+=(b.lvl||1); return n; }
+const CAPK=['wood','stone','food','iron'];
+function resCap(k){ if(!S||S.mode==='sandbox') return 1e9; const base=(k==='iron'?250:600)+200*S.era+150*(hallLvl()-1);
+  return base+(k==='food'?lvSum('granary')*500:lvSum('storage')*(k==='iron'?200:500)); }
+function techCost(t){ const d=Math.min(.3,.06*lvSum('library')); if(!d) return t.cost; const c={}; for(const k in t.cost) c[k]=Math.ceil(t.cost[k]*(1-d)); return c; }
+function techLib(t){ return t.era>=2&&!lvSum('library')&&!(S.mode||'').startsWith('sc_'); }
 function canAfford(c){ for(const k in c) if(S.res[k] < c[k]) return false; return true; }
 function pay(c){ for(const k in c) S.res[k]-=c[k]; }
 function anchorFor(type,i,j){ return {i:i-Math.floor((B[type].s-1)/2), j:j-Math.floor((B[type].s-1)/2)}; }
@@ -1291,11 +1424,18 @@ function canPlace(type,i,j){
     const p=tileToWorld(a,c), ld=Math.hypot(p.x-LAKE.x,p.z-LAKE.z); if(ld<LAKE.r+1.5) return false; if(ld<LAKE.r+4.6) shore=true;
   }
   if(type==='harbor'&&!shore) return false;
+  if(slopeOf(type,i,j)>(B[type].s>=2?2.6:1.9)) return false;
   return true;
 }
 function centerOf(type,i,j){
-  const s=B[type].s, p=tileToWorld(i,j); p.x+=(s-1)*T/2; p.z+=(s-1)*T/2; return p;
+  const s=B[type].s, p=tileToWorld(i,j); p.x+=(s-1)*T/2; p.z+=(s-1)*T/2; p.y=padY(type,i,j); return p;
 }
+const NOPAD={wall:1,trap:1,moat:1,garden:1,lamp:1,banner:1};
+function padY(type,i,j){ const s=B[type].s; let lk=0,ls=0,sum=0,n=0,mx=-99,mn=99; for(let a=i;a<=i+s;a++) for(let c=j;c<=j+s;c++){ if(a<0||c<0||a>N||c>N) continue; const h=CH[a*CN+c]; sum+=h; n++; mx=Math.max(mx,h); mn=Math.min(mn,h); if(CLK[a*CN+c]){ lk++; ls+=h; } }
+  if(NOPAD[type]) return n?sum/n:0; return lk?ls/lk:(n?sum/n:0); }
+function slopeOf(type,i,j){ const s=B[type].s; let mx=-99,mn=99; for(let a=i;a<=i+s;a++) for(let c=j;c<=j+s;c++){ if(a<0||c<0||a>N||c>N) continue; const h=CH[a*CN+c]; mx=Math.max(mx,h); mn=Math.min(mn,h); } return mx-mn; }
+function flattenPad(b){ if(NOPAD[b.type]) return; const ch=[]; for(let a=b.i;a<=b.i+b.s;a++) for(let c=b.j;c<=b.j+b.s;c++){ if(a<0||c<0||a>N||c>N) continue; const k=a*CN+c; if(!CLK[k]){ CH[k]=b.y; CLK[k]=1; ch.push([a,c]); } }
+  if(ch.length){ syncCorners(ch); for(let a=b.i-2;a<=b.i+b.s+1;a++) for(let c=b.j-2;c<=b.j+b.s+1;c++){ const o=occ[a]&&occ[a][c]; if(o&&o.mesh&&o.kind!=='bld'&&o.kind!=='road'){ o.mesh.position.y=hgt(o.mesh.position.x,o.mesh.position.z)-.05; if(o.mesh.userData.sync) o.mesh.userData.sync(); } } } }
 let b0h=2, placeRot=0, buildRot=0, lastBuilt=null;
 function placeBuilding(type,i,j,tier,instant){
   for(let k=rubble.length-1;k>=0;k--){ const r=rubble[k]; if(i<r.i+r.s&&i+B[type].s>r.i&&j<r.j+r.s&&j+B[type].s>r.j){ scene.remove(r.g); rubble.splice(k,1); } }
@@ -1308,12 +1448,12 @@ function placeBuilding(type,i,j,tier,instant){
   b0h=bHeight(mesh);
   if(!instant){ mesh.scale.y=.12; }
   for(let a=i;a<i+d.s;a++) for(let c=j;c<j+d.s;c++){ const o0=occ[a]&&occ[a][c]; if(o0&&o0.kind!=='bld'){ if(o0.kind==='road') removeRoad(a,c); else removeNode(a,c,false); } occ[a][c]={kind:'bld',b}; }
-  blds.push(b);
+  b.y=p.y; blds.push(b); flattenPad(b);
   if(type==='wall'||type==='gate'){ wallRefresh(b); wallRefreshAround(i,j); }
   return b;
 }
 function destroyBuilding(b){
-  scene.remove(b.mesh); if(b.bar) scene.remove(b.bar); if(b.scaf) scene.remove(b.scaf); if(b.glow) scene.remove(b.glow);
+  scene.remove(b.mesh); if(b.bar) scene.remove(b.bar); if(b.scaf) scene.remove(b.scaf); if(b.glow) scene.remove(b.glow); if(b.pbar) scene.remove(b.pbar);
   for(let a=b.i;a<b.i+b.s;a++) for(let c=b.j;c<b.j+b.s;c++) occ[a][c]=null;
   blds.splice(blds.indexOf(b),1);
   if(b.type==='wall'||b.type==='gate') wallRefreshAround(b.i,b.j);
@@ -1322,7 +1462,7 @@ function destroyBuilding(b){
 function upgradeModels(force){
   blds.forEach(b=>{
     if(b.prog<1||(b.tier===S.era&&!(force&&b.type===force))) return;
-    const m=(b.type==='wall')?wallModel(S.era,wallMask(b)):(b.type==='gate')?gateModel(S.era,wallMask(b)):mdl(b.type,S.era,b.type==='farm'?season():(b.i*7+b.j*13)%5); m.position.copy(b.mesh.position); if(b.type!=='gate') m.rotation.copy(b.mesh.rotation);
+    const m=(b.type==='wall')?wallModel(S.era,wallMask(b)):(b.type==='gate')?gateModel(S.era,wallMask(b)):mdl(b.type,S.era,b.type==='farm'?season():(b.i*7+b.j*13)%5,b.lvl||1); m.position.copy(b.mesh.position); if(b.type!=='gate') m.rotation.copy(b.mesh.rotation);
     scene.remove(b.mesh); scene.add(m); b.mesh=m; b.tier=S.era; b.badge=null; b.h=bHeight(m); if(b.glow){ scene.remove(b.glow); b.glow=null; } applyLevelVisual(b);
   });
 }
@@ -1365,8 +1505,8 @@ function setMode(k,type=null){
     scene.add(ghost);
     const s=B[type].s*T; footprint.scale.set(s,1,s);
   }
-  gridHelper.visible = (k==='build'||k==='road');
-  footprint.visible = (k==='build'||k==='demolish'||k==='road');
+  gridHelper.visible = (k==='build'||k==='road'||k==='plant'); if(gridLines) gridLines.visible=gridHelper.visible;
+  footprint.visible = (k==='build'||k==='demolish'||k==='road'||k==='plant'); if(k==='plant'||k==='road') footprint.scale.set(T,1,T);
   if(k==='demolish'||k==='road') footprint.scale.set(T,1,T);
   canvas.style.cursor = (k==='demolish'||k==='rally'||k==='road'||k==='attack') ? 'crosshair' : 'default';
   refreshBar(); renderInfo();
@@ -1377,14 +1517,17 @@ const cam={x:0,z:0,yaw:.8,pitch:.85,dist:46};
 const keys={};
 function updateCamera(){
   const cp=Math.cos(cam.pitch), sp=Math.sin(cam.pitch);
-  camera.position.set(cam.x+Math.sin(cam.yaw)*cp*cam.dist, sp*cam.dist, cam.z+Math.cos(cam.yaw)*cp*cam.dist);
-  camera.lookAt(cam.x,0,cam.z);
+  const gy=gOff(cam.x,cam.z); cam.y=(cam.y===undefined?gy:cam.y+(gy-cam.y)*.08);
+  camera.position.set(cam.x+Math.sin(cam.yaw)*cp*cam.dist, sp*cam.dist+cam.y, cam.z+Math.cos(cam.yaw)*cp*cam.dist);
+  camera.lookAt(cam.x,cam.y,cam.z);
 }
 const ray=new THREE.Raycaster(), ndc=new THREE.Vector2(), gplane=new THREE.Plane(new THREE.Vector3(0,1,0),0), hitP=new THREE.Vector3();
 function pickGround(){
   ndc.set(mouse.x/innerWidth*2-1, -(mouse.y/innerHeight)*2+1);
-  ray.setFromCamera(ndc,camera);
-  return ray.ray.intersectPlane(gplane,hitP) ? hitP : null;
+  ray.setFromCamera(ndc,camera); gplane.constant=0;
+  if(!ray.ray.intersectPlane(gplane,hitP)) return null;
+  for(let it=0;it<5;it++){ const h=gOff(hitP.x,hitP.z); gplane.constant=-h; if(!ray.ray.intersectPlane(gplane,hitP)) break; }
+  gplane.constant=0; return hitP;
 }
 function hoverTile(){
   const p=pickGround(); if(!p) return null;
@@ -1514,6 +1657,7 @@ function onLeftClick(t){
   }
   if(!t) return;
   if(mode.k==='road'){ paintRoad(); return; }
+  if(mode.k==='plant'){ plantTree(t.i,t.j); return; }
   if(mode.k==='rally'){ const p=pickGround(); if(p){ S.rally={x:clamp(p.x,-HALF+2,HALF-2),z:clamp(p.z,-HALF+2,HALF-2)}; S.rallyCustom=true; updateRallyFlag(); soldiers.forEach(so=>{so.order=null;so.hold=null;if(so.stance==='r')so.stance='d';}); toast('🚩 Toplanma noktası belirlendi, ordu geri çağrıldı.','good'); beep(380,.1,'triangle',.05,520); } setMode('select'); return; }
   if(mode.k==='build'){ doPlace(anchorFor(mode.type,t.i,t.j)); return; }
   if(mode.k==='demolish'){
@@ -1535,7 +1679,8 @@ function onLeftClick(t){
 function doPlace(a){
   const d=B[mode.type];
   if(S.era<d.era){ toast('Önce '+ERAS[d.era].n+'’na geç.','bad'); return false; }
-  if(!canPlace(mode.type,a.i,a.j)){ beep(160,.12,'square',.04); toast('Buraya inşa edilemez.','bad'); return false; }
+  if(!reqOk(mode.type)){ toast(d.n+': '+reqTxt(mode.type),'bad'); return false; }
+  if(!canPlace(mode.type,a.i,a.j)){ beep(160,.12,'square',.04); toast(slopeOf(mode.type,a.i,a.j)>(B[mode.type].s>=2?2.6:1.9)?'⛰️ Arazi bu yapı için çok engebeli.':'Buraya inşa edilemez.','bad'); return false; }
   if(!canAfford(d.cost)){ beep(160,.12,'square',.04); toast('Yetersiz kaynak: '+costStr(d.cost),'bad'); return false; }
   pay(d.cost); placeRot=buildRot; lastBuilt=placeBuilding(mode.type,a.i,a.j,S.era,false); sfx('build0',.45)||beep(300,.1,'triangle',.06,500); refreshBar(); return true;
 }
@@ -1554,6 +1699,7 @@ function updateConfirm(){
   let txt='';
   if(mode.k==='build'){ const d=B[mode.type]; txt=`${d.ic} ${d.n} · ${costStr(d.cost)}`+((touchMode||MOBILE)&&!pending?' — yer seç':''); }
   else if(mode.k==='road') txt='🛤️ Yol — sürükleyerek döşe';
+  else if(mode.k==='plant') txt='🌱 Ağaç dik — boş karoya dokun (🪵5 🌾5)';
   else if(mode.k==='demolish') txt='🔨 Yık / kes — dokun';
   else if(mode.k==='rally') txt='🚩 Bayrak yerini seç';
   else if(mode.k==='attack') txt='🗡️ Bir düşman kampına dokun';
@@ -1579,9 +1725,13 @@ function smithUp(k,b){
 function makeBar(w){
   const g=new THREE.Group();
   const bg=new THREE.Mesh(new THREE.PlaneGeometry(w,.2),new THREE.MeshBasicMaterial({color:0,transparent:true,opacity:.65,depthTest:false}));
-  const fg=new THREE.Mesh(new THREE.PlaneGeometry(w,.14),new THREE.MeshBasicMaterial({color:0x4caf50,depthTest:false}));
+  const fg=new THREE.Mesh(new THREE.PlaneGeometry(w,.14),new THREE.MeshBasicMaterial({color:0x4caf50,transparent:true,depthTest:false}));
   bg.renderOrder=10; fg.renderOrder=11; fg.position.z=.001; g.add(bg,fg); g.fg=fg; g.w=w; return g;
 }
+function makePBar(w){ const g=new THREE.Group();
+  const bg=new THREE.Mesh(new THREE.PlaneGeometry(w+.12,.38),new THREE.MeshBasicMaterial({color:0x1a1208,transparent:true,opacity:.8,depthTest:false,fog:false,toneMapped:false}));
+  const fg=new THREE.Mesh(new THREE.PlaneGeometry(w,.26),new THREE.MeshBasicMaterial({color:0xf5c542,transparent:true,depthTest:false,fog:false,toneMapped:false}));
+  bg.renderOrder=12; fg.renderOrder=13; fg.position.z=.002; g.add(bg,fg); g.fg=fg; g.w=w; return g; }
 function setBar(g,r){ r=clamp(r,0,1); g.fg.scale.x=Math.max(.001,r); g.fg.position.x=-(1-r)*g.w/2; g.fg.material.color.setHex(r>.5?0x4caf50:r>.25?0xffc107:0xf44336); }
 function makeUnit(body,helm,big){
   const g=new THREE.Group();
@@ -1900,7 +2050,7 @@ function heroHeal(){
   toast(`💚 ${h.name} şifa dağıttı: ${n} birlik iyileşti!`,'good'); sfx('book',.4)||beep(660,.3,'sine',.05,990);
 }
 function startingArmy(){ const h=blds.find(b=>b.type==='hall'); if(h) for(let k=0;k<3;k++) spawnSoldier('spear',h); }
-function armyCap(){ let c=6+(S.laws&&S.laws.draft?6:0); for(const b of blds){ if(b.prog<1) continue; if(b.type==='armycamp') c+=2; if(b.type==='barracks') c+=4+2*((b.lvl||1)-1); if(b.type==='castle') c+=8; } return c; }
+function armyCap(){ let c=6+(S.laws&&S.laws.draft?6:0); for(const b of blds){ if(b.prog<1) continue; if(b.type==='armycamp') c+=2; if(b.type==='barracks') c+=4+2*((b.lvl||1)-1); if(b.type==='castle') c+=8; if(b.type==='stable') c+=3; } return c; }
 function queuedCount(){ let n=0; for(const b of blds) n+=b.q.length; return n; }
 function queueUnit(b,kind){
   const U=UNITS[kind]; if(!U||b.prog<1) return;
@@ -1913,7 +2063,7 @@ function queueUnit(b,kind){
 }
 function updateRallyFlag(){
   if(!rallyFlag){ rallyFlag=new THREE.Group(); const kf=KRU()&&KR.get('castle/flag'); if(kf){ kf.scale.setScalar(2.2); rallyFlag.add(kf); } else { rallyFlag.add(cyl(0x444444,.05,1.8)); rallyFlag.add(box(0x2a5db0,.7,.4,.03,.35,1.35,0)); } scene.add(rallyFlag); }
-  rallyFlag.position.set(S.rally.x,0,S.rally.z);
+  rallyFlag.position.set(S.rally.x,gOff(S.rally.x,S.rally.z),S.rally.z);
 }
 const vis=[];
 function visShot(e,tx,ty,tz,dt){
@@ -1959,7 +2109,7 @@ function stepToward(u,tx,tz,spd,dt){
   const dx=tx-u.mesh.position.x, dz=tz-u.mesh.position.z, d=Math.hypot(dx,dz);
   if(u.stance&&onRoad(u.mesh.position.x,u.mesh.position.z)) spd*=1.3;
   if(d>.01){ const s=Math.min(d,spd*dt); u.mesh.position.x+=dx/d*s; u.mesh.position.z+=dz/d*s; u.mesh.rotation.y=Math.atan2(dx,dz); }
-  u.ph+=dt*9; u.mesh.position.y=hgt(u.mesh.position.x,u.mesh.position.z)+(u.mesh.userData.ch?0:Math.abs(Math.sin(u.ph))*.1);
+  u.ph+=dt*9; u.mesh.position.y=(u.mesh.userData.gp?0:hgt(u.mesh.position.x,u.mesh.position.z))+(u.mesh.userData.ch?0:Math.abs(Math.sin(u.ph))*.1);
   return d;
 }
 function bossTick(dt){
@@ -2067,7 +2217,9 @@ function updateUnits(dt){
   /* sağlık çubukları */
   for(const u of enemies.concat(soldiers)){ u.bar.visible=u.hp<u.maxhp&&!u.fogHid; if(u.bar.visible){ u.bar.position.set(u.mesh.position.x,(u.bh||1.9),u.mesh.position.z); u.bar.quaternion.copy(camera.quaternion); setBar(u.bar,u.hp/u.maxhp);} }
   for(const b of blds){
-    if(b.hp<b.maxhp){ if(!b.bar){b.bar=makeBar(b.s*T*.8); scene.add(b.bar);} b.bar.position.set(b.cx,(b.h||HEIGHTS[b.type])+.8,b.cz); b.bar.quaternion.copy(camera.quaternion); setBar(b.bar,b.hp/b.maxhp); }
+    if(b.prog<1||b.upT>0){ if(!b.pbar){ b.pbar=makePBar(Math.max(1.6,b.s*T*.9)); scene.add(b.pbar); } const r=b.prog<1?b.prog:1-b.upT/(b.upTot||1); b.pbar.position.set(b.cx,(b.h||HEIGHTS[b.type]||2)*(b.prog<1?Math.max(.3,b.prog):1)+1.25+(b.mesh.position.y||0),b.cz); b.pbar.quaternion.copy(camera.quaternion); const rr=clamp(r,0,1); b.pbar.fg.scale.x=Math.max(.001,rr); b.pbar.fg.position.x=-(1-rr)*b.pbar.w/2; b.pbar.fg.material.color.setHex(b.prog<1?0xf5c542:0x5ab0ff); }
+    else if(b.pbar){ scene.remove(b.pbar); b.pbar=null; }
+    if(b.hp<b.maxhp){ if(!b.bar){b.bar=makeBar(b.s*T*.8); scene.add(b.bar);} b.bar.position.set(b.cx,(b.h||HEIGHTS[b.type])+.8+(b.y||0),b.cz); b.bar.quaternion.copy(camera.quaternion); setBar(b.bar,b.hp/b.maxhp); }
   }
 }
 
@@ -2184,7 +2336,7 @@ function makeScaffold(b){
     [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(([x,z])=>g.add(box(0x8a5a2b,.12,h,.12,x*sz/2,0,z*sz/2)));
     for(let y=.8;y<h;y+=.9){ g.add(box(0x6b4423,sz,.08,.1,0,y,sz/2)); g.add(box(0x6b4423,sz,.08,.1,0,y,-sz/2)); }
   }
-  g.position.set(b.cx,0,b.cz); scene.add(g); return g;
+  g.position.set(b.cx,b.y||0,b.cz); scene.add(g); return g;
 }
 const selRing=new THREE.Mesh(new THREE.RingGeometry(.47,.5,48).rotateX(-Math.PI/2),new THREE.MeshBasicMaterial({color:0xffd36a,transparent:true,opacity:.9,depthWrite:false}));
 selRing.position.y=.07; selRing.visible=false; scene.add(selRing);
@@ -2198,10 +2350,11 @@ const GLOW_T={lamp:1,house:1,hall:1,tavern:1,chapel:1,clinic:1,barracks:1,blacks
 function updateBuildFx(raw){
   const night=1-dayF;
   for(const b of blds){
-    if(b.prog<1&&!b.scaf) b.scaf=makeScaffold(b);
-    if(b.prog>=1&&b.scaf){ scene.remove(b.scaf); b.scaf=null; }
+    const busy=b.prog<1||b.upT>0;
+    if(busy&&!b.scaf) b.scaf=makeScaffold(b);
+    if(!busy&&b.scaf){ scene.remove(b.scaf); b.scaf=null; }
     if(GLOW_T[b.type]&&b.prog>=1){
-      if(!b.glow){ b.glow=glowSprite(b.type==='magetower'?0x7fd4ff:0xffb050,b.type==='castle'?4:2.4); { const r=(b.rot||0)*Math.PI/2, dd=b.s*T*.5+.15, ox=(b.type==='hall'?.4:.2); b.glow.position.set(b.cx+Math.sin(r)*dd+Math.cos(r)*ox,Math.min(2.2,(b.h||2)*.45),b.cz+Math.cos(r)*dd-Math.sin(r)*ox); } scene.add(b.glow); }
+      if(!b.glow){ b.glow=glowSprite(b.type==='magetower'?0x7fd4ff:0xffb050,b.type==='castle'?4:2.4); { const r=(b.rot||0)*Math.PI/2, dd=b.s*T*.5+.15, ox=(b.type==='hall'?.4:.2); b.glow.position.set(b.cx+Math.sin(r)*dd+Math.cos(r)*ox,Math.min(2.2,(b.h||2)*.45)+(b.y||0),b.cz+Math.cos(r)*dd-Math.sin(r)*ox); } scene.add(b.glow); }
       b.glow.material.opacity=clamp((night-.35)*1.6,0,.85)*(b.fire?0:1)*(.9+.1*Math.sin(performance.now()/180+b.id));
     }
   }
@@ -2305,7 +2458,7 @@ function addRubble(b){
   const g=new THREE.Group(), n=(window.KR&&KR.glb&&KR.glb['hx/destroyed'])?2+b.s:4+b.s*4;
   if(n<5){ const d=KR.hxPart('destroyed',b.s*T*.85,{ry:Math.random()*6}); if(d){ d.traverse(o=>{ if(o.isMesh){ o.castShadow=true; } }); g.add(d); } }
   for(let k=0;k<n;k++){ const r=new THREE.Mesh(GI,mat([0x8a8a86,0x6b4423,0x9b9b96,0x5a3a26][k%4])); const sc=.2+Math.random()*.35*b.s; r.scale.set(sc,sc*.6,sc); r.position.set((Math.random()-.5)*b.s*T*.8,sc*.3,(Math.random()-.5)*b.s*T*.8); r.rotation.set(Math.random()*3,Math.random()*3,0); r.castShadow=true; g.add(r); }
-  g.position.set(b.cx,0,b.cz); scene.add(g); rubble.push({g,t:30,i:b.i,j:b.j,s:b.s});
+  g.position.set(b.cx,b.y||0,b.cz); scene.add(g); rubble.push({g,t:30,i:b.i,j:b.j,s:b.s});
 }
 function updateRubble(dt){ for(let k=rubble.length-1;k>=0;k--){ const r=rubble[k]; r.t-=dt; if(r.t<3) r.g.position.y=-(3-r.t)*.2; if(r.t<=0){ scene.remove(r.g); rubble.splice(k,1); } } }
 /* ---------- köy hayatı ---------- */
@@ -2463,7 +2616,7 @@ function updateVillagers(dt){
         if(j.type==='lumber'||j.type==='quarry'||j.type==='mine'||j.type==='ironmine') tl.hand.rotation.z=-.4+sw*.9;
         if((j.type==='lumber'||j.type==='quarry'||j.type==='ironmine')&&Math.random()<dt*.9) sfxAt(j.type==='lumber'?'chop':(Math.random()<.5?'mine0':'mine1'),m.position.x,m.position.z,.22,120);
         else if(j.type==='farm'&&!m.userData.ch) m.rotation.x=.45+sw*.15;
-        if(v.t<=0){ v.skill++; v.lvl=Math.min(4,1+Math.floor(v.skill/6)); v.carry=(j.type!=='market'&&j.type!=='blacksmith'&&j.type!=='hunter'); v.state='back'; v.tx=j.cx; v.tz=j.cz+j.s*T*.5+.4; m.rotation.x=0; tl.hand.rotation.z=0; }
+        if(v.t<=0){ v.skill+=1+.5*lvSum('school'); v.lvl=Math.min(4,1+Math.floor(v.skill/6)); v.carry=(j.type!=='market'&&j.type!=='blacksmith'&&j.type!=='hunter'); v.state='back'; v.tx=j.cx; v.tz=j.cz+j.s*T*.5+.4; m.rotation.x=0; tl.hand.rotation.z=0; }
       }
       else if(v.state==='back'){ if(stepToward(v,v.tx,v.tz,v.spd,dt)<.5){ if(v.carry&&Math.random()<.5&&Math.hypot(v.mesh.position.x-cam.x,v.mesh.position.z-cam.z)<40) floatText(v.mesh.position.x,1.8,v.mesh.position.z,{lumber:'+🪵',quarry:'+🪨',farm:'+🌾',hunter:'+🍖',mine:'+🪙'}[j.type]||'+🪙'); v.carry=false; const sp=workSpot(v); v.tx=sp.x; v.tz=sp.z; v.state='go'; } }
     } else {
@@ -2496,7 +2649,7 @@ function updateSheep(dt){
 }
 function emitSmoke(x,y,z){
   const p=puffs.find(q=>!q.on); if(!p) return;
-  p.on=true; p.life=0; p.max=2.6+Math.random()*1.2; p.m.visible=true; p.m.position.set(x,y,z); p.m.scale.setScalar(.12);
+  p.on=true; p.life=0; p.max=2.6+Math.random()*1.2; p.m.visible=true; p.m.position.set(x,y+gOff(x,z),z); p.m.scale.setScalar(.12);
 }
 function updateSmoke(dt){
   for(const b of blds){ if(b.prog>=1&&b.hp<b.maxhp*.5&&!b.fire&&Math.random()<dt*1.2){ const c=new THREE.Color(); emitSmoke(b.cx+(Math.random()-.5)*b.s,(b.h||2)*.6,b.cz+(Math.random()-.5)*b.s); } }
@@ -2725,15 +2878,14 @@ function repairBuilding(b){
 /* ---------- yollar ---------- */
 const roadMat=new THREE.MeshStandardMaterial({color:new THREE.Color(0x8b7355).convertSRGBToLinear(),roughness:1,flatShading:true});
 function roadColor(){ return S.era>=2?0x8a867c:(S.era>=1?0x7f7a70:0x8b7355); }
-function recolorRoads(){ roadMat.color.setHex(roadColor()).convertSRGBToLinear(); }
+function recolorRoads(){ roadMat.color.setHex(roadColor()).convertSRGBToLinear(); roadDirty=true; }
 function placeRoad(i,j,free){
   if(i<1||j<1||i>N-2||j>N-2||occ[i][j]) return false;
   if(!free){ if(S.res.wood<3) return false; S.res.wood-=3; }
-  const m=new THREE.Mesh(GB,roadMat), p=tileToWorld(i,j);
-  m.scale.set(T*.97,.08,T*.97); m.position.set(p.x,.04,p.z); m.receiveShadow=true; scene.add(m);
-  occ[i][j]={kind:'road',mesh:m}; roadN++; return true;
+  const m=new THREE.Object3D();
+  occ[i][j]={kind:'road',mesh:m}; roadN++; roadDirty=true; return true;
 }
-function removeRoad(i,j){ const o=occ[i][j]; if(!o||o.kind!=='road') return; scene.remove(o.mesh); occ[i][j]=null; roadN--; }
+function removeRoad(i,j){ const o=occ[i][j]; if(!o||o.kind!=='road') return; occ[i][j]=null; roadN--; roadDirty=true; }
 function roadList(){ const l=[]; for(let i=0;i<N;i++) for(let j=0;j<N;j++){ const o=occ[i][j]; if(o&&o.kind==='road') l.push([i,j]); } return l; }
 function roadAdj(b){
   for(let i=b.i-1;i<=b.i+b.s;i++) for(let j=b.j-1;j<=b.j+b.s;j++){
@@ -2937,6 +3089,7 @@ function calcHappiness(){
     if(b.prog<1) continue; const m=1+.3*((b.lvl||1)-1);
     if(b.type==='well') sv+=12*m; else if(b.type==='tavern') sv+=18*m; else if(b.type==='chapel') sv+=22*m; else if(b.type==='market') sv+=8*m; else if(b.type==='clinic') sv+=14*m;
   }
+  { const cl=lvSum('cathedral'); if(cl) add('Katedral',Math.min(18,8+2*cl)); const ar=lvSum('arena'); if(ar) add('Arena oyunları',Math.min(15,5+2*ar)); const pl=lvSum('palace'); if(pl) add('Kraliyet sarayı',6+2*pl); const sc=lvSum('school'); if(sc) add('Okul',Math.min(8,2+2*sc)); const wl=lvSum('wonder'); if(wl) add('Harika (gurur)',Math.min(15,5+2*wl)); }
   add('Çeşme, han, şapel, pazar',Math.min(22,Math.round(22*sv/Math.max(10,S.pop*1.2))));
   { let dv=0; for(const b of blds) if(b.prog>=1&&B[b.type].deco) dv+=B[b.type].deco; if(dv) add('Süsler ve bahçeler',Math.min(12,dv)); }
   const hs=blds.filter(b=>b.type==='house'&&b.prog>=1);
@@ -2954,13 +3107,23 @@ function calcHappiness(){
 }
 
 /* ---------- bina seviyesi ---------- */
+const LVLMAX=5, LVL_ERA=[0,0,1,2,3], NOLVL={wall:1,gate:1,trap:1,moat:1,garden:1,lamp:1,banner:1,statue:1};
+function lvlMax(b){ return NOLVL[b.type]?1:LVLMAX; }
 function upCost(b){
-  const base=B[b.type].cost, src=Object.keys(base).length?base:{wood:120,stone:90}, m=b.lvl===1?.8:1.4, c={};
-  for(const k in src) c[k]=Math.ceil(src[k]*m);
-  if(b.lvl>=2) c.gold=(c.gold||0)+40; return c;
+  const base=B[b.type].cost, src=Object.keys(base).length?base:{wood:120,stone:90}, m=.6+.45*b.lvl, c={};
+  for(const k in src) if(k!=='iron') c[k]=Math.ceil(src[k]*m);
+  if(b.lvl>=1) c.gold=(c.gold||0)+30*b.lvl; if(b.lvl>=2) c.iron=8*(b.lvl-1); return c;
+}
+function upTime(b){ return Math.round((B[b.type].bt||5)*(1.6+b.lvl*1.3)*(has('eng')?.6:1)); }
+function rebuildMesh(b){
+  if(b.type==='wall'||b.type==='gate') return;
+  const m=mdl(b.type,b.tier,b.type==='farm'?season():(b.i*7+b.j*13)%5,b.lvl||1); m.position.copy(b.mesh.position); m.rotation.copy(b.mesh.rotation);
+  if(b.hlDeco){ b.mesh.remove(b.hlDeco); m.add(b.hlDeco); }
+  scene.remove(b.mesh); scene.add(m); b.mesh=m; b.h=bHeight(m); if(b.glow){ scene.remove(b.glow); b.glow=null; }
 }
 function applyLevelVisual(b){
   if(b.badge){ b.mesh.remove(b.badge); b.badge=null; }
+  if(window.KR&&KR.ready) return;
   if(b.lvl>=2){
     const g=new THREE.Group(), col=b.lvl===2?0xc9d1d9:0xffd54a;
     const kf=KRU()&&KR.get('castle/flag-wide');
@@ -2970,11 +3133,16 @@ function applyLevelVisual(b){
   }
 }
 function upgradeBuilding(b){
-  if(b.prog<1||b.lvl>=3) return;
-  if(S.era<b.lvl) return toast('Seviye '+(b.lvl+1)+' için '+ERAS[b.lvl].n+' gerekir.','bad');
+  if(b.prog<1||b.lvl>=lvlMax(b)||b.upT>0) return;
+  const ne=LVL_ERA[b.lvl]; if(S.era<ne) return toast('Seviye '+(b.lvl+1)+' için '+ERAS[ne].n+' gerekir.','bad');
+  if(b.type!=='hall'){ const h=blds.find(x=>x.type==='hall'); if(h&&b.lvl>=h.lvl+1&&b.lvl>=2) return toast('Önce Şehir Merkezini seviye '+(b.lvl)+' yap (binalar merkezden en fazla 1 seviye yukarıda olabilir).','bad'); }
   const c=upCost(b); if(!canAfford(c)) return toast('Yetersiz kaynak: '+costStr(c),'bad');
-  pay(c); b.lvl++; const old=b.maxhp; b.maxhp=Math.round(old*1.3); b.hp+=b.maxhp-old;
-  applyLevelVisual(b); beep(450,.3,'triangle',.07,800); toast('⬆️ '+B[b.type].n+' seviye '+b.lvl+' oldu!','good'); renderInfo(b);
+  pay(c); b.upT=b.upTot=upTime(b); beep(450,.3,'triangle',.07,800); toast('🔨 '+B[b.type].n+' seviye '+(b.lvl+1)+' için yükseltiliyor ('+b.upT+' sn)','good'); renderInfo(b);
+}
+function upgradeTick(dt){
+  for(const b of blds){ if(!(b.upT>0)) continue; b.upT-=dt; if(b.upT>0) continue; b.upT=0;
+    b.lvl++; const old=b.maxhp; b.maxhp=Math.round(old*1.25); b.hp+=b.maxhp-old; rebuildMesh(b);
+    burst(b.cx,(b.h||2),b.cz,[0xffd54a,0xffffff],16,4,.2,.9); sfx('coins2',.4)||beep(600,.3,'triangle',.06,900); toast('⬆️ '+B[b.type].n+' seviye '+b.lvl+' oldu!'+(b.lvl===lvlMax(b)?' (en üst seviye)':''),'good'); if(selected===b) renderInfo(b); rates=calcRates(); }
 }
 
 /* ---------- mevsimler & hava ---------- */
@@ -3073,10 +3241,10 @@ let ringV=null;
 function mkRing(col){ const m=new THREE.Mesh(RING_G,new THREE.MeshBasicMaterial({color:col,transparent:true,opacity:.9,depthTest:false})); m.renderOrder=9; scene.add(m); return m; }
 function updateRings(){
   for(const so of soldiers){
-    if(so.sel){ if(!so.ring) so.ring=mkRing(0x4fd1ff); so.ring.position.set(so.mesh.position.x,.12,so.mesh.position.z); const k=(so.kind==='hero'||so.kind==='knight')?1.4:1; so.ring.scale.set(k,1,k); }
+    if(so.sel){ if(!so.ring) so.ring=mkRing(0x4fd1ff); so.ring.position.set(so.mesh.position.x,.12+gOff(so.mesh.position.x,so.mesh.position.z),so.mesh.position.z); const k=(so.kind==='hero'||so.kind==='knight')?1.4:1; so.ring.scale.set(k,1,k); }
     else if(so.ring){ scene.remove(so.ring); so.ring=null; }
   }
-  if(selV&&villagers.includes(selV)&&!selV.hidden){ if(!ringV) ringV=mkRing(0xffe27a); ringV.visible=true; ringV.position.set(selV.mesh.position.x,.12,selV.mesh.position.z); }
+  if(selV&&villagers.includes(selV)&&!selV.hidden){ if(!ringV) ringV=mkRing(0xffe27a); ringV.visible=true; ringV.position.set(selV.mesh.position.x,.12+gOff(selV.mesh.position.x,selV.mesh.position.z),selV.mesh.position.z); }
   else if(ringV) ringV.visible=false;
 }
 function pickUnit(x,z){
@@ -3268,6 +3436,9 @@ function calcRates(){
       case 'ironmine': b.nodes=nodesAround(b,'rock',4).length; if(b.nodes>0) r.iron+=(.08+.07*Math.min(b.nodes,6))*m*staff(b)*(has('pick')?1.3:1); break;
       case 'harbor': r.food+=1.0*m*staff(b)*(season()===3?.6:1); break;
       case 'bakery': b.flour=mills.some(ml=>Math.hypot(ml.cx-b.cx,ml.cz-b.cz)<11); r.food+=(b.flour?1.2:.6)*m*staff(b); break;
+      case 'arena': r.gold+=.9*m*(1+.25*((b.lvl||1)-1)); break;
+      case 'palace': r.gold+=2.2*m*(1+.25*((b.lvl||1)-1)); cap+=10+3*((b.lvl||1)-1); break;
+      case 'wonder': r.gold+=1.5*(b.lvl||1); break;
       case 'tavern': r.gold+=.3*m*(1+.25*((b.lvl||1)-1))*(S.laws.tariff?1.25:1); break;
     }
   }
@@ -3281,7 +3452,7 @@ function economy(dt){
   rateT-=dt; if(rateT<=0){ syncVillagers(); assignWorkers(); rates=calcRates(); calcHappiness(); rateT=.5; }
   S.happy+=(happyT-S.happy)*Math.min(1,dt*.12);
   if(S.time<S.plagueUntil&&S.pop>3) S.pop=Math.max(3,S.pop-.08*dt*(1-Math.min(.7,.25*cnt('clinic'))));
-  for(const k in rates) S.res[k]+=rates[k]*dt;
+  for(const k in rates){ const pv=S.res[k]; S.res[k]+=rates[k]*dt; if(rates[k]>0&&CAPK.includes(k)){ const c=resCap(k); if(S.res[k]>c) S.res[k]=Math.max(Math.min(pv,S.res[k]),c); } }
   /* odun & taş tükenir */
   for(const b of blds){
     if(b.prog<1) continue;
@@ -3302,7 +3473,7 @@ function economy(dt){
   }
 }
 function simulate(dt){
-  expTick(dt);
+  expTick(dt); upgradeTick(dt);
   S.time+=dt;
   for(const b of blds){ if(b.prog<1){ b.prog=Math.min(1,b.prog+dt*(has('eng')?2:1)*(1+.35*Math.min(3,b.builders||0))/Math.max(.1,b.bt)); b.mesh.scale.y=.12+.88*b.prog; if(b.prog>=1){ b.mesh.scale.y=1; sfxAt('build1',b.cx,b.cz,.5)||beep(520,.15,'triangle',.05); burst(b.cx,.3,b.cz,[0xd8c8a2,0xb9a27a,0xeee3c8],10+b.s*6,3.5,.22,1,6); if(b.type==='wonder') endGame(true); if(b.type==='armycamp'&&!S.rallyCustom){ S.rally={x:b.cx,z:b.cz+b.s*T*.5+1.6}; updateRallyFlag(); soldiers.forEach(so=>{so.hold=null;}); toast('⛺ Ordu kampı hazır: askerler burada toplanıp iyileşecek.','good'); } } } }
   economy(dt);
@@ -3321,9 +3492,11 @@ function simulate(dt){
 }
 
 /* ---------- çağ atlama ---------- */
+function eraHallReq(next){ return !(S.mode==='sandbox'||(S.mode||'').startsWith('sc_')||S.camp!=null)&&hallLvl()<next+1; }
 function advanceEra(){
   const next=S.era+1; if(next>=ERAS.length) return;
   const c=ERAS[next].cost; if(!canAfford(c)) return toast('Çağ atlamak için: '+costStr(c),'bad');
+  if(eraHallReq(next)) return toast('Çağ atlamak için önce Şehir Merkezini seviye '+(next+1)+' yap.','bad');
   pay(c); S.era=next; upgradeModels(); recolorRoads(); if(SB.j_era) jingle('j_era',.4); else beep(400,.5,'triangle',.07,900); blds.forEach(b=>burst(b.cx,.5,b.cz,[0xffd54a,0xffffff],6,4,.15,1.2,4));
   toast('🏰 '+ERAS[next].n+'’na ulaştın! Tüm binalar yükseltildi, yeni yapılar açıldı.','good'); banner(ERAS[next].n.toLocaleUpperCase('tr-TR'),'Yeni binalar, birlikler ve araştırmalar açıldı'); shake(.3,.5);
   if(mode.k==='build') setMode('build',mode.type); refreshUI();
@@ -3368,12 +3541,12 @@ function toast(msg,kind=''){
   while($('toasts').children.length>(MOBILE?2:4)) $('toasts').firstChild.remove();
 }
 const CATS=[
-  {id:'town', ic:'🏠', n:'Köy',     items:['house','well','tavern','chapel','market','clinic','firehouse','blacksmith']},
-  {id:'prod', ic:'🌾', n:'Üretim',  items:['farm','hunter','lumber','quarry','mine','ironmine','mill','bakery','harbor']},
-  {id:'def',  ic:'🛡️', n:'Savunma', items:['tower','barracks','armycamp','wall','gate','trap','moat','castle','magetower','workshop']},
+  {id:'town', ic:'🏠', n:'Köy',     items:['house','well','tavern','chapel','market','clinic','firehouse','blacksmith','school','library','cathedral','arena']},
+  {id:'prod', ic:'🌾', n:'Üretim',  items:['farm','hunter','lumber','quarry','mine','ironmine','mill','bakery','harbor','storage','granary']},
+  {id:'def',  ic:'🛡️', n:'Savunma', items:['tower','barracks','stable','armycamp','wall','gate','trap','moat','castle','magetower','workshop']},
   {id:'deco', ic:'🌷', n:'Süs',     items:['garden','lamp','statue','banner']},
-  {id:'spec', ic:'🏛️', n:'Özel',    items:['wonder']},
-  {id:'tool', ic:'🛠️', n:'Araçlar', items:['road','demolish']}
+  {id:'spec', ic:'🏛️', n:'Özel',    items:['palace','wonder']},
+  {id:'tool', ic:'🛠️', n:'Araçlar', items:['road','plant','demolish']}
 ];
 let curCat='town';
 function buildBar(){
@@ -3385,6 +3558,7 @@ function buildBar(){
   CATS.find(c=>c.id===curCat).items.forEach(k=>{
     const el=document.createElement('button'); el.className='bb'; el.dataset.k=k;
     if(k==='road'){ el.title='Yol döşe (R)'; el.innerHTML='<span class="ic">🛤️</span><span class="nm">Yol</span><span class="ct">🪵3 / karo</span>'; el.onclick=()=>{ setMode('road'); closeMenus(); }; }
+    else if(k==='plant'){ el.title='Ağaç dik (T)'; el.innerHTML='<span class="ic">🌱</span><span class="nm">Ağaç Dik</span><span class="ct">🪵5 · 🌾5</span>'; el.onclick=()=>{ setMode('plant'); closeMenus(); }; }
     else if(k==='demolish'){ el.title='Yık / ağaç ve kaya kes (X)'; el.innerHTML='<span class="ic">🔨</span><span class="nm">Yık / Kes</span><span class="ct">%50 iade</span>'; el.onclick=()=>{ setMode('demolish'); closeMenus(); }; }
     else { const d=B[k]; el.title=d.d; el.innerHTML=`<span class="ic">${d.ic}</span><span class="nm">${d.n}</span><span class="ct">${costStr(d.cost)}</span>`; el.onclick=()=>{ pickBuild(k,true); if(mode.k==='build') closeMenus(); }; }
     bar.appendChild(el);
@@ -3413,16 +3587,17 @@ function goFull(){
 function pickBuild(k,force){
   if(!started||S.over) return;
   if(S.era<B[k].era) return toast(B[k].n+' için '+ERAS[B[k].era].n+' gerekir.','bad');
+  if(!reqOk(k)) return toast(B[k].n+': '+reqTxt(k),'bad');
   setMode(!force&&mode.k==='build'&&mode.type===k?'select':'build',k);
 }
 function refreshBar(){
   if(!S) return;
   document.querySelectorAll('.bb').forEach(el=>{
-    const k=el.dataset.k; if(k==='demolish'||k==='rally'||k==='road'||k==='attack'){ el.classList.toggle('sel',mode.k===k); return; }
-    const d=B[k], lock=S.era<d.era;
+    const k=el.dataset.k; if(k==='demolish'||k==='rally'||k==='road'||k==='attack'||k==='plant'){ el.classList.toggle('sel',mode.k===k); return; }
+    const d=B[k], lock=S.era<d.era||!reqOk(k);
     el.classList.toggle('lock',lock); el.classList.toggle('sel',mode.k==='build'&&mode.type===k);
     el.classList.toggle('poor',!lock&&!canAfford(d.cost));
-    el.querySelector('.ct').textContent = lock ? '🔒 '+ERAS[d.era].n : costStr(d.cost);
+    el.querySelector('.ct').textContent = lock ? '🔒 '+(S.era<d.era?ERAS[d.era].n:reqTxt(k)) : costStr(d.cost);
   });
 }
 let infoKey='';
@@ -3435,6 +3610,7 @@ function renderInfo(b){
     const d=B[mode.type]; put('build:'+mode.type,`<h3>${d.ic} ${d.n}</h3><p>${d.d}</p><div class="row"><span>Maliyet</span><span>${costStr(d.cost)}</span></div><p>Sol tık: yerleştir · Esc: iptal</p>`); return;
   }
   if(mode.k==='demolish'){ put('dem',`<h3>🔨 Yıkım aracı</h3><p>Bina yık (%50 iade), ağaç kes (+8 odun), kaya kır (+10 taş).</p>`); return; }
+  if(mode.k==='plant'){ put('plant',`<h3>🌱 Ağaç dik</h3><p>Boş karoya ağaç dik (🪵5 🌾5). Oduncuların ormanı tükendiğinde yeniden ağaçlandır; ağaçlar süs olarak da güzel durur.</p>`); return; }
   if(mode.k==='road'){ put('road',`<h3>🛤️ Yol</h3><p>Tıkla ya da sürükleyerek döşe (3 odun / karo). Yola bitişik üretim binaları %10 verimli olur, yola bitişik evler refahı artırır, köylüler yolda %50 hızlı yürür.</p>`); return; }
   if(mode.k==='attack'){ put('attack',`<h3>🗡️ Sefer</h3><p>Ormandaki bir düşman kampına dokun / tıkla: tüm ordun saldırır. Kamp yıkılınca ganimet kazanır, baskınlar azalır. Kamplar bir süre sonra yeniden kurulur.</p>`); return; }
   if(mode.k==='rally'){ put('rally',`<h3>🚩 Toplanma noktası</h3><p>Zemine dokun / tıkla: askerler boştayken orada bekler.</p>`); return; }
@@ -3444,21 +3620,22 @@ function renderInfo(b){
     put('v'+v.name+v.lvl,`<button class="x" id="infoX">✕</button><h3>👤 ${v.name}</h3><p>${(v.job&&V_JOB[v.job.type])||'Köylü'} · ${V_LVL[v.lvl-1]}</p><div id="i-dyn"></div>`,()=>{ $('infoX').onclick=()=>{ selV=null; infoKey=''; renderInfo(); }; });
     const st=v.hidden?'Evde dinleniyor':v.state==='work'?'Çalışıyor':v.state==='back'?'Ürün taşıyor':v.state==='go'?'İşe gidiyor':'Köyde dolaşıyor';
     const rw=(a,x)=>`<div class="row"><span>${a}</span><span>${x}</span></div>`;
-    $('i-dyn').innerHTML=rw('Durum',st)+rw('Meslek',(v.job&&V_JOB[v.job.type])||'İşsiz')+rw('Beceri',V_LVL[v.lvl-1]+(v.lvl<4?` · sonraki seviyeye ${6-(v.skill%6)} tur`:' · en üst seviye'))+rw('Verim','×'+(1+.2*(v.lvl-1)).toFixed(1));
+    $('i-dyn').innerHTML=rw('Durum',st)+rw('Meslek',(v.job&&V_JOB[v.job.type])||'İşsiz')+rw('Beceri',V_LVL[v.lvl-1]+(v.lvl<4?` · sonraki seviyeye ${Math.ceil(6-(v.skill%6))} tur`:' · en üst seviye'))+rw('Verim','×'+(1+.2*(v.lvl-1)).toFixed(1));
     return;
   }
   if(!b){ el.style.display='none'; infoKey=''; return; }
   const d=B[b.type], done=b.prog>=1;
   const ups=done?Object.keys(UNITS).filter(k=>UNITS[k].at.includes(b.type)):[];
   const rc=repairCost(b), hurt=done&&b.hp<b.maxhp-1;
-  const flags=ups.map(k=>(S.era>=UNITS[k].era&&canAfford(unitCost(k)))?1:0).join('')+(hurt?'R'+(canAfford(rc)?1:0):'')+(done&&b.lvl<3?'U'+((S.era>=b.lvl&&canAfford(upCost(b)))?1:0):'');
+  const flags=ups.map(k=>(S.era>=UNITS[k].era&&canAfford(unitCost(k)))?1:0).join('')+(hurt?'R'+(canAfford(rc)?1:0):'')+(done&&b.lvl<lvlMax(b)?'U'+((S.era>=LVL_ERA[b.lvl]&&canAfford(upCost(b)))?1:0)+(b.upT>0?'u':''):'');
   const key=['b',b.id,done?1:0,b.tier,S.era,flags,b.type==='blacksmith'?(S.smith.w+'/'+S.smith.a+(canAfford(smithCost(S.smith.w))?1:0)+(canAfford(smithCost(S.smith.a))?1:0)):''].join('|');
   let html=`<button class="x" id="infoX">✕</button><h3>${d.ic} ${d.n}</h3><p>${d.d}</p><div id="i-dyn"></div>`;
   if(ups.length) html+='<div class="tr">'+ups.map(k=>{
     const U=UNITS[k], lock=S.era<U.era, can=!lock&&canAfford(unitCost(k));
     return `<button class="btn" data-u="${k}" ${can?'':'disabled'} title="${U.n}">${lock?'🔒':U.ic} ${U.n}<br><small>${lock?ERAS[U.era].n:costStr(unitCost(k))}</small></button>`;
   }).join('')+'</div>';
-  if(done&&b.lvl<3){ const uc=upCost(b), lk=S.era<b.lvl; html+=`<button class="btn brass" id="upBtn" style="width:100%;margin-top:6px" ${(lk||!canAfford(uc))?'disabled':''}>⬆ Seviye ${b.lvl+1} · ${lk?'🔒 '+ERAS[b.lvl].n:costStr(uc)}</button>`; }
+  if(done&&b.upT>0){ html+=`<div class="upb">🔨 Seviye ${b.lvl+1} yükseltiliyor… <span id="upLeft">${Math.ceil(b.upT)}</span> sn</div>`; }
+  else if(done&&b.lvl<lvlMax(b)){ const uc=upCost(b), ne=LVL_ERA[b.lvl], lk=S.era<ne; html+=`<button class="btn brass" id="upBtn" style="width:100%;margin-top:6px" ${(lk||!canAfford(uc))?'disabled':''}>⬆ Seviye ${b.lvl+1} · ${lk?'🔒 '+ERAS[ne].n:costStr(uc)+' · ⏱️'+upTime(b)+' sn'}</button>`; }
   if(hurt) html+=`<button class="btn brass" id="repBtn" style="width:100%;margin-top:6px" ${canAfford(rc)?'':'disabled'}>🔧 Onar · ${costStr(rc)}</button>`;
   if(done&&b.type==='blacksmith'){ const sm=S.smith; html+='<div class="tr">'+[['w','⚔️ Silah'],['a','🛡️ Zırh']].map(([k,nm])=>{ const lv=sm[k], c=smithCost(lv), mx=lv>=3; return `<button class="btn" data-sm="${k}" ${(mx||!canAfford(c))?'disabled':''}>${nm} Sv${lv}${mx?' (en üst)':' → '+(lv+1)}<br><small>${mx?'+%45':costStr(c)}</small></button>`; }).join('')+'</div>'; }
   if(b.type!=='hall') html+='<button class="btn" id="delBtn" style="width:100%;margin-top:6px">Yık (%50 iade)</button>';
@@ -3484,7 +3661,7 @@ function renderInfo(b){
     if(b.type==='armycamp'){ const n=soldiers.filter(so=>so.hp<so.maxhp&&Math.hypot(so.mesh.position.x-b.cx,so.mesh.position.z-b.cz)<9.5).length; r+=row('Yenilenen asker',n+' · %'+(3*(1+.3*(b.lvl-1))).toFixed(1)+'/sn'); }
     if(ups.length){ r+=row('Ordu',armyN()+'/'+armyCap()); if(b.q.length) r+=row('Eğitimde',UNITS[b.q[0].kind].ic+' '+Math.ceil(b.q[0].t)+' sn'+(b.q.length>1?' · sırada '+(b.q.length-1):'')); }
   }
-  r+=row('Seviye',b.lvl+'/3')+row('Çağ görünümü',b.tier+1)+row('Can',Math.ceil(b.hp)+'/'+b.maxhp)+`<div class="hpb"><i style="width:${b.hp/b.maxhp*100}%"></i></div>`;
+  r+=row('Seviye',b.lvl+'/'+lvlMax(b)+(b.upT>0?' (yükseltiliyor: '+Math.ceil(b.upT)+' sn)':''))+row('Çağ görünümü',b.tier+1)+row('Can',Math.ceil(b.hp)+'/'+b.maxhp)+`<div class="hpb"><i style="width:${b.hp/b.maxhp*100}%"></i></div>`;
   const dy=$('i-dyn'); if(dy) dy.innerHTML=r;
 }
 function rateTxt(v){ const s=(v>=0?'+':'')+v.toFixed(1)+'/sn'; return s; }
@@ -3493,7 +3670,7 @@ function refreshUI(){
   $('c-iron').style.display=((S.res.iron||0)>0||cnt('ironmine'))?'':'none';
   ['wood','stone','food','gold','iron'].forEach(k=>{
     const el=$('c-'+k); el.querySelector('b').textContent=fmt(S.res[k]||0);
-    const rk=rates[k]||0, sm=el.querySelector('small'); sm.textContent=rateTxt(rk); sm.className=rk<0?'neg':'pos'; el.classList.toggle('low',rk<0);
+    const rk=rates[k]||0, sm=el.querySelector('small'); const full=CAPK.includes(k)&&(S.res[k]||0)>=resCap(k)-1&&S.mode!=='sandbox'; sm.textContent=full?'DOLU · depo':rateTxt(rk); sm.className=(rk<0||full)?'neg':'pos'; el.classList.toggle('low',rk<0||full); el.title=CAPK.includes(k)&&S.mode!=='sandbox'?'Kapasite: '+fmt(resCap(k)):'';
   });
   $('c-pop').querySelector('b').textContent=Math.floor(S.pop)+' / '+popCap;
   $('c-army').querySelector('b').textContent=armyN()+' / '+armyCap();
@@ -3502,7 +3679,7 @@ function refreshUI(){
   $('eraName').textContent=MOBILE?ERAS[S.era].n.replace(/ Çağı?$/,''):ERAS[S.era].n;
   const nb=$('eraBtn');
   if(S.era>=ERAS.length-1){ nb.style.display='none'; }
-  else{ nb.style.display=''; nb.title='Çağ atla: '+costStr(ERAS[S.era+1].cost); nb.classList.toggle('ready',canAfford(ERAS[S.era+1].cost)); nb.disabled=false; }
+  else{ nb.style.display=''; nb.title='Çağ atla: '+costStr(ERAS[S.era+1].cost)+(eraHallReq(S.era+1)?' · Şehir Merkezi Sv'+(S.era+2)+' gerekir':''); nb.classList.toggle('ready',canAfford(ERAS[S.era+1].cost)&&!eraHallReq(S.era+1)); nb.disabled=false; }
   const day=Math.floor(S.time/260)+1, tt=((.9+S.time/260*Math.PI*2));
   $('clk').textContent='Gün '+day+' '+SEASON_EM[season()]+({rain:'🌧️',snow:'🌨️',fog:'🌫️'}[S.weather]||'')+(Math.sin(tt)<-.05?'🌙':'');
   const r=$('raid');
@@ -3625,8 +3802,8 @@ function renderTech(){
   if(techTab==='tech'){
     h+='<p class="note">Araştırmalar kalıcıdır. Bina canı ve inşaat bonusları yalnızca sonradan yapılan binaları etkiler.</p>';
     TECHS.forEach(t=>{
-      const done=S.tech[t.id], lock=S.era<t.era, can=canAfford(t.cost);
-      h+=`<div class="trow"><span class="ic">${t.ic}</span><div class="tx"><b>${t.n}</b><small>${t.d}</small></div><button class="btn ${done||lock?'':'brass'}" data-t="${t.id}" ${(done||lock||!can)?'disabled':''}>${done?'✓ Tamam':lock?'🔒 '+ERAS[t.era].n:costStr(t.cost)}</button></div>`;
+      const tc=techCost(t), lib=techLib(t), done=S.tech[t.id], lock=S.era<t.era||lib, can=canAfford(tc);
+      h+=`<div class="trow"><span class="ic">${t.ic}</span><div class="tx"><b>${t.n}</b><small>${t.d}</small></div><button class="btn ${done||lock?'':'brass'}" data-t="${t.id}" ${(done||lock||!can)?'disabled':''}>${done?'✓ Tamam':S.era<t.era?'🔒 '+ERAS[t.era].n:lib?'🔒 📜 Kütüphane':costStr(tc)}</button></div>`;
     });
   } else if(techTab==='happy'){
     const hv=Math.round(S.happy);
@@ -3674,8 +3851,8 @@ function renderTech(){
   body.querySelectorAll('button[data-tax]').forEach(b=>b.onclick=()=>{ S.tax=+b.dataset.tax; calcHappiness(); renderTech(); });
 }
 function researchTech(id){
-  const t=TECHS.find(x=>x.id===id); if(!t||S.tech[id]||S.era<t.era||!canAfford(t.cost)) return;
-  pay(t.cost); S.tech[id]=true; sfx('book',.5)||beep(500,.2,'triangle',.06,800); toast('🔬 '+t.n+' araştırıldı!','good');
+  const t=TECHS.find(x=>x.id===id); if(!t||S.tech[id]||S.era<t.era||techLib(t)||!canAfford(techCost(t))) return;
+  pay(techCost(t)); S.tech[id]=true; sfx('book',.5)||beep(500,.2,'triangle',.06,800); toast('🔬 '+t.n+' araştırıldı!','good');
   rates=calcRates(); renderTech(); refreshUI();
 }
 function exchGet(i){
@@ -3705,7 +3882,7 @@ $('cfRot').onclick=()=>{ buildRot=(buildRot+1)%4; sfx('click',.3); };
 function saveGame(key){
   key=key||SAVE_KEY; if(!S||S.over) return false;
   try{
-    const data={v:2,meta:{t:S.time,era:S.era,pop:Math.floor(S.pop),wave:S.wave,date:Date.now()},S:{...S,paused:false,poi:S.poi?S.poi.map(p=>({t:p.t,x:p.x,z:p.z,done:p.done})):null,_fog:undefined,fogG:S._fog?S._fog.join(''):(S.fogG||'')},cut,army:soldiers.filter(s=>!s.ally).map(s=>s.kind==='hero'?{k:'hero',name:s.name,lvl:s.lvl,xp:s.xp}:(s.kills?{k:s.kind,kills:s.kills}:s.kind)),roads:roadList(),camps:camps.map(c=>({cl:c.cleared,rt:c.respawn,lv:c.lvl})),b:blds.map(b=>({t:b.type,i:b.i,j:b.j,tier:b.tier,hp:b.hp,mh:b.maxhp,lv:b.lvl,prog:b.prog,r:b.rot||0}))};
+    const data={v:2,meta:{t:S.time,era:S.era,pop:Math.floor(S.pop),wave:S.wave,date:Date.now()},S:{...S,paused:false,poi:S.poi?S.poi.map(p=>({t:p.t,x:p.x,z:p.z,done:p.done})):null,_fog:undefined,fogG:S._fog?S._fog.join(''):(S.fogG||'')},cut,army:soldiers.filter(s=>!s.ally).map(s=>s.kind==='hero'?{k:'hero',name:s.name,lvl:s.lvl,xp:s.xp}:(s.kills?{k:s.kind,kills:s.kills}:s.kind)),roads:roadList(),camps:camps.map(c=>({cl:c.cleared,rt:c.respawn,lv:c.lvl})),b:blds.map(b=>({t:b.type,i:b.i,j:b.j,tier:b.tier,hp:b.hp,mh:b.maxhp,lv:b.lvl,ut:b.upT||0,prog:b.prog,r:b.rot||0}))};
     if(key!==SAVE_KEY){ try{ renderer.render(scene,camera); const c=document.createElement('canvas'); c.width=192; c.height=108; c.getContext('2d').drawImage(renderer.domElement,0,0,192,108); data.meta.thumb=c.toDataURL('image/jpeg',.6); }catch(e){} }
     localStorage.setItem(key,JSON.stringify(data)); return true;
   }catch(e){ return false; }
@@ -3714,8 +3891,11 @@ function loadGame(key){
   try{
     const raw=localStorage.getItem(key||SAVE_KEY); if(!raw) return false;
     const d=JSON.parse(raw); clearWorld(); S=Object.assign(freshState(),d.S); S.paused=false; S.res.iron=S.res.iron||0;
-    genNodes(); (d.cut||[]).forEach(c=>removeNode(c[1],c[2],true));
-    d.b.forEach(x=>{ placeRot=x.r||0; const b=placeBuilding(x.t,x.i,x.j,x.tier,true); b.lvl=x.lv||1; applyLevelVisual(b); b.maxhp=Math.max(b.maxhp,x.mh||x.hp); b.hp=x.hp; b.prog=x.prog; if(x.prog<1) b.mesh.scale.y=.12+.88*x.prog; });
+    const OF=d.S.N?0:(N-36)/2; S.N=N; if(OF){ S.fogG=''; S.planted=(S.planted||[]).map(q=>[q[0]+OF,q[1]+OF]); d.b.forEach(x=>{ x.i+=OF; x.j+=OF; }); d.roads=(d.roads||[]).map(r=>[r[0]+OF,r[1]+OF]); d.cut=[]; }
+    genTerrain(); rebuildGround();
+    genNodes(); if(OF){ d.b.forEach(x=>{ const s=B[x.t]?B[x.t].s:1; for(let a=x.i-1;a<=x.i+s;a++) for(let c=x.j-1;c<=x.j+s;c++){ const o=occ[a]&&occ[a][c]; if(o&&o.kind!=='bld') removeNode(a,c,false); } }); (d.roads||[]).forEach(r=>{ const o=occ[r[0]]&&occ[r[0]][r[1]]; if(o&&o.kind!=='bld') removeNode(r[0],r[1],false); }); }
+    (d.cut||[]).forEach(c=>removeNode(c[1],c[2],false)); cut.length=0; (d.cut||[]).forEach(c=>cut.push(c)); (S.planted||[]).forEach(q=>{ if(!occ[q[0]][q[1]]) addNode('tree',q[0],q[1],Math.random); });
+    d.b.forEach(x=>{ placeRot=x.r||0; const b=placeBuilding(x.t,x.i,x.j,x.tier,true); b.lvl=x.lv||1; b.upT=x.ut||0; b.upTot=b.upT; if(b.lvl>1) rebuildMesh(b); b.maxhp=Math.max(b.maxhp,x.mh||x.hp); b.hp=x.hp; b.prog=x.prog; if(x.prog<1) b.mesh.scale.y=.12+.88*x.prog; });
     (d.roads||[]).forEach(r=>placeRoad(r[0],r[1],true)); recolorRoads(); initCamps(d.camps); initPOI();
     const hh=blds.find(x=>x.type==='hall'); (d.army||[]).forEach(k=>{ const kk=typeof k==='string'?k:k.k; if(hh&&UNITS[kk]){ const u=spawnSoldier(kk,hh,typeof k==='object'?k:null); if(k&&k.kills&&u){ u.kills=k.kills-1; u.rank=0; u.lastHit=null; const fake={lastHit:u}; u.kills=Math.max(0,k.kills-1); creditKill(fake); } } });
     fowInit(); applySeasonVisuals(season()); syncVillagers(); assignWorkers(); updateRallyFlag(); rates=calcRates(); setMode('select'); refreshUI(); return true;
@@ -3778,7 +3958,7 @@ function tutTick(){ const el=$('tutBox'); if(!S||!started||S.mode!=='normal'||S.
   el.style.display='block'; if(st.hl&&$(st.hl)) $(st.hl).classList.add('tut-glow'); }
 setInterval(()=>{ try{ tutTick(); }catch(e){} },800);
 function endGame(won){
-  if(S.over) return; S.over=true; S.won=won; if(window.NET) NET.onGameOver(won); document.body.classList.remove('photo'); checkAch(); recUpdate();
+  if(S.over) return; if(won&&S.endless){ if(!S._wn){ S._wn=1; toast('🏛️ Yeni bir zafer daha! Krallığın efsaneleşiyor.','good'); } return; } S.over=true; S.won=won; if(window.NET) NET.onGameOver(won); document.body.classList.remove('photo'); checkAch(); recUpdate();
   try{localStorage.removeItem(SAVE_KEY);}catch(e){}
   $('endTitle').textContent = won ? (S.winKind==='scenario'?'🏁 Senaryo Zaferi!':S.winKind==='conquest'?'🏴 Fetih Zaferi!':S.winKind==='prosperity'?'👑 Refah Zaferi!':S.winKind==='diplomacy'?'🤝 Diplomasi Zaferi!':'🏛️ Zafer!') : '💀 Krallığın yıkıldı';
   setTimeout(()=>{ const st=$('endStats'); if(st) st.innerHTML=[['⏱️ Süre','Gün '+(Math.floor(S.time/260)+1)],['🏰 Çağ',ERAS[S.era].n],['👥 Nüfus',Math.floor(S.pop)],['🏠 Bina',blds.length],['⚔️ Düşman',S.kills],['🌊 Dalga',S.wave],['🐉 Ejderha',S.dragonKills||0],['🏴 Kamp',camps.filter(c=>c.cleared).length+'/'+camps.length]].map(x=>`<div class="stat"><small>${x[0]}</small><b>${x[1]}</b></div>`).join(''); },0);
@@ -3786,7 +3966,7 @@ function endGame(won){
     ? (S.winKind==='scenario'?`Senaryo tamamlandı! ${S.kills} düşmanı alt ettin, ${S.wave} dalgaya dayandın.`:S.winKind==='diplomacy'?`Diplomasi zaferi! Komşu krallıkların hepsi senin sancağın altında birleşti. ${S.wave} baskına dayandın.`:S.winKind==='conquest'?`Fetih zaferi! Ormandaki tüm düşman kampları yerle bir edildi. ${S.kills} düşmanı alt ettin.`:S.winKind==='prosperity'?`Refah zaferi! Halkın mutlu, şehrin kalabalık; krallığın altın çağını yaşıyor. ${S.wave} baskına dayandın.`:`Harika tamamlandı ve krallığın tarihe geçti. ${S.wave} baskına karşı koydun, ${S.kills} düşmanı alt ettin.`)
     : (S.mode==='sc_winter'&&blds.some(b=>b.type==='hall'))?`Kış bitti ama yalnızca ${Math.floor(S.pop)} kişi hayatta kaldı. En az 12 gerekiyordu.`
     : (S.mode==='sc_gold'&&blds.some(b=>b.type==='hall'))?`Süre doldu! ${Math.floor(S.res.gold)} altın biriktirebildin. Bir dahaki sefere!`:`Şehir merkezi düştü. ${S.wave} baskına dayandın, ${S.kills} düşman yendin.`;
-  $('nextChBtn').style.display='none';
+  $('nextChBtn').style.display='none'; $('contBtn').style.display=(won&&S.camp==null&&S.mode!=='sc_weekly')?'':'none';
   { const sc=calcScore(); lbAdd(sc); $('endText').textContent+=` 🏆 Puan: ${sc}`; if(S.mode==='sc_weekly'){ $('endTitle').textContent='🏆 Turnuva bitti!'; $('endText').textContent=`Bu haftanın turnuvasında ${sc} puan topladın! ${S.wave} dalga, ${S.kills} düşman. Sıralama ekranından skorunu görebilirsin.`; } }
   if(S.camp!=null&&CAMP[S.camp]){ const c=CAMP[S.camp]; if(won){ campSet(S.camp+1); $('endTitle').textContent='📖 '+c.n+' tamamlandı!'; $('endText').textContent=c.outro; if(CAMP[S.camp+1]) $('nextChBtn').style.display=''; else $('endText').textContent+=' 👑 Kampanyayı bitirdin! Artık gerçek bir efsanesin.'; } else $('endText').textContent+=' Bölümü yeniden dene!'; }
   if(won){ const wd=blds.find(b=>b.type==='wonder'); if(wd){ cam.x=wd.cx; cam.z=wd.cz; cam.dist=30; } winFx=12; setTimeout(()=>{ $('endScreen').style.display='flex'; },3500); } else $('endScreen').style.display='flex';
@@ -3814,7 +3994,7 @@ function updateFX(dt){
     p.r+=dt*5;
   }
   for(const p of fxParts){
-    const k=1-p.l/p.m; fxDummy.position.set(p.x,p.y,p.z); fxDummy.rotation.set(p.r,p.r*.7,0); fxDummy.scale.setScalar(p.sz*(.3+.7*k)); fxDummy.updateMatrix();
+    const k=1-p.l/p.m; if(p.gy===undefined) p.gy=p.y>-.2?gOff(p.x,p.z):0; fxDummy.position.set(p.x,p.y+p.gy,p.z); fxDummy.rotation.set(p.r,p.r*.7,0); fxDummy.scale.setScalar(p.sz*(.3+.7*k)); fxDummy.updateMatrix();
     fxMesh.setMatrixAt(n,fxDummy.matrix); fxCol.setHex(p.c); fxMesh.setColorAt(n,fxCol); n++;
   }
   fxMesh.count=n; fxMesh.instanceMatrix.needsUpdate=true; if(fxMesh.instanceColor) fxMesh.instanceColor.needsUpdate=true;
@@ -3832,7 +4012,10 @@ const plates=new Map();
 function updatePlates(){
   if(!floatLayer){ floatLayer=document.createElement('div'); floatLayer.id='floats'; document.body.appendChild(floatLayer); }
   const want=[]; for(const u of soldiers) if(u.kind==='hero') want.push([u,'👑 '+u.name+' · Sv'+u.lvl,'#ffe08a']);
+  if(S&&started) for(const b of blds){ if(b.prog<1||b.upT>0){ const sec=b.prog<1?Math.ceil((1-b.prog)/Math.max(1e-4,(has('eng')?2:1)*(1+.35*Math.min(3,b.builders||0))/Math.max(.1,b.bt))):Math.ceil(b.upT); const pc=b.prog<1?Math.floor(b.prog*100):Math.floor((1-b.upT/(b.upTot||1))*100);
+      want.push([{mesh:{position:{x:b.cx,y:0,z:b.cz},visible:true},bh:(b.h||2)+.9,_b:b},(b.prog<1?'🔨 İnşaat ':'⬆ Seviye '+(b.lvl+1)+' ')+'%'+pc+' · '+sec+' sn'+(b.prog<1&&!(b.builders>0)?' (işçi bekleniyor)':''),b.prog<1?'#ffd36a':'#9ad0ff']); continue; } }
   if(S&&started) for(const b of blds){ if(b.prog<1) continue; let w2=null;
+    if(b.prog<1){ continue; }
     if((b.type==='lumber'||b.type==='quarry'||b.type==='mine'||b.type==='ironmine')&&b.nodes===0) w2=({lumber:'🌲',quarry:'🪨',mine:'💰',ironmine:'⛓️'})[b.type]+' kaynak bitti';
     else if(b.type==='bakery'&&!b.flour) w2='🌬️ değirmen yok (yarı verim)';
     else if(VSLOTS[b.type]&&(b.workers||0)===0) w2='👷 işçi yok';
@@ -3842,14 +4025,14 @@ function updatePlates(){
   for(const e of enemies){ if(e.kind==='king') want.push([e,'👑 Düşman Kralı','#ff8a7a']); else if(e.kind==='dragon') want.push([e,'🐉 Ejderha','#ff6a5a']); else if(BOSS_N[e.kind]) want.push([e,BOSS_P[e.kind],'#ff7a5a']); else if(e.rank>=2) want.push([e,RANKS[e.rank].ic+' '+RANKS[e.rank].n+(e.fac?' · '+e.fac:''),RANKS[e.rank].col]); else if(e.online) want.push([e,'🌐 '+e.online,'#9ad0ff']); }
   const seen=new Set();
   for(const [u0,txt,col] of want){ const u=u0._b?u0._b:u0, pu=u0; seen.add(u); let el=plates.get(u); if(!el){ el=document.createElement('div'); el.className='plate'; el.style.color=col; floatLayer.appendChild(el); plates.set(u,el); } if(el.textContent!==txt) el.textContent=txt;
-    fv.set(pu.mesh.position.x,(pu.fly?pu.mesh.position.y+3.5:(pu.bh||2)+.9),pu.mesh.position.z).project(camera); if(fv.z>1||!pu.mesh.visible||Math.abs(fv.x)>1.1||Math.abs(fv.y)>1.1){ el.style.display='none'; continue; } el.style.display=''; el.style.transform=`translate(${(fv.x*.5+.5)*innerWidth}px,${(-fv.y*.5+.5)*innerHeight}px) translate(-50%,-100%)`; }
+    fv.set(pu.mesh.position.x,(pu.fly?pu.mesh.position.y+3.5:(pu.bh||2)+.9+gOff(pu.mesh.position.x,pu.mesh.position.z)),pu.mesh.position.z).project(camera); if(fv.z>1||!pu.mesh.visible||Math.abs(fv.x)>1.1||Math.abs(fv.y)>1.1){ el.style.display='none'; continue; } el.style.display=''; el.style.transform=`translate(${(fv.x*.5+.5)*innerWidth}px,${(-fv.y*.5+.5)*innerHeight}px) translate(-50%,-100%)`; }
   for(const [u,el] of plates){ if(!seen.has(u)){ el.remove(); plates.delete(u); } }
 }
 function updateFloats(dt){
   updatePlates();
   for(let i=floats.length-1;i>=0;i--){
     const f=floats[i]; f.t+=dt; if(f.t>1.6){ f.el.remove(); floats.splice(i,1); continue; }
-    fv.set(f.x,f.y+f.t*1.6,f.z).project(camera);
+    fv.set(f.x,f.y+f.t*1.6+(f.g===undefined?(f.g=gOff(f.x,f.z)):f.g),f.z).project(camera);
     if(fv.z>1){ f.el.style.display='none'; continue; }
     f.el.style.display=''; f.el.style.transform=`translate(${(fv.x*.5+.5)*innerWidth}px,${(-fv.y*.5+.5)*innerHeight}px) translate(-50%,-50%)`;
     f.el.style.opacity=f.t<1.1?1:1-(f.t-1.1)/.5;
@@ -3895,8 +4078,19 @@ function drawMinimap(){
 
 /* ---------- ana döngü ---------- */
 const clock=new THREE.Clock(); let uiT=0, saveT=0, selT=0;
+function groundLists(){ return [soldiers,enemies,villagers,sheep,caravans,typeof campGuards!=='undefined'?campGuards:[]]; }
+function groundPre(){
+  for(const L of groundLists()) for(const u of L){ const m=u.mesh; if(m&&m.userData.gy){ m.position.y-=m.userData.gy; m.userData.gy=0; } }
+  for(const a of arrows){ if(a.m&&a.m.userData.gy){ a.m.position.y-=a.m.userData.gy; a.m.userData.gy=0; } }
+  for(const v of vis){ if(v.m.userData.gy){ v.m.position.y-=v.m.userData.gy; v.m.userData.gy=0; } }
+}
+function groundPost(){
+  for(const L of groundLists()) for(const u of L){ const m=u.mesh; if(!m||u.fly) continue; const g=gOff(m.position.x,m.position.z); m.position.y+=g; m.userData.gy=g; m.userData.gp=1; if(u.bar&&u.bar.parent===scene) u.bar.position.y+=0; }
+  for(const a of arrows){ if(!a.m) continue; const g=gOff(a.m.position.x,a.m.position.z); a.m.position.y+=g; a.m.userData.gy=g; }
+  for(const v of vis){ const g=gOff(v.m.position.x,v.m.position.z); v.m.position.y+=g; v.m.userData.gy=g; }
+}
 function frame(){
-  requestAnimationFrame(frame);
+  requestAnimationFrame(frame); groundPre();
   const raw=Math.min(clock.getDelta(),.1);
   /* kamera hareketi */
   const sp=cam.dist*.85*raw*(keys.ShiftLeft?2:1);
@@ -3933,14 +4127,16 @@ function frame(){
     const tl=hoverTile();
     if(mode.k==='build' && ghost){
       const a=touchMode?pending:(tl?anchorFor(mode.type,tl.i,tl.j):null);
-      if(a){ const p=centerOf(mode.type,a.i,a.j); ghost.position.copy(p); ghost.rotation.y=(mode.type==='wall'||mode.type==='gate')?ghost.rotation.y:buildRot*Math.PI/2; footprint.position.set(p.x,.06,p.z);
+      if(a){ const p=centerOf(mode.type,a.i,a.j); ghost.position.copy(p); ghost.rotation.y=(mode.type==='wall'||mode.type==='gate')?ghost.rotation.y:buildRot*Math.PI/2; footprint.position.set(p.x,p.y+.08,p.z);
         const ok=canPlace(mode.type,a.i,a.j)&&canAfford(B[mode.type].cost); footprint.material.color.setHex(ok?0x69c47a:0xec6a5e); ghost.visible=footprint.visible=true; }
       else ghost.visible=footprint.visible=false;
+    } else if(mode.k==='plant'){
+      if(tl){ const p=tileToWorld(tl.i,tl.j); footprint.scale.set(T,1,T); footprint.position.set(p.x,gOff(p.x,p.z)+.08,p.z); footprint.material.color.setHex(!occ[tl.i][tl.j]?0x69c47a:0xec6a5e); footprint.visible=true; } else footprint.visible=false;
     } else if(mode.k==='road'){
-      if(tl){ const p=tileToWorld(tl.i,tl.j); footprint.position.set(p.x,.06,p.z); footprint.material.color.setHex((!occ[tl.i][tl.j]&&tl.i>0&&tl.j>0&&tl.i<N-1&&tl.j<N-1&&S.res.wood>=3)?0x69c47a:0xec6a5e); footprint.visible=true; }
+      if(tl){ const p=tileToWorld(tl.i,tl.j); footprint.position.set(p.x,gOff(p.x,p.z)+.08,p.z); footprint.material.color.setHex((!occ[tl.i][tl.j]&&tl.i>0&&tl.j>0&&tl.i<N-1&&tl.j<N-1&&S.res.wood>=3)?0x69c47a:0xec6a5e); footprint.visible=true; }
       else footprint.visible=false;
     } else if(mode.k==='demolish'){
-      if(tl){ const o=occ[tl.i][tl.j]; const p=o&&o.kind==='bld'?centerOf(o.b.type,o.b.i,o.b.j):tileToWorld(tl.i,tl.j); const s=o&&o.kind==='bld'?o.b.s*T:T; footprint.scale.set(s,1,s); footprint.position.set(p.x,.06,p.z); footprint.material.color.setHex(o?0xec6a5e:0x888888); footprint.visible=true; }
+      if(tl){ const o=occ[tl.i][tl.j]; const p=o&&o.kind==='bld'?centerOf(o.b.type,o.b.i,o.b.j):tileToWorld(tl.i,tl.j); const s=o&&o.kind==='bld'?o.b.s*T:T; footprint.scale.set(s,1,s); footprint.position.set(p.x,(o&&o.kind==='bld'?(o.b.y||0):gOff(p.x,p.z))+.08,p.z); footprint.material.color.setHex(o?0xec6a5e:0x888888); footprint.visible=true; }
       else footprint.visible=false;
     } else if(mode.k==='select' && tl && !drag && !touchMode && !MOBILE){
       const o=occ[tl.i][tl.j]; if(!selected&&o&&o.kind==='bld') renderInfoHover(o.b); else if(!selected&&!selV) $('info').style.display='none';
@@ -3953,6 +4149,8 @@ function frame(){
     uiT-=raw; if(uiT<=0){ refreshUI(); uiT=.25; if((selected||selV)&&mode.k==='select') renderInfo(); }
     saveT-=raw; if(saveT<=0){ saveGame(); saveT=25; }
   }
+  if(roadDirty&&S) paintRoads();
+  groundPost();
   renderer.render(scene,camera);
 }
 let hoverShown=null,hoverTick=0, winFx=0, fpsN=0, fpsT=0, camFollow=null;
@@ -4079,6 +4277,7 @@ $('contBtn').onclick=()=>{ openSlots('load'); };
 $('achMainBtn').onclick=openAch;
 $('aboutBtn').onclick=()=>{ $('abAch').textContent=ACH.filter(a=>achDone[a.id]).length+'/'+ACH.length; $('aboutScreen').style.display='flex'; };
 $('aboutClose').onclick=()=>{ $('aboutScreen').style.display='none'; };
+$('contBtn').onclick=()=>{ $('endScreen').style.display='none'; S.over=false; S.endless=true; winFx=0; S.nextWave=Math.min(S.nextWave,240); saveGame(); toast('♾️ Sonsuz mod: şehrini büyütmeye devam et. Baskınlar giderek güçlenecek!','good'); refreshUI(); };
 $('homeBtn').onclick=()=>{ if(S&&!S.over) saveGame(); inSession=true; showMain(); };
 $('againBtn').onclick=()=>{ $('endScreen').style.display='none'; startNew(); };
 $('endMenu').onclick=()=>{ $('endScreen').style.display='none'; inSession=false; showMain(); };
